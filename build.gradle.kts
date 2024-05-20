@@ -9,6 +9,14 @@ configurations {
 
 dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.data:spring-data-redis")
+  implementation("org.springframework.session:spring-session-data-redis")
+  implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+  implementation("org.springframework.boot:spring-boot-starter-security")
+  implementation("org.springframework.security:spring-security-config")
+  implementation("org.springframework.security:spring-security-oauth2-authorization-server")
+  implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
 }
 
 kotlin {
