@@ -4,7 +4,7 @@
 [![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-handover-service/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-handover-service)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-handover-service-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
 
-This is a skeleton project from which to create new kotlin projects from.
+Handover service for handling authentication and shared context data across OASys and ARNS-space applications
 
 # Instructions
 
