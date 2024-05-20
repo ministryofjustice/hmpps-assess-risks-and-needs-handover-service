@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppshandoverservice.config
+package uk.gov.justice.digital.hmpps.hmppshandoverservice.handlers.exceptions
 
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
