@@ -1,5 +1,11 @@
 package uk.gov.justice.digital.hmpps.hmppshandoverservice.handover.controller
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.access.prepost.PreAuthorize
@@ -20,6 +26,7 @@ import java.net.URL
 
 @RestController
 @RequestMapping("/handover")
+@Tag(name = "Handover", description = "APIs for handling handovers")
 class HandoverController(
   private val handoverService: HandoverService,
   private val registeredClientRepository: RegisteredClientRepository,
@@ -30,19 +37,42 @@ class HandoverController(
 
   @PreAuthorize("@jwt.isIssuedByHmppsAuth() and @jwt.isClientCredentialsGrant()")
   @PostMapping
+  @Operation(
+    summary = "Create a new handover link",
+    description = "Creates a new handover link using the provided handover request. " +
+      "**Authorization for this endpoint requires a client credentials JWT provided by HMPPS Auth.**",
+    responses = [
+      ApiResponse(
+        responseCode = "200",
+        description = "Handover link created successfully",
+        content = [Content(schema = Schema(implementation = CreateHandoverLinkResponse::class))],
+      ),
+      ApiResponse(responseCode = "400", description = "Invalid request"),
+      ApiResponse(responseCode = "401", description = "Unauthorized"),
+      ApiResponse(responseCode = "403", description = "Forbidden"),
+    ],
+  )
   fun createHandoverLink(
     @RequestBody handoverRequest: HandoverRequest,
   ): CreateHandoverLinkResponse {
     return handoverService.createHandover(handoverRequest)
   }
 
-  // TODO: Probably shouldn't have a default clientId for this
   @GetMapping("/{handoverCode}")
+  @Operation(
+    summary = "Use a handover link",
+    description = "Consumes a handover link and exchanges it for authentication session cookie",
+    responses = [
+      ApiResponse(responseCode = "200", description = "Handover link exchanged successfully"),
+      ApiResponse(responseCode = "400", description = "Invalid handover code"),
+      ApiResponse(responseCode = "401", description = "Unauthorized"),
+      ApiResponse(responseCode = "403", description = "Forbidden"),
+      ApiResponse(responseCode = "404", description = "Handover link not found"),
+    ],
+  )
   fun useHandoverLink(
-    @PathVariable
-    handoverCode: String,
-    @RequestParam
-    clientId: String = "sentence-plan",
+    @Parameter(description = "Handover code") @PathVariable handoverCode: String,
+    @Parameter(description = "Client ID") @RequestParam clientId: String = "sentence-plan",
     request: HttpServletRequest,
     response: HttpServletResponse,
   ) {
@@ -53,7 +83,6 @@ class HandoverController(
 
     val client = registeredClientRepository.findByClientId(clientId)
 
-    // TODO: Bit of a hacky to redirect the user back to the client, better way?
     client?.let {
       response.sendRedirect(stripPath(client.redirectUris.iterator().next()))
     }

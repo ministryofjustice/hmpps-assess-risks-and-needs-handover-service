@@ -28,8 +28,8 @@ class SecurityConfig(
             "/health/**",
             "/info",
             "/ping",
-            "/swagger-ui.html",
-            "/swagger-ui/**",
+            "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
+            "/swagger-resources", "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security",
           ).permitAll()
           .requestMatchers(HttpMethod.GET, "/handover/*").permitAll()
           .anyRequest().authenticated()

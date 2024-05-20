@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.index.Indexed
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.io.Serializable
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -15,25 +16,10 @@ enum class UserAccess(val value: String) {
   ;
 
   fun toAuthorities(): List<GrantedAuthority> {
-    val commonAuthorities = listOf(
-      SimpleGrantedAuthority("SCOPE_openid"),
-      SimpleGrantedAuthority("SCOPE_profile"),
-    )
-
     return when (this) {
-      READ_ONLY -> commonAuthorities + listOf(SimpleGrantedAuthority("READ"))
-      READ_WRITE -> commonAuthorities + listOf(SimpleGrantedAuthority("READ"), SimpleGrantedAuthority("WRITE"))
+      READ_ONLY -> listOf(SimpleGrantedAuthority("READ"))
+      READ_WRITE -> listOf(SimpleGrantedAuthority("READ"), SimpleGrantedAuthority("WRITE"))
     }
-  }
-}
-
-class HandoverPrincipal(
-  val identifier: String = "",
-  val displayName: String = "",
-  val accessMode: UserAccess = UserAccess.READ_ONLY,
-) : Serializable {
-  override fun toString(): String {
-    return identifier
   }
 }
 
@@ -43,7 +29,44 @@ data class HandoverContext(
   @Indexed var handoverSessionId: String,
   val createdAt: LocalDateTime = LocalDateTime.now(),
   val principal: HandoverPrincipal,
-  val subject: Any?,
-  val assessmentContext: Any?,
-  val sentencePlanContext: Any?,
+  val subject: SubjectDetails,
+  val assessmentContext: AssessmentContext?,
+  val sentencePlanContext: SentencePlanContext?,
 ) : Serializable
+
+data class HandoverPrincipal(
+  val identifier: String = "",
+  val displayName: String = "",
+  val accessMode: UserAccess = UserAccess.READ_ONLY,
+) : Serializable {
+  override fun toString(): String {
+    return identifier
+  }
+}
+
+data class AssessmentContext(
+  val oasysPk: String,
+  val assessmentVersion: String,
+) : Serializable
+
+data class SentencePlanContext(
+  val oasysPk: String,
+  val assessmentVersion: String,
+) : Serializable
+
+data class SubjectDetails(
+  val crn: String?,
+  val pnc: String?,
+  val nomisId: String?,
+  val givenName: String,
+  val familyName: String,
+  val dateOfBirth: LocalDate?,
+  val gender: Int,
+  val location: Location,
+  val sexuallyMotivatedOffenceHistory: String?,
+) : Serializable
+
+enum class Location {
+  PRISON,
+  COMMUNITY,
+}
