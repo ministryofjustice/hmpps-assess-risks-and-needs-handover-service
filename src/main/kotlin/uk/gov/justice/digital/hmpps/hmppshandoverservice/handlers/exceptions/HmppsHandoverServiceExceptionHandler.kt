@@ -3,9 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppshandoverservice.handlers.exceptions
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
-import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -45,6 +43,19 @@ class HmppsHandoverServiceExceptionHandler {
         developerMessage = e.message,
       ),
     ).also { log.error("Unexpected exception", e) }
+
+  @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
+  fun handler(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
+    return ResponseEntity
+      .status(FORBIDDEN)
+      .body(
+        ErrorResponse(
+          status = FORBIDDEN,
+          userMessage = "Access denied",
+          developerMessage = ex.message ?: "",
+        )
+      )
+  }
 
   private companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
