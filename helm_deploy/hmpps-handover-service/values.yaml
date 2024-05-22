@@ -1,18 +1,18 @@
 generic-service:
-  nameOverride: hmpps-assess-risk-and-needs-handover-service
+  nameOverride: hmpps-handover-service
   productId: "" # productId for the product that this belongs too, i.e. DPS001, see README.md for details
 
   replicaCount: 4
 
   image:
-    repository: quay.io/hmpps/hmpps-assess-risk-and-needs-handover-service
+    repository: quay.io/hmpps/hmpps-handover-service
     tag: app_version # override at deployment time
     port: 8080
 
   ingress:
     enabled: true
     host: app-hostname.local # override per environment
-    tlsSecretName: hmpps-assess-risk-and-needs-handover-service-cert
+    tlsSecretName: hmpps-handover-service-cert
 
   # Environment variables to load into the deployment
   env:
@@ -28,7 +28,7 @@ generic-service:
   #     [name of environment variable as seen by app]: [key of kubernetes secret to load]
 
   namespace_secrets:
-    hmpps-assess-risk-and-needs-handover-service:
+    hmpps-handover-service:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
 
   allowlist:
@@ -36,4 +36,4 @@ generic-service:
       - internal
 
 generic-prometheus-alerts:
-  targetApplication: hmpps-assess-risk-and-needs-handover-service
+  targetApplication: hmpps-handover-service

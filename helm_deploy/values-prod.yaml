@@ -1,9 +1,9 @@
 ---
-# Per environment values which override defaults in hmpps-assess-risk-and-needs-handover-service/values.yaml
+# Per environment values which override defaults in hmpps-handover-service/values.yaml
 
 generic-service:
   ingress:
-    host: hmpps-assess-risk-and-needs-handover-service.hmpps.service.justice.gov.uk
+    host: hmpps-handover-service.hmpps.service.justice.gov.uk
 
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json

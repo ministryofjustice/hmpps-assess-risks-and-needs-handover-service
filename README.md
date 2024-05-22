@@ -1,8 +1,8 @@
-# hmpps-assess-risk-and-needs-handover-service
-[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-assess-risk-and-needs-handover-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-assess-risk-and-needs-handover-service "Link to report")
-[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-assess-risk-and-needs-handover-service/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-assess-risk-and-needs-handover-service)
-[![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-assess-risk-and-needs-handover-service/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-assess-risk-and-needs-handover-service)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-assess-risk-and-needs-handover-service-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
+# hmpps-handover-service
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-handover-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-handover-service "Link to report")
+[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-handover-service/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-handover-service)
+[![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-handover-service/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-handover-service)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-handover-service-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
 
 Handover service for handling authentication and shared context data across OASys and ARNS-space applications
 
@@ -15,11 +15,11 @@ see https://github.com/ministryofjustice/dps-project-bootstrap.
 
 When deploying to a new namespace, you may wish to use this template kotlin project namespace as the basis for your new namespace:
 
-<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-assess-risk-and-needs-handover-service>
+<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-handover-service>
 
 Copy this folder, update all the existing namespace references, and submit a PR to the CloudPlatform team. Further instructions from the CloudPlatform team can be found here: <https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide>
 
-## Renaming from Hmpps Assess Risk And Needs Handover Service - github Actions
+## Renaming from Hmpps Handover Service - github Actions
 
 Once the new repository is deployed. Navigate to the repository in github, and select the `Actions` tab.
 Click the link to `Enable Actions on this repository`.
@@ -32,7 +32,7 @@ enabled by default on newly created repos. There is no way to enable Actions oth
 If this situation changes we will update this project so that the workflow is triggered during the bootstrap project.
 Further reading: <https://github.community/t/workflow-isnt-enabled-in-repos-generated-from-template/136421>
 
-## Manually renaming from Hmpps Assess Risk And Needs Handover Service
+## Manually renaming from Hmpps Handover Service
 
 Run the `rename-project.bash` and create a PR.
 
