@@ -21,30 +21,18 @@ class OpenApiConfiguration(
 ) {
   private val version: String = buildProperties.version
 
-  init {
-    val schema = Schema<LocalDateTime>()
-    schema.example(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")))
-    SpringDocUtils.getConfig().replaceWithSchema(LocalDateTime::class.java, schema)
-  }
-
   @Bean
-  fun customOpenAPI(buildProperties: BuildProperties, appConfiguration: AppConfiguration): OpenAPI? = OpenAPI()
-    .servers(
-      listOf(
-        Server().url(appConfiguration.baseUrl),
-      ),
-    )
-    .openapi("3.0.1")
+  fun customOpenAPI(buildProperties: BuildProperties, appConfiguration: AppConfiguration): OpenAPI =
+    OpenAPI()
     .info(
       Info()
-        .title("HMPPS Handover Service")
+        .title("HMPPS ARNS Handover Service")
         .version(version)
         .description("Authentication and management of context data for applications in the ARNS space")
         .contact(
           Contact()
-            .name("HMPPS Digital Studio")
-            .email("feedback@digital.justice.gov.uk")
-            .url("https://github.com/ministryofjustice/hmpps-handover-service"),
+            .name("HMPPS ARNS Handover GitHub Project")
+            .url("https://github.com/ministryofjustice/hmpps-asses-risk-and-needs-handover-service"),
         ),
     )
     .components(
