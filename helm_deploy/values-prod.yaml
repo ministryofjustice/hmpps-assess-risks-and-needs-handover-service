@@ -1,13 +1,13 @@
 ---
-# Per environment values which override defaults in hmpps-asses-risk-and-needs-handover-service/values.yaml
+# Per environment values which override defaults in hmpps-handover-service/values.yaml
 
 generic-service:
   ingress:
-    host: hmpps-arns-handover-service.hmpps.service.justice.gov.uk
+    host: hmpps-handover-service.hmpps.service.justice.gov.uk
 
   env:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    HMPPS_HANDOVER_BASE_URL: "https://hmpps-arns-handover.services.justice.gov.uk"
+    HMPPS_HANDOVER_BASE_URL: "https://hmpps-handover.services.justice.gov.uk"
     HMPPS_AUTH_BASE_URL: "https://sign-in-prod.hmpps.service.justice.gov.uk"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack

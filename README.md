@@ -1,8 +1,8 @@
-# hmpps-asses-risk-and-needs-handover-service
-[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-asses-risk-and-needs-handover-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-asses-risk-and-needs-handover-service "Link to report")
-[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-asses-risk-and-needs-handover-service/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-asses-risk-and-needs-handover-service)
-[![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-asses-risk-and-needs-handover-service/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-asses-risk-and-needs-handover-service)
-[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-asses-risk-and-needs-handover-service-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
+# hmpps-handover-service
+[![repo standards badge](https://img.shields.io/badge/dynamic/json?color=blue&style=flat&logo=github&label=MoJ%20Compliant&query=%24.result&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-handover-service)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-github-repositories.html#hmpps-handover-service "Link to report")
+[![CircleCI](https://circleci.com/gh/ministryofjustice/hmpps-handover-service/tree/main.svg?style=svg)](https://circleci.com/gh/ministryofjustice/hmpps-handover-service)
+[![Docker Repository on Quay](https://quay.io/repository/hmpps/hmpps-handover-service/status "Docker Repository on Quay")](https://quay.io/repository/hmpps/hmpps-handover-service)
+[![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://hmpps-handover-service-dev.hmpps.service.justice.gov.uk/webjars/swagger-ui/index.html?configUrl=/v3/api-docs)
 
 Handover service for handling authentication and shared context data across OASys and ARNS-space applications
 
@@ -15,7 +15,7 @@ see https://github.com/ministryofjustice/dps-project-bootstrap.
 
 When deploying to a new namespace, you may wish to use this template kotlin project namespace as the basis for your new namespace:
 
-<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-asses-risk-and-needs-handover-service>
+<https://github.com/ministryofjustice/cloud-platform-environments/tree/main/namespaces/live.cloud-platform.service.justice.gov.uk/hmpps-handover-service>
 
 Copy this folder, update all the existing namespace references, and submit a PR to the CloudPlatform team. Further instructions from the CloudPlatform team can be found here: <https://user-guide.cloud-platform.service.justice.gov.uk/#cloud-platform-user-guide>
 
