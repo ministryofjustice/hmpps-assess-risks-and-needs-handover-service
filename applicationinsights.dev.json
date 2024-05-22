@@ -1,6 +1,6 @@
 {
   "role": {
-    "name": "hmpps-handover-service"
+    "name": "hmpps-assess-risk-and-needs-handover-service"
   },
   "customDimensions": {
     "service.version": "${BUILD_NUMBER}"

@@ -1,10 +1,10 @@
 info.app:
-  name: Hmpps Handover Service
+  name: Hmpps Assess Risk And Needs Handover Service
   version: 1.0
 
 spring:
   application:
-    name: hmpps-handover-service
+    name: hmpps-assess-risk-and-needs-handover-service
   codec:
     max-in-memory-size: 10MB
   security:

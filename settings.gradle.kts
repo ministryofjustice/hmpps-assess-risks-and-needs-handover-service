@@ -1,1 +1,1 @@
-rootProject.name = "hmpps-handover-service"
+rootProject.name = "hmpps-assess-risk-and-needs-handover-service"
