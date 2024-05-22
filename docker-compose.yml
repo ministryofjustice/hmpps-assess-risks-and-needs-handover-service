@@ -1,10 +1,10 @@
 version: "3"
 services:
-  hmpps-handover-service:
+  hmpps-assess-risks-and-needs-handover-service:
     build:
       context: .
     network_mode: "host"
-    container_name: hmpps-handover-service
+    container_name: hmpps-assess-risks-and-needs-handover-service
     ports:
       - "8081:8080"
     healthcheck:
