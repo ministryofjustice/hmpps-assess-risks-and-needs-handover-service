@@ -41,7 +41,7 @@ class HandoverService(
   }
 
   fun generateHandoverLink(handoverCode: String): String {
-    return appConfiguration.baseUrl + appConfiguration.endpoints.handover + '/' + handoverCode
+    return appConfiguration.externalUrl + appConfiguration.endpoints.handover + '/' + handoverCode
   }
 
   fun consumeAndExchangeHandover(handoverCode: String): UsernamePasswordAuthenticationToken {

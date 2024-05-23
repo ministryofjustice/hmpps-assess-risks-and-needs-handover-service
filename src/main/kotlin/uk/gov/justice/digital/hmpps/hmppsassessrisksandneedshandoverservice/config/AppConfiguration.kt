@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties("app.self")
 class AppConfiguration() {
   var baseUrl: String = ""
+  var externalUrl: String = ""
   var endpoints: Endpoints = Endpoints()
 }
 
