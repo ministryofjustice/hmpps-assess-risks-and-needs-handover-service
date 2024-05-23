@@ -6,8 +6,9 @@ generic-service:
     host: hmpps-assess-risks-and-needs-handover-service.hmpps.service.justice.gov.uk
 
   env:
+    SPRING_PROFILES_ACTIVE: "prod"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    HMPPS_HANDOVER_BASE_URL: "https://hmpps-handover.services.justice.gov.uk"
+    HMPPS_HANDOVER_BASE_URL: "https://hmpps-assess-risks-and-needs-handover-service.services.justice.gov.uk"
     HMPPS_AUTH_BASE_URL: "https://sign-in-prod.hmpps.service.justice.gov.uk"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack

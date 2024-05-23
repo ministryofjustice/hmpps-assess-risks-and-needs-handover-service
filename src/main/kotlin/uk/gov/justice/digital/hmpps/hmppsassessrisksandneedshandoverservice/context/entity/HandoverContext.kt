@@ -45,8 +45,9 @@ data class HandoverPrincipal(
 }
 
 data class AssessmentContext(
-  val oasysPk: String,
-  val assessmentVersion: String,
+  val oasysAssessmentPk: String,
+  val assessmentUUID: String,
+  val assessmentVersion: String?,
 ) : Serializable
 
 data class SentencePlanContext(
