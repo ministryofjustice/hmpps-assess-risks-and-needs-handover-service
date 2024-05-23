@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.ClientsProperties
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
@@ -29,7 +30,7 @@ import java.net.URL
 @Tag(name = "Handover", description = "APIs for handling handovers")
 class HandoverController(
   private val handoverService: HandoverService,
-  private val registeredClientRepository: RegisteredClientRepository,
+  private val cliemtsProperties: ClientsProperties,
 ) {
 
   private val strategy = SecurityContextHolder.getContextHolderStrategy()
@@ -81,23 +82,10 @@ class HandoverController(
     strategy.context = context
     repo.saveContext(context, request, response)
 
-    val client = registeredClientRepository.findByClientId(clientId)
+    val client = cliemtsProperties.clients.get(clientId)
 
     client?.let {
-      response.sendRedirect(stripPath(client.redirectUris.iterator().next()))
-    }
-  }
-
-  private fun stripPath(urlString: String): String {
-    val url = URL(urlString)
-    val scheme = url.protocol
-    val host = url.host
-    val port = url.port
-
-    return if (port == -1) {
-      "$scheme://$host"
-    } else {
-      "$scheme://$host:$port"
+      response.sendRedirect(client.handoverRedirectUri)
     }
   }
 }
