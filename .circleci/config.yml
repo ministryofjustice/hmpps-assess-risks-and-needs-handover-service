@@ -7,9 +7,9 @@ parameters:
   alerts-slack-channel:
     type: string
     default: "hmpps-assessments-notifications"
-  releases-slack-channel:
-    type: string
-    default: 
+#  releases-slack-channel:
+#    type: string
+#    default: 
 
 jobs:
   validate:
