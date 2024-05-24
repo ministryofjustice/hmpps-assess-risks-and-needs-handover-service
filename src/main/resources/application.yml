@@ -15,11 +15,11 @@ spring:
         jwt:
           issuers:
             - issuer-name: "HMPPS Handover"
-              jwk-set-uri: ${app.self.baseUrl}/oauth2/jwks
-              issuer-uri: ${app.self.baseUrl}
+              jwk-set-uri: ${app.self.base-url}/oauth2/jwks
+              issuer-uri: ${app.self.base-url}
             - issuer-name: "HMPPS Auth"
-              jwk-set-uri: ${app.services.hmpps-auth.baseUrl}/auth/.well-known/jwks.json
-              issuer-uri: ${app.services.hmpps-auth.baseUrl}/auth/issuer
+              jwk-set-uri: ${app.services.hmpps-auth.base-url}/auth/.well-known/jwks.json
+              issuer-uri: ${app.services.hmpps-auth.base-url}/auth/issuer
       authorizationserver:
         jwk:
           pem-secret: ${jwk-pem.secret}
