@@ -8,9 +8,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,23 +20,19 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.ClientsProperties
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
-import java.net.URL
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.UseHandoverLinkResult
 
 @RestController
-@RequestMapping("/handover")
-@Tag(name = "Handover", description = "APIs for handling handovers")
+@RequestMapping("\${app.self.endpoints.handover}")
+@Tag(name = "Handover", description = "Endpoints for creating and consuming a handover session")
 class HandoverController(
   private val handoverService: HandoverService,
-  private val cliemtsProperties: ClientsProperties,
+  private val appConfiguration: AppConfiguration,
 ) {
-
-  private val strategy = SecurityContextHolder.getContextHolderStrategy()
-  private val repo = HttpSessionSecurityContextRepository()
-
   @PreAuthorize("@jwt.isIssuedByHmppsAuth() and @jwt.isClientCredentialsGrant()")
   @PostMapping
   @Operation(
@@ -55,8 +52,8 @@ class HandoverController(
   )
   fun createHandoverLink(
     @RequestBody handoverRequest: HandoverRequest,
-  ): CreateHandoverLinkResponse {
-    return handoverService.createHandover(handoverRequest)
+  ): ResponseEntity<CreateHandoverLinkResponse> {
+    return ResponseEntity.ok(handoverService.createHandover(handoverRequest))
   }
 
   @GetMapping("/{handoverCode}")
@@ -65,10 +62,9 @@ class HandoverController(
     description = "Consumes a handover link and exchanges it for authentication session cookie",
     responses = [
       ApiResponse(responseCode = "200", description = "Handover link exchanged successfully"),
-      ApiResponse(responseCode = "400", description = "Invalid handover code"),
-      ApiResponse(responseCode = "401", description = "Unauthorized"),
-      ApiResponse(responseCode = "403", description = "Forbidden"),
-      ApiResponse(responseCode = "404", description = "Handover link not found"),
+      ApiResponse(responseCode = "404", description = "Client not found"),
+      ApiResponse(responseCode = "404", description = "Handover link expired or not found"),
+      ApiResponse(responseCode = "409", description = "Handover link has already been used"),
     ],
   )
   fun useHandoverLink(
@@ -76,16 +72,22 @@ class HandoverController(
     @Parameter(description = "Client ID") @RequestParam clientId: String = "sentence-plan",
     request: HttpServletRequest,
     response: HttpServletResponse,
-  ) {
-    val context = strategy.createEmptyContext()
-    context.authentication = handoverService.consumeAndExchangeHandover(handoverCode)
-    strategy.context = context
-    repo.saveContext(context, request, response)
+  ): ResponseEntity<Any> {
+    val strategy = SecurityContextHolder.getContextHolderStrategy()
+    val repo = HttpSessionSecurityContextRepository()
+    val client = appConfiguration.clients[clientId]
+      ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found")
 
-    val client = cliemtsProperties.clients.get(clientId)
+    return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
+      is UseHandoverLinkResult.Success -> {
+        strategy.context = strategy.createEmptyContext()
+        strategy.context.authentication = result.authenticationToken
+        repo.saveContext(strategy.context, request, response)
 
-    client?.let {
-      response.sendRedirect(client.handoverRedirectUri)
+        ResponseEntity.status(HttpStatus.FOUND).header("Location", client.handoverRedirectUri).build()
+      }
+      UseHandoverLinkResult.HandoverLinkNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Handover link expired or not found")
+      UseHandoverLinkResult.HandoverLinkAlreadyUsed -> ResponseEntity.status(HttpStatus.CONFLICT).body("Handover link has already been used")
     }
   }
 }
