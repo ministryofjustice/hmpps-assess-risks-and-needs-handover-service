@@ -73,17 +73,6 @@ app:
     endpoints:
       handover: /handover
       context: /context
-  clients:
-    sentence-plan:
-      secret: ${client.sp.secret}
-      oauth-redirect-uris:
-        - ${client.sp.oauth-redirect-uri}
-      handover-redirect-uri: ${client.sp.handover-redirect-uri}
-    strengths-and-needs-assessment:
-      secret: ${san.secret}
-      oauth-redirect-uris:
-        - ${client.san.oauth-redirect-uri}
-      handover-redirect-uri: ${client.san.handover-redirect-uri}
 
 management:
   endpoints:

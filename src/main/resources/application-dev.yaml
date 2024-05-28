@@ -1,10 +1,14 @@
 app:
   clients:
     sentence-plan:
+      secret: ${client.sp.secret:sp-secret}
       oauth-redirect-uris:
         - ${client.sp.oauth-redirect-uri:http://sentence-plan-dev.hmpps.service.justice.gov.uk/sign-in/callback}
         - http://localhost:3000/sign-in/callback
+      handover-redirect-uri: ${client.sp.handover-redirect-uri:http://sentence-plan-dev.hmpps.service.justice.gov.uk/sign-in}
     strengths-and-needs-assessment:
+      secret: ${client.sp.secret:san-secret}
       oauth-redirect-uris:
         - ${client.san.oauth-redirect-uri:http://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback}
         - http://localhost:3000/sign-in/callback
+      handover-redirect-uri: ${client.san.handover-redirect-uri:http://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in}
