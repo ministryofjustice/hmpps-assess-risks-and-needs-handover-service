@@ -1,7 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config
 
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.oauth2.core.AuthorizationGrantType
@@ -13,28 +11,16 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import java.time.Duration
 
-@ConfigurationProperties(prefix = "app")
-class ClientsProperties {
-  var clients: Map<String, ClientProperties> = mutableMapOf()
-}
-
-class ClientProperties {
-  lateinit var secret: String
-  lateinit var oauthRedirectUri: String
-  lateinit var handoverRedirectUri: String
-}
-
 @Configuration
-@EnableConfigurationProperties(ClientsProperties::class)
 class ClientConfiguration(
-  val clientsProperties: ClientsProperties,
+  private val appConfiguration: AppConfiguration,
 ) {
 
   @Bean
   fun registeredClientRepository(): InMemoryRegisteredClientRepository {
     val tokenSettings = TokenSettings.builder()
-      .accessTokenTimeToLive(Duration.ofHours(2))
-      .refreshTokenTimeToLive(Duration.ofDays(30))
+      .accessTokenTimeToLive(Duration.ofHours(1))
+      .refreshTokenTimeToLive(Duration.ofDays(2))
       .build()
 
     val registeredClients = clientsProperties.clients.map { (clientId, clientProperties) ->

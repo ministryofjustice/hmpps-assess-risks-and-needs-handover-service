@@ -2,6 +2,12 @@ info.app:
   name: Hmpps Handover Service
   version: 1.0
 
+logging:
+  level:
+    org:
+      springframework:
+        security: debug
+
 spring:
   application:
     name: hmpps-assess-risks-and-needs-handover-service
@@ -53,17 +59,20 @@ server:
   error:
     include-message: always
     whitelabel:
-      enabled: false
+      enabled: true
 
 app:
   services:
     hmpps-auth:
       base-url: ${hmpps-auth.base-url}
+    oasys:
+      base-url: ${oasys.base-url}
   self:
     base-url: ${hmpps-handover.base-url}
     external-url: ${hmpps-handover-external-url:${app.self.base-url}}
     endpoints:
-      handover: "/handover"
+      handover: /handover
+      context: /context
   clients:
     sentence-plan:
       secret: ${client.sp.secret}
