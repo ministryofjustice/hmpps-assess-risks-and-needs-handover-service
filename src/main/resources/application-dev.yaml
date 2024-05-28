@@ -1,0 +1,10 @@
+app:
+  clients:
+    sentence-plan:
+      oauth-redirect-uris:
+        - ${client.sp.oauth-redirect-uri:http://sentence-plan-dev.hmpps.service.justice.gov.uk/sign-in/callback}
+        - http://localhost:3000/sign-in/callback
+    strengths-and-needs-assessment:
+      oauth-redirect-uris:
+        - ${client.san.oauth-redirect-uri:http://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback}
+        - http://localhost:3000/sign-in/callback
