@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,11 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 
 @RestController
-@RequestMapping("/context")
+@RequestMapping("\${app.self.endpoints.context}")
 @Tag(name = "Handover Context", description = "APIs for handling handover context")
 class HandoverContextController(
   val handoverContextService: HandoverContextService,
@@ -46,8 +49,16 @@ class HandoverContextController(
   fun updateContext(
     @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: String,
     @RequestBody handoverRequest: HandoverRequest,
-  ): HandoverContext? {
-    return handoverContextService.updateContext(handoverSessionId, handoverRequest)
+  ): ResponseEntity<Any> {
+    return when (val result = handoverContextService.updateContext(handoverSessionId, handoverRequest)) {
+      is GetHandoverContextResult.Success ->
+        ResponseEntity
+          .ok(result)
+      GetHandoverContextResult.HandoverContextNotFound ->
+        ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body("No handover context found for session ID $handoverSessionId")
+    }
   }
 
   @PreAuthorize("@jwt.isIssuedByHmppsAuth() and @jwt.isClientCredentialsGrant()")
@@ -69,8 +80,16 @@ class HandoverContextController(
   )
   fun getContextByHandoverSessionId(
     @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: String,
-  ): HandoverContext? {
-    return handoverContextService.getContext(handoverSessionId)
+  ): ResponseEntity<Any> {
+    return when (val result = handoverContextService.getContext(handoverSessionId)) {
+      is GetHandoverContextResult.Success ->
+        ResponseEntity
+          .ok(result)
+      GetHandoverContextResult.HandoverContextNotFound ->
+        ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body("No handover context found for session ID $handoverSessionId")
+    }
   }
 
   @PreAuthorize("@jwt.isIssuedByHmppsHandover()")
@@ -87,10 +106,19 @@ class HandoverContextController(
       ),
       ApiResponse(responseCode = "401", description = "Unauthorized"),
       ApiResponse(responseCode = "403", description = "Forbidden"),
+      ApiResponse(responseCode = "404", description = "No handover context session found"),
     ],
   )
-  fun getContextByAuthentication(): HandoverContext? {
+  fun getContextByAuthentication(): ResponseEntity<Any> {
     val handoverSessionId: String = SecurityContextHolder.getContext().authentication.name
-    return handoverContextService.getContext(handoverSessionId)
+    return when (val result = handoverContextService.getContext(handoverSessionId)) {
+      is GetHandoverContextResult.Success ->
+        ResponseEntity
+          .ok(result)
+      GetHandoverContextResult.HandoverContextNotFound ->
+        ResponseEntity
+          .status(HttpStatus.NOT_FOUND)
+          .body("No handover context found for session ID $handoverSessionId")
+    }
   }
 }

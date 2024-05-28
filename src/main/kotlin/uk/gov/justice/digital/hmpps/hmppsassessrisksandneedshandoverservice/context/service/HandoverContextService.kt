@@ -10,12 +10,19 @@ class HandoverContextService(
   private val handoverContextRepository: HandoverContextRepository,
 ) {
 
-  fun updateContext(handoverSessionId: String, handoverRequest: HandoverRequest): HandoverContext {
-    handoverContextRepository.findByHandoverSessionId(handoverSessionId)
-      ?: throw NoSuchElementException("No handover context found for session ID $handoverSessionId")
-
-    // TODO: Maybe worth stopping them from updating the principal?
-    return saveContext(handoverSessionId, handoverRequest)
+  fun updateContext(handoverSessionId: String, handoverRequest: HandoverRequest): GetHandoverContextResult {
+    return handoverContextRepository.findByHandoverSessionId(handoverSessionId)
+      ?.let { existingContext ->
+        val updatedContext = existingContext.copy(
+          principal = handoverRequest.principal,
+          subject = handoverRequest.subject,
+          assessmentContext = handoverRequest.assessmentContext,
+          sentencePlanContext = handoverRequest.sentencePlanContext
+        )
+        handoverContextRepository.save(updatedContext)
+        GetHandoverContextResult.Success(updatedContext)
+      }
+      ?: GetHandoverContextResult.HandoverContextNotFound
   }
 
   fun saveContext(handoverSessionId: String, handoverRequest: HandoverRequest): HandoverContext {
@@ -30,8 +37,14 @@ class HandoverContextService(
     )
   }
 
-  fun getContext(handoverSessionId: String): HandoverContext {
+  fun getContext(handoverSessionId: String): GetHandoverContextResult {
     return handoverContextRepository.findByHandoverSessionId(handoverSessionId)
-      ?: throw NoSuchElementException("No handover context found for session ID $handoverSessionId")
+      ?.let { GetHandoverContextResult.Success(it) }
+      ?: GetHandoverContextResult.HandoverContextNotFound
   }
+}
+
+sealed class GetHandoverContextResult {
+  data class Success(val handoverContext: HandoverContext) : GetHandoverContextResult()
+  data object HandoverContextNotFound : GetHandoverContextResult()
 }
