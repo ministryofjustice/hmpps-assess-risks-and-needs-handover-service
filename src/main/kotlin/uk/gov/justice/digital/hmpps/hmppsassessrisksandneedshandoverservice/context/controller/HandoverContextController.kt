@@ -53,7 +53,7 @@ class HandoverContextController(
     return when (val result = handoverContextService.updateContext(handoverSessionId, handoverRequest)) {
       is GetHandoverContextResult.Success ->
         ResponseEntity
-          .ok(result)
+          .ok(result.handoverContext)
       GetHandoverContextResult.HandoverContextNotFound ->
         ResponseEntity
           .status(HttpStatus.NOT_FOUND)
@@ -84,7 +84,7 @@ class HandoverContextController(
     return when (val result = handoverContextService.getContext(handoverSessionId)) {
       is GetHandoverContextResult.Success ->
         ResponseEntity
-          .ok(result)
+          .ok(result.handoverContext)
       GetHandoverContextResult.HandoverContextNotFound ->
         ResponseEntity
           .status(HttpStatus.NOT_FOUND)
@@ -114,7 +114,7 @@ class HandoverContextController(
     return when (val result = handoverContextService.getContext(handoverSessionId)) {
       is GetHandoverContextResult.Success ->
         ResponseEntity
-          .ok(result)
+          .ok(result.handoverContext)
       GetHandoverContextResult.HandoverContextNotFound ->
         ResponseEntity
           .status(HttpStatus.NOT_FOUND)
