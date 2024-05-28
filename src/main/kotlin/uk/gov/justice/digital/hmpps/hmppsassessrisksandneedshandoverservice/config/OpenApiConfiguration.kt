@@ -6,15 +6,19 @@ import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.security.SecurityRequirement
 import io.swagger.v3.oas.models.security.SecurityScheme
+import org.slf4j.LoggerFactory
 import org.springframework.boot.info.BuildProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class OpenApiConfiguration(
-  buildProperties: BuildProperties,
+  private val appConfiguration: AppConfiguration,
 ) {
-  private val version: String = buildProperties.version
+
+  init {
+    log.info("OpenAPI Swagger Docs available at: ${appConfiguration.self.externalUrl}/swagger-ui.html")
+  }
 
   @Bean
   fun customOpenAPI(buildProperties: BuildProperties, appConfiguration: AppConfiguration): OpenAPI =
@@ -22,7 +26,7 @@ class OpenApiConfiguration(
       .info(
         Info()
           .title("HMPPS ARNS Handover Service")
-          .version(version)
+          .version(buildProperties.version)
           .description("Authentication and management of context data for applications in the ARNS space")
           .contact(
             Contact()
@@ -42,4 +46,8 @@ class OpenApiConfiguration(
         ),
       )
       .addSecurityItem(SecurityRequirement().addList("bearer-jwt"))
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 }

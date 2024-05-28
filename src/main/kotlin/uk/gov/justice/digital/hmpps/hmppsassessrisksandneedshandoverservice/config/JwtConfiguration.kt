@@ -90,4 +90,15 @@ class JwtConfiguration(
   fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? {
     return jwtProperties.issuers.find { it.issuerName == issuerName }
   }
+
+  init {
+    log.info("Application is configured to use the following JWT issuers:")
+    jwtProperties.issuers.forEach { (issuerName, jwkSetUri) ->
+      log.info("Issuer: $issuerName, JWK Set URI: $jwkSetUri")
+    }
+  }
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+  }
 }
