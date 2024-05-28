@@ -24,6 +24,11 @@ dependencies {
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+
+  // Test dependencies
+  testImplementation(kotlin("test"))
+  testImplementation("net.datafaker:datafaker:2.2.2")
+  testImplementation("com.ninja-squad:springmockk:4.0.2")
 }
 
 kotlin {
