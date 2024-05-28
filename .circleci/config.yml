@@ -13,9 +13,7 @@ parameters:
 
 jobs:
   validate:
-    executor:
-      name: hmpps/java
-      tag: "21.0"
+    executor: java
     steps:
       - checkout
       - restore_cache:
@@ -141,4 +139,15 @@ workflows:
             - veracode-credentials
             - hmpps-common-vars
 
-
+executors:
+  java:
+    docker:
+      - image: cimg/openjdk:21.0
+        environment:
+          _JAVA_OPTIONS: -Xmx1024m -XX:ParallelGCThreads=2 -XX:ConcGCThreads=2
+            -XX:ParallelGCThreads=2
+            -Djava.util.concurrent.ForkJoinPool.common.parallelism=2
+            -Dorg.gradle.daemon=false
+      - image: cimg/redis:7.2
+        environment:
+          ALLOW_EMPTY_PASSWORD: yes
