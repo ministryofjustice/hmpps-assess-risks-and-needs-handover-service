@@ -1,7 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config
 
+import org.slf4j.LoggerFactory
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.authentication.AuthenticationManager
@@ -15,13 +17,13 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtIss
 
 @ConfigurationProperties(prefix = "spring.security.oauth2.resourceserver.jwt")
 data class JwtProperties(
-  var issuers: List<JwtIssuerProperties> = emptyList(),
+  val issuers: List<JwtIssuerProperties> = emptyList(),
 )
 
 data class JwtIssuerProperties(
-  var issuerName: String,
-  var jwkSetUri: String,
-  var issuerUri: String,
+  val issuerName: String,
+  val jwkSetUri: String,
+  val issuerUri: String,
 ) {
   fun checkIssuerMatch(tokenIssuerUri: String): Boolean {
     return (tokenIssuerUri == issuerUri)
@@ -33,19 +35,20 @@ data class JwtIssuerProperties(
 class JwtConfiguration(
   private val jwtProperties: JwtProperties,
 ) {
+  @Bean
   fun issuerAuthenticationManagerResolver(): JwtIssuerAuthenticationManagerResolver {
-    val issuerToJwkSetUri = jwtProperties.issuers.associateBy(
-      { it.issuerUri },
-      { it.jwkSetUri },
-    )
+    return JwtIssuerAuthenticationManagerResolver { issuerUri: String ->
+      val issuer = getIssuerByIssuerUri(issuerUri)
+        ?: throw AccessDeniedException("Invalid issuer: $issuerUri")
 
-    return JwtIssuerAuthenticationManagerResolver { issuer: String ->
-      val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuerToJwkSetUri[issuer]).build()
-      val jwtAuthenticationProvider = JwtAuthenticationProvider(jwtDecoder)
+      val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuer.jwkSetUri)
+        .build()
+        .apply {
+          setJwtValidator(JwtValidators.createDefaultWithIssuer(issuerUri))
+        }
 
-      jwtDecoder.setJwtValidator(JwtValidators.createDefaultWithIssuer(issuer))
       AuthenticationManager { authentication ->
-        jwtAuthenticationProvider.authenticate(authentication)
+        JwtAuthenticationProvider(jwtDecoder).authenticate(authentication)
       }
     }
   }
@@ -71,6 +74,10 @@ class JwtConfiguration(
     return true
   }
 
+  private fun getIssuerByIssuerUri(issuerUri: String): JwtIssuerProperties? {
+    return jwtProperties.issuers.find { it.issuerUri == issuerUri }
+  }
+
   private fun isIssuer(issuer: JwtIssuerProperties): Boolean {
     val authentication = SecurityContextHolder.getContext().authentication
 
@@ -87,7 +94,18 @@ class JwtConfiguration(
     return true
   }
 
-  fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? {
+  private fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? {
     return jwtProperties.issuers.find { it.issuerName == issuerName }
+  }
+
+  init {
+    log.info("Application is configured to use the following JWT issuers:")
+    jwtProperties.issuers.forEach { (issuerName, jwkSetUri) ->
+      log.info("Issuer: $issuerName, JWK Set URI: $jwkSetUri")
+    }
+  }
+
+  companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
   }
 }

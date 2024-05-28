@@ -7,40 +7,56 @@ import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
-class SecurityConfig(
-  private val jwtConfiguration: JwtConfiguration,
-) {
+class SecurityConfig {
 
   @Bean
   @Order(3)
   fun securityChain(
     http: HttpSecurity,
+    appConfiguration: AppConfiguration,
+    issuerAuthenticationManagerResolver: JwtIssuerAuthenticationManagerResolver,
   ): SecurityFilterChain {
-    val signOutUrl = "/sign-out"
+    http.authorizeHttpRequests { request ->
+      // App
+      request
+        .requestMatchers(
+          HttpMethod.GET,
+          "${appConfiguration.self.endpoints.handover}/*",
+        ).permitAll()
+
+      // Status, docs and reporting
+      request
+        .requestMatchers(
+          HttpMethod.GET,
+          // Health and Info
+          "/health/**",
+          "/info",
+          // Swagger
+          "/v3/api-docs/**",
+          "/swagger-ui.html",
+          "/swagger-ui/**",
+        ).permitAll()
+
+      // Catch all
+      request
+        .anyRequest().authenticated()
+    }
 
     return http
-      .authorizeHttpRequests { requests ->
-        requests
-          .requestMatchers(
-            "/health/**",
-            "/info",
-            "/ping",
-            "/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**",
-            "/swagger-resources", "/swagger-resources/configuration/ui", "/swagger-resources/configuration/security",
-          ).permitAll()
-          .requestMatchers(HttpMethod.GET, "/handover/*").permitAll()
-          .anyRequest().authenticated()
+      .csrf { csrf -> csrf.disable() }
+      .logout { logout ->
+        logout
+          .logoutSuccessUrl("https://www.gov.uk")
+          .logoutUrl("/sign-out")
       }
-      .logout { o ->
-        run {
-          o.logoutUrl(signOutUrl)
-          o.logoutSuccessUrl("https://www.gov.uk")
-        }
+      .oauth2ResourceServer { resourceServer ->
+        resourceServer
+          .authenticationManagerResolver(issuerAuthenticationManagerResolver)
       }
-      .oauth2ResourceServer { resourceServer -> resourceServer.authenticationManagerResolver(jwtConfiguration.issuerAuthenticationManagerResolver()) }
       .build()
   }
 

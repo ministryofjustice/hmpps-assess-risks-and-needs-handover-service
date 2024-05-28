@@ -4,13 +4,34 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
 @Component
-@ConfigurationProperties("app.self")
-class AppConfiguration() {
-  var baseUrl: String = ""
-  var externalUrl: String = ""
-  var endpoints: Endpoints = Endpoints()
-}
+@ConfigurationProperties("app")
+class AppConfiguration {
+  lateinit var services: Services
+  lateinit var self: Self
+  lateinit var clients: Map<String, Client>
 
-class Endpoints {
-  var handover: String? = null
+  class Services {
+    lateinit var hmppsAuth: Service
+    lateinit var oasys: Service
+
+    class Service {
+      lateinit var baseUrl: String
+    }
+  }
+
+  class Self {
+    lateinit var baseUrl: String
+    lateinit var externalUrl: String
+    lateinit var endpoints: Endpoints
+
+    class Endpoints {
+      lateinit var handover: String
+      lateinit var context: String
+    }
+  }
+  class Client {
+    lateinit var secret: String
+    lateinit var oauthRedirectUris: ArrayList<String>
+    lateinit var handoverRedirectUri: String
+  }
 }

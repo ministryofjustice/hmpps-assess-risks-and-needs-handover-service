@@ -41,20 +41,21 @@ class HandoverService(
   }
 
   fun generateHandoverLink(handoverCode: String): String {
-    return appConfiguration.externalUrl + appConfiguration.endpoints.handover + '/' + handoverCode
+    return "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
   }
 
-  fun consumeAndExchangeHandover(handoverCode: String): UsernamePasswordAuthenticationToken {
-    when (validateToken(handoverCode)) {
-      TokenValidationResult.NOT_FOUND -> throw NoSuchElementException()
-      TokenValidationResult.ALREADY_USED -> throw NoSuchElementException()
+  fun consumeAndExchangeHandover(handoverCode: String): UseHandoverLinkResult {
+    return when (validateToken(handoverCode)) {
+      TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
+      TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
       TokenValidationResult.VALID -> {
         val handoverSessionId = consumeToken(handoverCode).handoverSessionId
-
-        return UsernamePasswordAuthenticationToken(
-          handoverSessionId,
-          null,
-          null,
+        UseHandoverLinkResult.Success(
+          UsernamePasswordAuthenticationToken(
+            handoverSessionId,
+            null,
+            null,
+          ),
         )
       }
     }
@@ -82,4 +83,10 @@ class HandoverService(
   companion object {
     private val log = LoggerFactory.getLogger(HandoverService::class.java)
   }
+}
+
+sealed class UseHandoverLinkResult {
+  data class Success(val authenticationToken: UsernamePasswordAuthenticationToken) : UseHandoverLinkResult()
+  data object HandoverLinkNotFound : UseHandoverLinkResult()
+  data object HandoverLinkAlreadyUsed : UseHandoverLinkResult()
 }
