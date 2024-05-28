@@ -19,7 +19,7 @@ class SecurityConfig {
     http: HttpSecurity,
     appConfiguration: AppConfiguration,
     issuerAuthenticationManagerResolver: JwtIssuerAuthenticationManagerResolver,
-    ): SecurityFilterChain {
+  ): SecurityFilterChain {
     http.authorizeHttpRequests { request ->
       // App
       request

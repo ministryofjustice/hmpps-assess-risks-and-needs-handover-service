@@ -17,7 +17,7 @@ class HandoverContextService(
           principal = handoverRequest.principal,
           subject = handoverRequest.subject,
           assessmentContext = handoverRequest.assessmentContext,
-          sentencePlanContext = handoverRequest.sentencePlanContext
+          sentencePlanContext = handoverRequest.sentencePlanContext,
         )
         handoverContextRepository.save(updatedContext)
         GetHandoverContextResult.Success(updatedContext)
