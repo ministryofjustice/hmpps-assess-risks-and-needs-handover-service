@@ -5,13 +5,11 @@ generic-service:
   replicaCount: 2
 
   ingress:
-    host: hmpps-assess-risks-and-needs-handover-service-dev.hmpps.service.justice.gov.uk
+    host: arns-handover-service-dev.hmpps.service.justice.gov.uk
 
   env:
     SPRING_PROFILES_ACTIVE: "dev"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    HMPPS_HANDOVER_BASE_URL: "https://hmpps-assess-risks-and-needs-handover-service-dev.services.justice.gov.uk"
-    HMPPS_AUTH_BASE_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
