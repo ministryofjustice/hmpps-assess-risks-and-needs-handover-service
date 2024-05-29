@@ -3,7 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.han
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
-import java.io.Serializable
 import java.time.Instant
 import java.util.UUID
 
@@ -19,4 +18,4 @@ class HandoverToken(
   var createdAt: Instant = Instant.now(),
   var handoverSessionId: String,
   var principal: HandoverPrincipal,
-) : Serializable
+)
