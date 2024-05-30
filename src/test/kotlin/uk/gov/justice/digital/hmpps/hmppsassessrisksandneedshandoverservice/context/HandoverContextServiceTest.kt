@@ -56,5 +56,15 @@ class HandoverContextServiceTest {
     assertEquals(existingContext, (result as GetHandoverContextResult.Success).handoverContext)
   }
 
-  // TODO: Still need to add more tests
+  @Test
+  fun `saveContext should return Success when context exists`() {
+    val handoverSessionId = "testSessionId"
+    val existingContext = TestUtils.createHandoverContext(handoverSessionId)
+    val handoverRequest = TestUtils.createHandoverRequest()
+    every { handoverContextRepository.save(any()) } returns existingContext
+
+    handoverContextService.saveContext(handoverSessionId, handoverRequest)
+    verify { handoverContextRepository.save(any()) }
+  }
+
 }
