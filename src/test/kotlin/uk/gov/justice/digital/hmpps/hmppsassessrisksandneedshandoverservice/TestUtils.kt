@@ -1,6 +1,8 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice
 
+import io.mockk.core.ValueClassSupport.boxedValue
 import net.datafaker.Faker
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
@@ -61,4 +63,11 @@ object TestUtils {
     location = listOf(Location.COMMUNITY, Location.PRISON).random(),
     sexuallyMotivatedOffenceHistory = listOf("yes", "no").random(),
   )
+
+  fun createEndPoint(): AppConfiguration.Self.Endpoints {
+    val endpoints = AppConfiguration.Self.Endpoints()
+    endpoints.handover = "/handover_endpoint"
+    endpoints.context = "/context_endpoint"
+    return endpoints
+  }
 }
