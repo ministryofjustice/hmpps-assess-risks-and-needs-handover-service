@@ -23,3 +23,13 @@ app:
       oauth-redirect-uris:
         - ${client.localhost.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
       handover-redirect-uri: ${client.localhost.handover-redirect-uri:http://localhost:3000/sign-in}
+    sentence-plan:
+      secret: ${client.sp.secret:sp-secret}
+      oauth-redirect-uris:
+        - ${client.sp.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
+      handover-redirect-uri: ${client.sp.handover-redirect-uri:http://localhost:3000/sign-in}
+    strengths-and-needs-assessment:
+      secret: ${client.sp.secret:san-secret}
+      oauth-redirect-uris:
+        - ${client.san.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
+      handover-redirect-uri: ${client.san.handover-redirect-uri:http://localhost:3000/sign-in}
