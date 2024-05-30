@@ -9,6 +9,8 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.UserAccess
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 import java.time.LocalDate
 import java.util.UUID
@@ -69,5 +71,13 @@ object TestUtils {
     endpoints.handover = "/handover_endpoint"
     endpoints.context = "/context_endpoint"
     return endpoints
+  }
+
+  fun createHandoverToken(status: TokenStatus): HandoverToken {
+    return HandoverToken(
+      tokenStatus = status,
+      handoverSessionId = "sessionId",
+      principal = createPrincipal(),
+    )
   }
 }
