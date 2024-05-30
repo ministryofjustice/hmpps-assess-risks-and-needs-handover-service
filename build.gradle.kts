@@ -29,6 +29,8 @@ dependencies {
   testImplementation(kotlin("test"))
   testImplementation("net.datafaker:datafaker:2.2.2")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
+  testImplementation("io.jsonwebtoken:jjwt-impl:0.12.3")
+  testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.3")
 }
 
 kotlin {
