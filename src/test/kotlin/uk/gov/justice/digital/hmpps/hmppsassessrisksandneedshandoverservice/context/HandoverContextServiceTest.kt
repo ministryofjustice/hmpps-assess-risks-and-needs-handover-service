@@ -68,5 +68,4 @@ class HandoverContextServiceTest {
     assertEquals(result, handoverContext)
     verify { handoverContextRepository.save(any()) }
   }
-
 }

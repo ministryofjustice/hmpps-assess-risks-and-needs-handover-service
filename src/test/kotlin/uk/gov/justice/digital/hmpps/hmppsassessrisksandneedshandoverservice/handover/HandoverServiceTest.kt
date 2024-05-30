@@ -25,11 +25,11 @@ class HandoverServiceTest {
   private val handoverContextService: HandoverContextService = mockk()
   private val appConfiguration: AppConfiguration = mockk()
   val handoverSessionId = "testSessionId"
+
   @BeforeEach
   fun setUp() {
     handoverService = HandoverService(handoverTokenRepository, handoverContextService, appConfiguration)
   }
-
 
   @Test
   fun `create handover should save the given handover request and return the link `() {
@@ -51,6 +51,7 @@ class HandoverServiceTest {
     verify { handoverContextService.saveContext(handoverSessionId, any()) }
     verify { handoverTokenRepository.save(any()) }
   }
+
   @Test
   fun `consume and exchange handover token should return authenticated token when valid token is used `() {
     val handoverToken = TestUtils.createHandoverToken(TokenStatus.UNUSED)

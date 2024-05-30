@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice
 
-import io.mockk.core.ValueClassSupport.boxedValue
 import net.datafaker.Faker
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
