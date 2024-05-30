@@ -7,6 +7,7 @@ spring:
           pem-secret: ${jwk-pem.secret:SUPERHOT}
   data:
     redis:
+      host: ${redis-host:localhost}
       ssl:
         enabled: ${redis-ssl-enabled:false}
 
@@ -17,13 +18,8 @@ app:
   self:
     base-url: ${hmpps-handover.base-url:http://localhost:8080}
   clients:
-    sentence-plan:
-      secret: ${client.sp.secret:sp-secret}
+    localhost:
+      secret: secret
       oauth-redirect-uris:
-        - ${client.sp.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
-      handover-redirect-uri: ${client.sp.handover-redirect-uri:http://localhost:3000/sign-in}
-    strengths-and-needs-assessment:
-      secret: ${client.sp.secret:san-secret}
-      oauth-redirect-uris:
-        - ${client.san.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
-      handover-redirect-uri: ${client.san.handover-redirect-uri:http://localhost:3000/sign-in}
+        - ${client.localhost.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
+      handover-redirect-uri: ${client.localhost.handover-redirect-uri:http://localhost:3000/sign-in}
