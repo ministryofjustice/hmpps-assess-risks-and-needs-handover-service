@@ -39,8 +39,10 @@ spring:
   data:
     redis:
       host: ${redis-host}
-      port: 6379
+      port: ${redis-port:6379}
       password: ${redis-auth-token}
+      ssl:
+        enabled: ${redis-ssl-enabled:true}
 
 server:
   port: 8080

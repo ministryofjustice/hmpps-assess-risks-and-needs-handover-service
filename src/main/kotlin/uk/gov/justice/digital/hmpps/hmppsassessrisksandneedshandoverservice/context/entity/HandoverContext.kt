@@ -5,7 +5,6 @@ import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.index.Indexed
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -32,13 +31,13 @@ data class HandoverContext(
   val subject: SubjectDetails,
   val assessmentContext: AssessmentContext?,
   val sentencePlanContext: SentencePlanContext?,
-) : Serializable
+)
 
 data class HandoverPrincipal(
   val identifier: String = "",
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
-) : Serializable {
+) {
   override fun toString(): String {
     return identifier
   }
@@ -48,12 +47,12 @@ data class AssessmentContext(
   val oasysAssessmentPk: String,
   val assessmentUUID: String,
   val assessmentVersion: String?,
-) : Serializable
+)
 
 data class SentencePlanContext(
   val oasysPk: String,
   val assessmentVersion: String,
-) : Serializable
+)
 
 data class SubjectDetails(
   val crn: String?,
@@ -65,7 +64,7 @@ data class SubjectDetails(
   val gender: Int,
   val location: Location,
   val sexuallyMotivatedOffenceHistory: String?,
-) : Serializable
+)
 
 enum class Location {
   PRISON,

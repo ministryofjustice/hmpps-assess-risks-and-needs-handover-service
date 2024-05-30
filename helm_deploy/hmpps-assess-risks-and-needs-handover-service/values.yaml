@@ -30,7 +30,11 @@ generic-service:
   namespace_secrets:
     hmpps-assess-risks-and-needs-handover-service:
       APPINSIGHTS_INSTRUMENTATIONKEY: "APPINSIGHTS_INSTRUMENTATIONKEY"
-    elasticache-redis:
+      CLIENT_SP_SECRET: "CLIENT_SP_SECRET"
+      CLIENT_SAN_SECRET: "CLIENT_SAN_SECRET"
+      JWK_PEM_ENCODED: "JWK_PEM_ENCODED"
+      JWK_PEM_SECRET: "JWK_PEM_SECRET"
+    hmpps-assess-risks-and-needs-handover-service-elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
 
