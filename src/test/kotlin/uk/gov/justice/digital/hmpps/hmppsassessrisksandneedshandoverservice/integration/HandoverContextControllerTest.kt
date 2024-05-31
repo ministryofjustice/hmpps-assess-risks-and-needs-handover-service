@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.TestUtils
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.*
-import java.time.LocalDate
 
 @AutoConfigureWebTestClient(timeout = "360000000")
 @DisplayName("Handover context Tests")

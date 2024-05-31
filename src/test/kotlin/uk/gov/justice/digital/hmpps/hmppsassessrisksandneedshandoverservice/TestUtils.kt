@@ -1,12 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice
 
 import net.datafaker.Faker
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.UserAccess
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 import java.time.LocalDate
 import java.util.UUID
@@ -61,4 +64,19 @@ object TestUtils {
     location = listOf(Location.COMMUNITY, Location.PRISON).random(),
     sexuallyMotivatedOffenceHistory = listOf("yes", "no").random(),
   )
+
+  fun createEndPoint(): AppConfiguration.Self.Endpoints {
+    val endpoints = AppConfiguration.Self.Endpoints()
+    endpoints.handover = "/handover_endpoint"
+    endpoints.context = "/context_endpoint"
+    return endpoints
+  }
+
+  fun createHandoverToken(status: TokenStatus): HandoverToken {
+    return HandoverToken(
+      tokenStatus = status,
+      handoverSessionId = "sessionId",
+      principal = createPrincipal(),
+    )
+  }
 }
