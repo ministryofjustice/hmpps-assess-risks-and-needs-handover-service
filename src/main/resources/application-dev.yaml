@@ -5,6 +5,11 @@ app:
   self:
     base-url: ${hmpps-handover.base-url:https://arns-handover-service-dev.hmpps.service.justice.gov.uk}
   clients:
+    localhost:
+      secret: secret
+      oauth-redirect-uris:
+        - ${client.localhost.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
+      handover-redirect-uri: ${client.localhost.handover-redirect-uri:http://localhost:3000/sign-in}
     sentence-plan:
       secret: ${client.sp.secret}
       oauth-redirect-uris:
