@@ -2,14 +2,11 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.int
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT
-import org.springframework.http.HttpHeaders
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.reactive.server.WebTestClient
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.JwtAuthHelper
-import java.time.Duration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.JwtAuthHelper
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @ActiveProfiles("test")
 abstract class IntegrationTestBase {
 
@@ -19,13 +16,4 @@ abstract class IntegrationTestBase {
 
   @Autowired
   internal lateinit var jwtHelper: JwtAuthHelper
-
-  internal fun setAuthorisation(user: String = "sentence-plan", roles: List<String> = listOf()): (HttpHeaders) -> Unit {
-    val token = jwtHelper.createJwt(
-      subject = user,
-      expiryTime = Duration.ofHours(1L),
-      roles = roles,
-    )
-    return { it.set(HttpHeaders.AUTHORIZATION, "Bearer $token") }
-  }
 }

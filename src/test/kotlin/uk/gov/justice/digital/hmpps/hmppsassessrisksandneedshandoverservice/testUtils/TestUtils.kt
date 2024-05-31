@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice
+package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils
 
 import net.datafaker.Faker
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
@@ -28,7 +28,6 @@ object TestUtils {
 
   fun createHandoverContext(handoverSessionId: String): HandoverContext {
     return HandoverContext(
-      id = UUID.randomUUID().toString(),
       handoverSessionId = handoverSessionId,
       principal = createPrincipal(),
       subject = createSubjectDetails(),
@@ -37,19 +36,19 @@ object TestUtils {
     )
   }
 
-  private fun createAssessmentContext() = AssessmentContext(
+  fun createAssessmentContext() = AssessmentContext(
     oasysAssessmentPk = faker.idNumber().valid(),
     assessmentUUID = UUID.randomUUID().toString(),
     assessmentVersion = "1",
   )
 
-  private fun createPrincipal() = HandoverPrincipal(
+  fun createPrincipal() = HandoverPrincipal(
     identifier = faker.idNumber().valid(),
     displayName = faker.name().fullName(),
     accessMode = UserAccess.READ_WRITE,
   )
 
-  private fun createSubjectDetails() = SubjectDetails(
+  fun createSubjectDetails() = SubjectDetails(
     crn = faker.idNumber().valid(),
     pnc = faker.idNumber().valid(),
     nomisId = faker.idNumber().valid(),
