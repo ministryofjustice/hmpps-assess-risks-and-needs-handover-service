@@ -10,6 +10,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.UserAccess
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverOasysRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 import java.time.LocalDate
 import java.util.UUID
@@ -23,6 +24,15 @@ object TestUtils {
       subject = createSubjectDetails(),
       assessmentContext = createAssessmentContext(),
       sentencePlanContext = null,
+    )
+  }
+
+  fun createOasysandoverRequest(): HandoverOasysRequest {
+    return HandoverOasysRequest(
+      user = createPrincipal(),
+      subjectDetails = createSubjectDetails(),
+      oasysAssessmentPk = UUID.randomUUID().toString(),
+      assessmentVersion = UUID.randomUUID().toString(),
     )
   }
 

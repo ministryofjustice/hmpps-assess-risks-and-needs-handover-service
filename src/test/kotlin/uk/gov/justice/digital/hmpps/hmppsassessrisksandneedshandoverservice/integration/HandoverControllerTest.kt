@@ -54,6 +54,23 @@ class HandoverControllerTest : IntegrationTestBase() {
   }
 
   @Test
+  fun `create handover link with OASys style request and valid auth should return okay`() {
+    val handoverRequest = TestUtils.createOasysandoverRequest()
+
+    val response = webTestClient.post().uri("/handover")
+      .bodyValue(handoverRequest)
+      .header("Content-Type", "application/json")
+      .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(CreateHandoverLinkResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response.link).startsWith(appConfiguration.self.externalUrl)
+  }
+
+  @Test
   fun `create handover link with invalid auth should return forbidden`() {
     val handoverRequest = TestUtils.createHandoverRequest()
 
