@@ -36,6 +36,7 @@ data class HandoverPrincipal(
   val identifier: String = "",
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
+  val returnUrl: String = "",
 ) {
   override fun toString(): String {
     return identifier
@@ -44,7 +45,7 @@ data class HandoverPrincipal(
 
 data class AssessmentContext(
   val oasysAssessmentPk: String,
-  val assessmentUUID: String,
+  val assessmentUUID: String?,
   val assessmentVersion: String?,
 )
 

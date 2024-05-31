@@ -36,8 +36,13 @@ class HandoverService(
 
     handoverContextService.saveContext(handoverSessionId, handoverRequest)
     handoverTokenRepository.save(handoverToken)
+    val handoverLink = generateHandoverLink(handoverToken.code)
 
-    return CreateHandoverLinkResponse(generateHandoverLink(handoverToken.code), handoverSessionId)
+    return CreateHandoverLinkResponse(
+      handoverLink = handoverLink,
+      handoverSessionId = handoverSessionId,
+      link = handoverLink,
+    )
   }
 
   fun generateHandoverLink(handoverCode: String): String {

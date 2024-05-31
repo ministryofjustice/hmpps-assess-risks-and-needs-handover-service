@@ -5,4 +5,5 @@ import java.io.Serializable
 class CreateHandoverLinkResponse(
   val handoverLink: String,
   val handoverSessionId: String,
+  val link: String,
 ) : Serializable
