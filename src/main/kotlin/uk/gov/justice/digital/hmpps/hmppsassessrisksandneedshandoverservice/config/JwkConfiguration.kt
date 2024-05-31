@@ -26,7 +26,7 @@ import java.util.*
 class JwkProperties(
   private val pemEncoded: String,
   private val pemSecret: String,
-  val keyId: String = "handover-key-id"
+  val keyId: String = "handover-key-id",
 ) {
   fun decode(): KeyPair {
     try {
