@@ -24,8 +24,7 @@ enum class UserAccess(val value: String) {
 
 @RedisHash("HandoverContext")
 data class HandoverContext(
-  @Id val id: String = UUID.randomUUID().toString(),
-  @Indexed var handoverSessionId: String,
+  @Id @Indexed var handoverSessionId: String,
   val createdAt: LocalDateTime = LocalDateTime.now(),
   val principal: HandoverPrincipal,
   val subject: SubjectDetails,
