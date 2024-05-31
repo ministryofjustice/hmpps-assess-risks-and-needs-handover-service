@@ -16,7 +16,7 @@ app:
     hmpps-auth:
       baseUrl: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
   self:
-    base-url: ${hmpps-handover.base-url:http://localhost:8080}
+    base-url: ${hmpps-handover.base-url:http://localhost:${server.port}}
   clients:
     localhost:
       secret: secret

@@ -24,8 +24,9 @@ import java.util.*
 
 @ConfigurationProperties(prefix = "spring.security.oauth2.authorizationserver.jwk")
 class JwkProperties(
-  private var pemEncoded: String,
-  private var pemSecret: String,
+  private val pemEncoded: String,
+  private val pemSecret: String,
+  val keyId: String = "handover-key-id"
 ) {
   fun decode(): KeyPair {
     try {
@@ -60,7 +61,7 @@ class JwkConfiguration {
     val privateKey = keyPair.private as RSAPrivateKey
     val rsaKey: RSAKey = RSAKey.Builder(publicKey)
       .privateKey(privateKey)
-      .keyID("key-id")
+      .keyID(jwkProperties.keyId)
       .build()
     return ImmutableJWKSet(JWKSet(rsaKey))
   }
