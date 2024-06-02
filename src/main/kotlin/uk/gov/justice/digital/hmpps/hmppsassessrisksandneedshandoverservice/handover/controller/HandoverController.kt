@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.han
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
@@ -39,6 +40,24 @@ class HandoverController(
     summary = "Create a new handover link",
     description = "Creates a new handover link using the provided handover request. " +
       "**Authorization for this endpoint requires a client credentials JWT provided by HMPPS Auth.**",
+    requestBody = io.swagger.v3.oas.annotations.parameters.RequestBody(
+      description = "Request examples",
+      content = arrayOf(
+        Content(
+          mediaType = "application/json",
+          examples = arrayOf(
+            ExampleObject(
+              name = "OASys Handover",
+              value = HANDOVER_OASYS_REQUEST_EXAMPLE,
+            ),
+            ExampleObject(
+              name = "Internal Handover",
+              value = HANDOVER_REQUEST_EXAMPLE,
+            ),
+          ),
+        ),
+      ),
+    ),
     responses = [
       ApiResponse(
         responseCode = "200",
@@ -89,5 +108,53 @@ class HandoverController(
       UseHandoverLinkResult.HandoverLinkNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Handover link expired or not found")
       UseHandoverLinkResult.HandoverLinkAlreadyUsed -> ResponseEntity.status(HttpStatus.CONFLICT).body("Handover link has already been used")
     }
+  }
+
+  companion object {
+    const val HANDOVER_REQUEST_EXAMPLE = """{
+      "principal": {
+        "identifier": "RBACKENT",
+        "displayName": "KENT Assessor",
+        "accessMode": "READ_WRITE",
+        "returnUrl": "http://192.168.56.21:8080/ords/f?p=EORSAN010:SAN010_LANDING:11281584380154::NO:APP::&cs=3h8xw8SUx3QRT6kfPRzfTI31XMtHvLSh90b9Yw4EPgxDIUaIjBgoYndHHlCjtWwUanAQjejASWA1a7E6M6LIqLw"
+      },
+      "subject": {
+        "crn": "D25987M",
+        "pnc": "22/2083Y",
+        "nomisId": null,
+        "givenName": "Paul",
+        "familyName": "PINK",
+        "dateOfBirth": "1954-10-16",
+        "gender": "1",
+        "location": "COMMUNITY",
+        "sexuallyMotivatedOffenceHistory": "NO"
+      },
+      "assessmentContext": {
+        "oasysAssessmentPk": 1631219,
+        "assessmentUUID": "d8cb7e78-1d55-4153-a2ed-a73fefc361a8"
+      }
+    }"""
+
+    const val HANDOVER_OASYS_REQUEST_EXAMPLE = """{
+      "user": {
+        "identifier": "RBACKENT",
+        "displayName": "KENT Assessor",
+        "accessMode": "READ_WRITE",
+        "returnUrl": "http://192.168.56.21:8080/ords/f?p=EORSAN010:SAN010_LANDING:11281584380154::NO:APP::&cs=3h8xw8SUx3QRT6kfPRzfTI31XMtHvLSh90b9Yw4EPgxDIUaIjBgoYndHHlCjtWwUanAQjejASWA1a7E6M6LIqLw"
+      },
+      "subjectDetails": {
+        "crn": "D25987M",
+        "pnc": "22/2083Y",
+        "nomisId": null,
+        "givenName": "Paul",
+        "familyName": "PINK",
+        "dateOfBirth": "1954-10-16",
+        "gender": "1",
+        "location": "COMMUNITY",
+        "sexuallyMotivatedOffenceHistory": "NO"
+      },
+      "oasysAssessmentPk": 1631219,
+      "assessmentVersion": null
+    }"""
   }
 }
