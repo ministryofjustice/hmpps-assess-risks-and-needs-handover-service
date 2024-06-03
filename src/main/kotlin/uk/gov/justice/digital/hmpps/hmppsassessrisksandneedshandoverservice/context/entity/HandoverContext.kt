@@ -46,7 +46,7 @@ data class HandoverPrincipal(
 data class AssessmentContext(
   val oasysAssessmentPk: String,
   val assessmentUUID: String?,
-  val assessmentVersion: String?,
+  val assessmentVersion: String? = null,
 )
 
 data class SentencePlanContext(

@@ -32,7 +32,7 @@ object TestUtils {
       user = createPrincipal(),
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = UUID.randomUUID().toString(),
-      assessmentVersion = UUID.randomUUID().toString(),
+      assessmentUUID = UUID.randomUUID().toString()
     )
   }
 

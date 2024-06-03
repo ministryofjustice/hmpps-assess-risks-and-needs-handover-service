@@ -13,5 +13,5 @@ data class HandoverOasysRequest(
 
   val oasysAssessmentPk: String,
 
-  val assessmentVersion: String,
+  val assessmentUUID: String?,
 )
