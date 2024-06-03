@@ -33,7 +33,7 @@ object TestUtils {
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = UUID.randomUUID().toString(),
       assessmentUUID = UUID.randomUUID().toString(),
-      assessmentVersion = UUID.randomUUID().toString(),
+      assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
     )
   }
 
@@ -50,7 +50,7 @@ object TestUtils {
   fun createAssessmentContext() = AssessmentContext(
     oasysAssessmentPk = faker.idNumber().valid(),
     assessmentUUID = UUID.randomUUID().toString(),
-    assessmentVersion = "1",
+    assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
   fun createPrincipal() = HandoverPrincipal(
