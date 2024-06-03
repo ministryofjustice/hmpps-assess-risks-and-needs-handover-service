@@ -32,7 +32,8 @@ class HandoverRequestDeserializer : JsonDeserializer<HandoverRequest>() {
         principal = parser.codec.treeToValue(node.get("user"), HandoverPrincipal::class.java),
         assessmentContext = AssessmentContext(
           oasysAssessmentPk = node.get("oasysAssessmentPk").toString(),
-          assessmentUUID = node.get("assessmentUUID").toString(),
+          assessmentUUID = node.get("assessmentUUID")?.toString(),
+          assessmentVersion = node.get("assessmentVersion")?.toString(),
         ),
       )
     } else {

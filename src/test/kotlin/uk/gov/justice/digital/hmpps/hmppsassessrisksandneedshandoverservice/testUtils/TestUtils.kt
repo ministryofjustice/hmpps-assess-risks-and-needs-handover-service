@@ -33,6 +33,7 @@ object TestUtils {
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = UUID.randomUUID().toString(),
       assessmentUUID = UUID.randomUUID().toString(),
+      assessmentVersion = UUID.randomUUID().toString(),
     )
   }
 
