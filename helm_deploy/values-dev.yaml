@@ -2,7 +2,7 @@
 # Per environment values which override defaults in hmpps-assess-risks-and-needs-handover-service/values.yaml
 
 generic-service:
-  replicaCount: 1
+  replicaCount: 2
 
   ingress:
     host: arns-handover-service-dev.hmpps.service.justice.gov.uk
