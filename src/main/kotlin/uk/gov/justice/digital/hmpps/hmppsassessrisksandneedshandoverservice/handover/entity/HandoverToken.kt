@@ -11,7 +11,7 @@ enum class TokenStatus {
   UNUSED,
 }
 
-@RedisHash("HandoverToken")
+@RedisHash("HandoverToken", timeToLive = 600)
 class HandoverToken(
   @Id var code: String = UUID.randomUUID().toString(),
   var tokenStatus: TokenStatus = TokenStatus.UNUSED,
