@@ -62,7 +62,7 @@ data class Authorization(
   }
 
   private fun getTimeToLiveInMinutes(): Long {
-    val fallbackTtl = 1L
+    val fallbackTtl = 30L
     val expiresAtList = listOfNotNull(
       this.authorizationCodeExpiresAt,
       this.accessTokenExpiresAt,
