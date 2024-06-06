@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.Authorization
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.repository.AuthorizationRepository
 import java.time.Instant
+import kotlin.reflect.KClass
 
 @Service
 class RedisOAuth2AuthorizationService(
@@ -86,100 +87,43 @@ class RedisOAuth2AuthorizationService(
   }
 
   private fun toObject(entity: Authorization): OAuth2Authorization {
-    val registeredClient = this.registeredClientRepository.findById(entity.registeredClientId)
+    return registeredClientRepository
+      .findById(entity.registeredClientId)
+      ?.let { entity.toObject(it, ::parseMap) }
       ?: throw DataRetrievalFailureException(
         "The RegisteredClient with id '${entity.registeredClientId}' was not found in the RegisteredClientRepository.",
       )
+  }
 
-    val builder = OAuth2Authorization.withRegisteredClient(registeredClient)
-      .id(entity.id)
-      .principalName(entity.principalName)
-      .authorizationGrantType(entity.authorizationGrantType?.let { resolveAuthorizationGrantType(it) })
-      .authorizedScopes(StringUtils.commaDelimitedListToSet(entity.authorizedScopes).toSet())
-      .attributes { attributes -> attributes.putAll(parseMap(entity.attributes)) }
+  fun OAuth2Authorization.Token<OAuth2AuthorizationCode>.toEntity(entity: Authorization) {
+    entity.authorizationCodeValue = token.tokenValue
+    entity.authorizationCodeIssuedAt = token.issuedAt
+    entity.authorizationCodeExpiresAt = token.expiresAt
+    entity.authorizationCodeMetadata = writeMap(metadata)
+  }
 
-    entity.state?.let {
-      builder.attribute(OAuth2ParameterNames.STATE, entity.state)
-    }
-
-    entity.authorizationCodeValue?.let {
-      val authorizationCode = OAuth2AuthorizationCode(
-        entity.authorizationCodeValue,
-        entity.authorizationCodeIssuedAt,
-        entity.authorizationCodeExpiresAt,
-      )
-      builder.token(authorizationCode) { metadata -> metadata.putAll(parseMap(entity.authorizationCodeMetadata)) }
-    }
-
-    entity.accessTokenValue?.let {
-      val accessToken = OAuth2AccessToken(
-        OAuth2AccessToken.TokenType.BEARER,
-        entity.accessTokenValue,
-        entity.accessTokenIssuedAt,
-        entity.accessTokenExpiresAt,
-        StringUtils.commaDelimitedListToSet(entity.accessTokenScopes).toSet(),
-      )
-      builder.token(accessToken) { metadata -> metadata.putAll(parseMap(entity.accessTokenMetadata)) }
-    }
-
-    entity.refreshTokenValue?.let {
-      val refreshToken = OAuth2RefreshToken(
-        entity.refreshTokenValue,
-        entity.refreshTokenIssuedAt,
-        entity.refreshTokenExpiresAt,
-      )
-      builder.token(refreshToken) { metadata -> metadata.putAll(parseMap(entity.refreshTokenMetadata)) }
-    }
-
-    entity.oidcIdTokenValue?.let {
-      val idToken = OidcIdToken(
-        entity.oidcIdTokenValue,
-        entity.oidcIdTokenIssuedAt,
-        entity.oidcIdTokenExpiresAt,
-        parseMap(entity.oidcIdTokenClaims),
-      )
-      builder.token(idToken) { metadata -> metadata.putAll(parseMap(entity.oidcIdTokenMetadata)) }
-    }
-
-    entity.userCodeValue?.let {
-      val userCode = OAuth2UserCode(
-        entity.userCodeValue,
-        entity.userCodeIssuedAt,
-        entity.userCodeExpiresAt,
-      )
-      builder.token(userCode) { metadata -> metadata.putAll(parseMap(entity.userCodeMetadata)) }
-    }
-
-    entity.deviceCodeValue?.let {
-      val deviceCode = OAuth2DeviceCode(
-        entity.deviceCodeValue,
-        entity.deviceCodeIssuedAt,
-        entity.deviceCodeExpiresAt,
-      )
-      builder.token(deviceCode) { metadata -> metadata.putAll(parseMap(entity.deviceCodeMetadata)) }
-    }
-
-    return builder.build()
+  fun OAuth2Authorization.Token<OidcIdToken>.toEntity(entity: Authorization) {
+    entity.oidcIdTokenValue = token.tokenValue
+    entity.oidcIdTokenIssuedAt = token.issuedAt
+    entity.oidcIdTokenExpiresAt = token.expiresAt
+    entity.oidcIdTokenMetadata = writeMap(metadata)
+    entity.oidcIdTokenClaims = claims?.run(::writeMap)
   }
 
   private fun toEntity(authorization: OAuth2Authorization): Authorization {
-    val entity = Authorization()
-    entity.id = authorization.id
-    entity.registeredClientId = authorization.registeredClientId
-    entity.principalName = authorization.principalName
-    entity.authorizationGrantType = authorization.authorizationGrantType.value
-    entity.authorizedScopes = authorization.authorizedScopes.joinToString(",")
-    entity.attributes = writeMap(authorization.attributes)
-    entity.state = authorization.getAttribute(OAuth2ParameterNames.STATE)
+    val entity = Authorization().apply {
+      id = authorization.id
+      registeredClientId = authorization.registeredClientId
+      principalName = authorization.principalName
+      authorizationGrantType = authorization.authorizationGrantType.value
+      authorizedScopes = authorization.authorizedScopes.joinToString(",")
+      attributes = writeMap(authorization.attributes)
+      state = authorization.getAttribute(OAuth2ParameterNames.STATE)
+    }
 
-    authorization.getToken(OAuth2AuthorizationCode::class.java)?.let {
-      setTokenValues(
-        it,
-        { value -> entity.authorizationCodeValue = value },
-        { issuedAt -> entity.authorizationCodeIssuedAt = issuedAt },
-        { expiresAt -> entity.authorizationCodeExpiresAt = expiresAt },
-        { metadata -> entity.authorizationCodeMetadata = metadata },
-      )
+    with(authorization) {
+      getToken(OAuth2AuthorizationCode::class.java)?.toEntity(entity)
+      getToken(OidcIdToken::class.java)?.toEntity(entity)
     }
 
     authorization.getToken(OAuth2AccessToken::class.java)?.let {
@@ -206,18 +150,6 @@ class RedisOAuth2AuthorizationService(
       )
     }
 
-    authorization.getToken(OidcIdToken::class.java)?. let { it ->
-      setTokenValues(
-        it,
-        { value -> entity.oidcIdTokenValue = value },
-        { issuedAt -> entity.oidcIdTokenIssuedAt = issuedAt },
-        { expiresAt -> entity.oidcIdTokenExpiresAt = expiresAt },
-        { metadata -> entity.oidcIdTokenMetadata = metadata },
-      )
-
-      entity.oidcIdTokenClaims = it.claims?.let(::writeMap)
-    }
-
     authorization.getToken(OAuth2UserCode::class.java)?. let {
       setTokenValues(
         it,
@@ -239,22 +171,6 @@ class RedisOAuth2AuthorizationService(
     }
 
     return entity
-  }
-
-  private fun setTokenValues(
-    token: OAuth2Authorization.Token<*>?,
-    tokenValueConsumer: (String) -> Unit,
-    issuedAtConsumer: (Instant) -> Unit,
-    expiresAtConsumer: (Instant) -> Unit,
-    metadataConsumer: (String) -> Unit,
-  ) {
-    token?.let {
-      val oAuth2Token = it.token
-      tokenValueConsumer(oAuth2Token.tokenValue)
-      issuedAtConsumer(oAuth2Token.issuedAt)
-      expiresAtConsumer(oAuth2Token.expiresAt)
-      metadataConsumer(writeMap(it.metadata))
-    }
   }
 
   private fun parseMap(data: String?): Map<String, Any> {
