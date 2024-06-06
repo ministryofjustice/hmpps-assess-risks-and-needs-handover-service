@@ -1,7 +1,7 @@
 app:
   services:
     hmpps-auth:
-      baseUrl: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
+      base-url: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
   self:
     base-url: ${hmpps-handover.base-url:https://arns-handover-service-dev.hmpps.service.justice.gov.uk}
   clients:
