@@ -14,7 +14,7 @@ spring:
 app:
   services:
     hmpps-auth:
-      baseUrl: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
+      base-url: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
   self:
     base-url: ${hmpps-handover.base-url:http://localhost:${server.port}}
   clients:
