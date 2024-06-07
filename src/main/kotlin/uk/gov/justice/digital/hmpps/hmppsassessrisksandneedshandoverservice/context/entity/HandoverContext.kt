@@ -45,7 +45,7 @@ data class HandoverPrincipal(
 
 data class AssessmentContext(
   val oasysAssessmentPk: String,
-  val assessmentUUID: String?,
+
   val assessmentVersion: Long?,
 )
 

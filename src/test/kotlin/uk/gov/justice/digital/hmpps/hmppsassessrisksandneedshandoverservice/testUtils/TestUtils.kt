@@ -49,7 +49,6 @@ object TestUtils {
 
   fun createAssessmentContext() = AssessmentContext(
     oasysAssessmentPk = faker.idNumber().valid(),
-    assessmentUUID = UUID.randomUUID().toString(),
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
