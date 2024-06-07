@@ -15,8 +15,8 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module
 import org.springframework.stereotype.Service
 import org.springframework.util.Assert
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.OAuth2AuthorizationBuilderExtension.from
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.JpaAuthorization
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.OAuth2AuthorizationBuilderExtension.from
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.repository.JpaAuthorizationRepository
 
 @Service
