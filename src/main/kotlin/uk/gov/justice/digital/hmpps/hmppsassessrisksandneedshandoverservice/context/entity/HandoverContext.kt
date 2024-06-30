@@ -45,13 +45,12 @@ data class HandoverPrincipal(
 
 data class AssessmentContext(
   val oasysAssessmentPk: String,
-
   val assessmentVersion: Long?,
 )
 
 data class SentencePlanContext(
-  val oasysPk: String,
-  val assessmentVersion: String,
+  val oasysAssessmentPk: String,
+  val planVersion: Long?,
 )
 
 data class SubjectDetails(
