@@ -88,7 +88,7 @@ class HandoverController(
   )
   fun useHandoverLink(
     @Parameter(description = "Handover code") @PathVariable handoverCode: String,
-    @Parameter(description = "Client ID") @RequestParam clientId: String = "localhost",
+    @Parameter(description = "Client ID") @RequestParam clientId: String,
     request: HttpServletRequest,
     response: HttpServletResponse,
   ): ResponseEntity<Any> {
