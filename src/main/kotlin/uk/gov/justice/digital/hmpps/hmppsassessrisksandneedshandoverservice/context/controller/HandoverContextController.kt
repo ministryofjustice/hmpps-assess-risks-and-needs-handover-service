@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
 
 @RestController
 @RequestMapping("\${app.self.endpoints.context}")
@@ -48,13 +48,13 @@ class HandoverContextController(
   )
   fun updateContext(
     @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: String,
-    @RequestBody handoverRequest: HandoverRequest,
+    @RequestBody handoverContext: UpdateHandoverContextRequest,
   ): ResponseEntity<Any> {
-    return when (val result = handoverContextService.updateContext(handoverSessionId, handoverRequest)) {
+    return when (val result = handoverContextService.updateContext(handoverSessionId, handoverContext)) {
       is GetHandoverContextResult.Success ->
         ResponseEntity
           .ok(result.handoverContext)
-      GetHandoverContextResult.HandoverContextNotFound ->
+      GetHandoverContextResult.NotFound ->
         ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body("No handover context found for session ID $handoverSessionId")
@@ -85,7 +85,7 @@ class HandoverContextController(
       is GetHandoverContextResult.Success ->
         ResponseEntity
           .ok(result.handoverContext)
-      GetHandoverContextResult.HandoverContextNotFound ->
+      GetHandoverContextResult.NotFound ->
         ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body("No handover context found for session ID $handoverSessionId")
@@ -115,7 +115,7 @@ class HandoverContextController(
       is GetHandoverContextResult.Success ->
         ResponseEntity
           .ok(result.handoverContext)
-      GetHandoverContextResult.HandoverContextNotFound ->
+      GetHandoverContextResult.NotFound ->
         ResponseEntity
           .status(HttpStatus.NOT_FOUND)
           .body("No handover context found for session ID $handoverSessionId")

@@ -6,34 +6,26 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.UserAccess
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverOasysRequest
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import java.time.LocalDate
 import java.util.UUID
 
 object TestUtils {
   private var faker: Faker = Faker()
 
-  fun createHandoverRequest(): HandoverRequest {
-    return HandoverRequest(
-      principal = createPrincipal(),
-      subject = createSubjectDetails(),
-      assessmentContext = createAssessmentContext(),
-      sentencePlanContext = null,
-    )
-  }
-
-  fun createOasysandoverRequest(): HandoverOasysRequest {
-    return HandoverOasysRequest(
+  fun createHandoverRequest(): CreateHandoverLinkRequest {
+    return CreateHandoverLinkRequest(
       user = createPrincipal(),
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = UUID.randomUUID().toString(),
-      assessmentUUID = UUID.randomUUID().toString(),
       assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+      planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
     )
   }
 
@@ -43,13 +35,27 @@ object TestUtils {
       principal = createPrincipal(),
       subject = createSubjectDetails(),
       assessmentContext = createAssessmentContext(),
-      sentencePlanContext = null,
+      sentencePlanContext = createSentencePlanContext(),
+    )
+  }
+
+  fun updateHandoverContextRequest(): UpdateHandoverContextRequest {
+    return UpdateHandoverContextRequest(
+      principal = createPrincipal(),
+      subject = createSubjectDetails(),
+      assessmentContext = createAssessmentContext(),
+      sentencePlanContext = createSentencePlanContext(),
     )
   }
 
   fun createAssessmentContext() = AssessmentContext(
     oasysAssessmentPk = faker.idNumber().valid(),
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+  )
+
+  fun createSentencePlanContext() = SentencePlanContext(
+    oasysAssessmentPk = faker.idNumber().valid(),
+    planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
   fun createPrincipal() = HandoverPrincipal(

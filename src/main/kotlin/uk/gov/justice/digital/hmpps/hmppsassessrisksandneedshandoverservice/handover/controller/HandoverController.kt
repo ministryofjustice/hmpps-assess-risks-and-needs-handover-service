@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.UseHandoverLinkResult
@@ -41,17 +41,13 @@ class HandoverController(
     description = "Creates a new handover link using the provided handover request. " +
       "**Authorization for this endpoint requires a client credentials JWT provided by HMPPS Auth.**",
     requestBody = io.swagger.v3.oas.annotations.parameters.RequestBody(
-      description = "Request examples",
+      description = "Request example",
       content = arrayOf(
         Content(
           mediaType = "application/json",
           examples = arrayOf(
             ExampleObject(
-              name = "OASys Handover",
-              value = HANDOVER_OASYS_REQUEST_EXAMPLE,
-            ),
-            ExampleObject(
-              name = "Internal Handover",
+              name = "Handover Request",
               value = HANDOVER_REQUEST_EXAMPLE,
             ),
           ),
@@ -70,7 +66,7 @@ class HandoverController(
     ],
   )
   fun createHandoverLink(
-    @RequestBody handoverRequest: HandoverRequest,
+    @RequestBody handoverRequest: CreateHandoverLinkRequest,
   ): ResponseEntity<CreateHandoverLinkResponse> {
     return ResponseEntity.ok(handoverService.createHandover(handoverRequest))
   }
@@ -112,30 +108,6 @@ class HandoverController(
 
   companion object {
     const val HANDOVER_REQUEST_EXAMPLE = """{
-      "principal": {
-        "identifier": "RBACKENT",
-        "displayName": "KENT Assessor",
-        "accessMode": "READ_WRITE",
-        "returnUrl": "http://192.168.56.21:8080/ords/f?p=EORSAN010:SAN010_LANDING:11281584380154::NO:APP::&cs=3h8xw8SUx3QRT6kfPRzfTI31XMtHvLSh90b9Yw4EPgxDIUaIjBgoYndHHlCjtWwUanAQjejASWA1a7E6M6LIqLw"
-      },
-      "subject": {
-        "crn": "D25987M",
-        "pnc": "22/2083Y",
-        "nomisId": null,
-        "givenName": "Paul",
-        "familyName": "PINK",
-        "dateOfBirth": "1954-10-16",
-        "gender": "1",
-        "location": "COMMUNITY",
-        "sexuallyMotivatedOffenceHistory": "NO"
-      },
-      "assessmentContext": {
-        "oasysAssessmentPk": 1631219,
-        "assessmentUUID": "d8cb7e78-1d55-4153-a2ed-a73fefc361a8"
-      }
-    }"""
-
-    const val HANDOVER_OASYS_REQUEST_EXAMPLE = """{
       "user": {
         "identifier": "RBACKENT",
         "displayName": "KENT Assessor",
@@ -154,7 +126,8 @@ class HandoverController(
         "sexuallyMotivatedOffenceHistory": "NO"
       },
       "oasysAssessmentPk": 1631219,
-      "assessmentVersion": null
+      "assessmentVersion": null,
+      "planVersion": null
     }"""
   }
 }

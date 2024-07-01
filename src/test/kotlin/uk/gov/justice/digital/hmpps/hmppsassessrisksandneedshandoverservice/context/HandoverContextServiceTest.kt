@@ -6,11 +6,16 @@ import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.repository.HandoverContextRepository
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
+import java.util.UUID
 
 class HandoverContextServiceTest {
   private lateinit var handoverContextService: HandoverContextService
@@ -21,51 +26,123 @@ class HandoverContextServiceTest {
     handoverContextService = HandoverContextService(handoverContextRepository)
   }
 
-  @Test
-  fun `updateContext should return Success when context exists and update successful`() {
-    val handoverSessionId = "testSessionId"
-    val existingContext = TestUtils.createHandoverContext(handoverSessionId)
-    val handoverRequest = TestUtils.createHandoverRequest()
-    val updatedContext = existingContext.copy(
-      principal = handoverRequest.principal,
-      subject = handoverRequest.subject,
-      assessmentContext = handoverRequest.assessmentContext,
-      sentencePlanContext = handoverRequest.sentencePlanContext,
-    )
+  @Nested
+  @DisplayName("updateContext")
+  inner class UpdateContext {
+    private lateinit var handoverSessionId: String
+    private lateinit var updateHandoverContextRequest: UpdateHandoverContextRequest
+    private lateinit var existingContext: HandoverContext
+    private lateinit var updatedContext: HandoverContext
 
-    every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
-    every { handoverContextRepository.save(any()) } returns updatedContext
+    @BeforeEach
+    fun setup() {
+      handoverSessionId = UUID.randomUUID().toString()
+      updateHandoverContextRequest = TestUtils.updateHandoverContextRequest()
+      existingContext = TestUtils.createHandoverContext(handoverSessionId)
+      updatedContext = existingContext.copy(
+        principal = updateHandoverContextRequest.principal,
+        subject = updateHandoverContextRequest.subject,
+        assessmentContext = updateHandoverContextRequest.assessmentContext,
+        sentencePlanContext = updateHandoverContextRequest.sentencePlanContext,
+      )
+    }
 
-    val result = handoverContextService.updateContext(handoverSessionId, handoverRequest)
+    @Test
+    fun `should find original context from repository when using valid handover session id`() {
+      every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
+      every { handoverContextRepository.save(any()) } returns updatedContext
 
-    assertTrue(result is GetHandoverContextResult.Success)
-    assertEquals(updatedContext, (result as GetHandoverContextResult.Success).handoverContext)
-    verify { handoverContextRepository.save(match { it == updatedContext }) }
+      handoverContextService.updateContext(handoverSessionId, updateHandoverContextRequest)
+
+      verify { handoverContextRepository.findByHandoverSessionId(match { it == handoverSessionId }) }
+    }
+
+    @Test
+    fun `should return not found when using invalid handover session id`() {
+      every { handoverContextRepository.findByHandoverSessionId(any()) } returns null
+
+      val result = handoverContextService.updateContext("invalid-session-id", updateHandoverContextRequest)
+
+      verify { handoverContextRepository.findByHandoverSessionId(match { it == "invalid-session-id" }) }
+      assertEquals(result, GetHandoverContextResult.NotFound)
+    }
+
+    @Test
+    fun `should return Success when context exists and update successful`() {
+      every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
+      every { handoverContextRepository.save(any()) } returns updatedContext
+
+      val result = handoverContextService.updateContext(handoverSessionId, updateHandoverContextRequest)
+
+      assertTrue(result is GetHandoverContextResult.Success)
+      assertEquals(updatedContext, (result as GetHandoverContextResult.Success).handoverContext)
+      verify {
+        handoverContextRepository.save(
+          withArg {
+            assertEquals(updatedContext.principal, it.principal)
+            assertEquals(updatedContext.subject, it.subject)
+            assertEquals(updatedContext.assessmentContext, it.assessmentContext)
+            assertEquals(updatedContext.sentencePlanContext, it.sentencePlanContext)
+            assertEquals(existingContext.createdAt, it.createdAt)
+            assertEquals(existingContext.handoverSessionId, it.handoverSessionId)
+          },
+        )
+      }
+    }
   }
 
-  @Test
-  fun `getContext should return Success when context exists`() {
-    val handoverSessionId = "testSessionId"
-    val existingContext = TestUtils.createHandoverContext(handoverSessionId)
+  @Nested
+  @DisplayName("getContext")
+  inner class GetContext {
+    private lateinit var handoverSessionId: String
+    private lateinit var existingContext: HandoverContext
 
-    every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
+    @BeforeEach
+    fun setup() {
+      handoverSessionId = UUID.randomUUID().toString()
+      existingContext = TestUtils.createHandoverContext(handoverSessionId)
+    }
 
-    val result = handoverContextService.getContext(handoverSessionId)
+    @Test
+    fun `should find original context from repository when using valid handover session id`() {
+      every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
 
-    assertTrue(result is GetHandoverContextResult.Success)
-    assertEquals(existingContext, (result as GetHandoverContextResult.Success).handoverContext)
-    verify { handoverContextRepository.findByHandoverSessionId(any()) }
+      val result = handoverContextService.getContext(handoverSessionId)
+
+      assertEquals(existingContext, (result as GetHandoverContextResult.Success).handoverContext)
+      verify { handoverContextRepository.findByHandoverSessionId(match { it == handoverSessionId }) }
+    }
+
+    @Test
+    fun `should return not found when using invalid handover session id`() {
+      every { handoverContextRepository.findByHandoverSessionId(any()) } returns null
+
+      val result = handoverContextService.getContext("invalid-session-id")
+
+      verify { handoverContextRepository.findByHandoverSessionId(match { it == "invalid-session-id" }) }
+      assertEquals(result, GetHandoverContextResult.NotFound)
+    }
   }
 
-  @Test
-  fun `saveContext should save the given handover request`() {
-    val handoverSessionId = "testSessionId"
-    val handoverContext = TestUtils.createHandoverContext(handoverSessionId)
-    val handoverRequest = TestUtils.createHandoverRequest()
-    every { handoverContextRepository.save(any()) } returns handoverContext
+  @Nested
+  @DisplayName("saveContext")
+  inner class SaveContext {
+    private lateinit var handoverSessionId: String
+    private lateinit var handoverContext: HandoverContext
 
-    val result = handoverContextService.saveContext(handoverSessionId, handoverRequest)
-    assertEquals(result, handoverContext)
-    verify { handoverContextRepository.save(any()) }
+    @BeforeEach
+    fun setup() {
+      handoverSessionId = UUID.randomUUID().toString()
+      handoverContext = TestUtils.createHandoverContext(handoverSessionId)
+    }
+
+    @Test
+    fun `should save the given handover context`() {
+      every { handoverContextRepository.save(any()) } returns handoverContext
+
+      val result = handoverContextService.saveContext(handoverContext)
+      assertEquals(result, handoverContext)
+      verify { handoverContextRepository.save(match { it == handoverContext }) }
+    }
   }
 }

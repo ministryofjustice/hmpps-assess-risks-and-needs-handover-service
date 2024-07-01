@@ -4,11 +4,14 @@ import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.HandoverRequest
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import java.util.*
 import kotlin.NoSuchElementException
@@ -26,15 +29,28 @@ class HandoverService(
   val appConfiguration: AppConfiguration,
 ) {
   fun createHandover(
-    handoverRequest: HandoverRequest,
+    handoverRequest: CreateHandoverLinkRequest,
     handoverSessionId: String = UUID.randomUUID().toString(),
   ): CreateHandoverLinkResponse {
     val handoverToken = HandoverToken(
       handoverSessionId = handoverSessionId,
-      principal = handoverRequest.principal,
+      principal = handoverRequest.user,
+    )
+    val handoverContext = HandoverContext(
+      handoverSessionId = handoverSessionId,
+      principal = handoverRequest.user,
+      subject = handoverRequest.subjectDetails,
+      assessmentContext = AssessmentContext(
+        oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+        assessmentVersion = handoverRequest.assessmentVersion,
+      ),
+      sentencePlanContext = SentencePlanContext(
+        oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+        planVersion = handoverRequest.planVersion,
+      ),
     )
 
-    handoverContextService.saveContext(handoverSessionId, handoverRequest)
+    handoverContextService.saveContext(handoverContext)
     handoverTokenRepository.save(handoverToken)
     val handoverLink = generateHandoverLink(handoverToken.code)
 
@@ -43,10 +59,6 @@ class HandoverService(
       handoverSessionId = handoverSessionId,
       link = handoverLink,
     )
-  }
-
-  fun generateHandoverLink(handoverCode: String): String {
-    return "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
   }
 
   fun consumeAndExchangeHandover(handoverCode: String): UseHandoverLinkResult {
@@ -64,6 +76,10 @@ class HandoverService(
         )
       }
     }
+  }
+
+  private fun generateHandoverLink(handoverCode: String): String {
+    return "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
   }
 
   private fun validateToken(code: String): TokenValidationResult {

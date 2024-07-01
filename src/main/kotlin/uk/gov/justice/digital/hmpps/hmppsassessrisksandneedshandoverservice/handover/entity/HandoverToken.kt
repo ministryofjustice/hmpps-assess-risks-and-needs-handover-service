@@ -12,7 +12,7 @@ enum class TokenStatus {
 }
 
 @RedisHash("HandoverToken", timeToLive = 43200)
-class HandoverToken(
+data class HandoverToken(
   @Id var code: String = UUID.randomUUID().toString(),
   var tokenStatus: TokenStatus = TokenStatus.UNUSED,
   var createdAt: Instant = Instant.now(),
