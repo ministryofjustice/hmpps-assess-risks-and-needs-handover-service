@@ -9,11 +9,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,8 +28,10 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.UseHandoverLinkResult
+import java.util.*
 
 @RestController
+@Validated
 @RequestMapping("\${app.self.endpoints.handover}")
 @Tag(name = "Handover", description = "Endpoints for creating and consuming a handover session")
 class HandoverController(
@@ -66,7 +70,7 @@ class HandoverController(
     ],
   )
   fun createHandoverLink(
-    @RequestBody handoverRequest: CreateHandoverLinkRequest,
+    @RequestBody @Valid handoverRequest: CreateHandoverLinkRequest,
   ): ResponseEntity<CreateHandoverLinkResponse> {
     return ResponseEntity.ok(handoverService.createHandover(handoverRequest))
   }
@@ -83,7 +87,7 @@ class HandoverController(
     ],
   )
   fun useHandoverLink(
-    @Parameter(description = "Handover code") @PathVariable handoverCode: String,
+    @Parameter(description = "Handover code") @PathVariable handoverCode: UUID,
     @Parameter(description = "Client ID") @RequestParam clientId: String,
     request: HttpServletRequest,
     response: HttpServletResponse,
@@ -93,7 +97,7 @@ class HandoverController(
     val client = appConfiguration.clients[clientId]
       ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found")
 
-    return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
+    return when (val result = handoverService.consumeAndExchangeHandover(handoverCode.toString())) {
       is UseHandoverLinkResult.Success -> {
         strategy.context = strategy.createEmptyContext()
         strategy.context.authentication = result.authenticationToken

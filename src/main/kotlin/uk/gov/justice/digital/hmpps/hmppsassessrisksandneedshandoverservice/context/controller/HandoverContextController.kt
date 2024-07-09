@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.tags.Tag
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -48,7 +49,7 @@ class HandoverContextController(
   )
   fun updateContext(
     @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: String,
-    @RequestBody handoverContext: UpdateHandoverContextRequest,
+    @RequestBody @Valid handoverContext: UpdateHandoverContextRequest,
   ): ResponseEntity<Any> {
     return when (val result = handoverContextService.updateContext(handoverSessionId, handoverContext)) {
       is GetHandoverContextResult.Success ->

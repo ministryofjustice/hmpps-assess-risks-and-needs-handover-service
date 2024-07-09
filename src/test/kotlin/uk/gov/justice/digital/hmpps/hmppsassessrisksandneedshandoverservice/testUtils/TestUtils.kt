@@ -14,7 +14,6 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import java.time.LocalDate
-import java.util.UUID
 
 object TestUtils {
   private var faker: Faker = Faker()
@@ -23,7 +22,7 @@ object TestUtils {
     return CreateHandoverLinkRequest(
       user = createPrincipal(),
       subjectDetails = createSubjectDetails(),
-      oasysAssessmentPk = UUID.randomUUID().toString(),
+      oasysAssessmentPk = (100_000..999_999).random().toString(),
       assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
       planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
     )
@@ -49,12 +48,12 @@ object TestUtils {
   }
 
   fun createAssessmentContext() = AssessmentContext(
-    oasysAssessmentPk = faker.idNumber().valid(),
+    oasysAssessmentPk = (100_000..999_999).random().toString(),
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
   fun createSentencePlanContext() = SentencePlanContext(
-    oasysAssessmentPk = faker.idNumber().valid(),
+    oasysAssessmentPk = (100_000..999_999).random().toString(),
     planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
@@ -65,8 +64,8 @@ object TestUtils {
   )
 
   fun createSubjectDetails() = SubjectDetails(
-    crn = faker.idNumber().valid(),
-    pnc = faker.idNumber().valid(),
+    crn = "X${(100_000..999_999).random()}",
+    pnc = "01/${(10_000_000..99_999_999).random()}A",
     nomisId = faker.idNumber().valid(),
     givenName = faker.name().firstName(),
     familyName = faker.name().lastName(),
@@ -77,7 +76,7 @@ object TestUtils {
     ),
     gender = listOf(0, 1, 2, 9).random(),
     location = listOf(Location.COMMUNITY, Location.PRISON).random(),
-    sexuallyMotivatedOffenceHistory = listOf("yes", "no").random(),
+    sexuallyMotivatedOffenceHistory = listOf("YES", "NO").random(),
   )
 
   fun createEndPoint(): AppConfiguration.Self.Endpoints {
