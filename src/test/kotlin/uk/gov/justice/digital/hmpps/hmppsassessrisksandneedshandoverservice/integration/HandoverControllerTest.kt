@@ -8,14 +8,19 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
+import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.WireMockExtension
+import java.time.LocalDate
 import java.util.*
 
 @ExtendWith(WireMockExtension::class)
@@ -55,7 +60,41 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return forbidden when authentication is invalid`() {
+    fun `should return bad request when invalid request`() {
+      val handoverRequest = CreateHandoverLinkRequest(
+        user = TestUtils.createPrincipal(),
+        subjectDetails = SubjectDetails(
+          crn = "12345",
+          pnc = "12345",
+          nomisId = "",
+          givenName = "",
+          familyName = "Jenkins",
+          dateOfBirth = LocalDate.of(1990, 1, 1),
+          gender = 1,
+          location = Location.PRISON,
+          sexuallyMotivatedOffenceHistory = "invalid_answer",
+        ),
+        oasysAssessmentPk = "123",
+        assessmentVersion = 1,
+        planVersion = 1,
+      )
+
+      val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isBadRequest
+        .expectBody(ErrorResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response.userMessage).contains("subjectDetails.sexuallyMotivatedOffenceHistory: must be either 'YES' or 'NO'")
+      assertThat(response.userMessage).contains("subjectDetails.givenName: size must be between 1 and 25")
+    }
+
+    @Test
+    fun `should return forbidden when unauthorized`() {
       val handoverRequest = TestUtils.createHandoverRequest()
 
       val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
