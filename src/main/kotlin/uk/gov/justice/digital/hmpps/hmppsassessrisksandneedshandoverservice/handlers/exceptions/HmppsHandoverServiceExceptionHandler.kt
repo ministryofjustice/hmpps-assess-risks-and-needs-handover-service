@@ -8,22 +8,46 @@ import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
 
 @RestControllerAdvice
 class HmppsAssessRisksAndNeedsHandoverServiceExceptionHandler {
-  @ExceptionHandler(ValidationException::class)
-  fun handleValidationException(e: ValidationException): ResponseEntity<ErrorResponse> = ResponseEntity
-    .status(BAD_REQUEST)
-    .body(
-      ErrorResponse(
-        status = BAD_REQUEST,
-        userMessage = "Validation failure: ${e.message}",
-        developerMessage = e.message,
-      ),
-    ).also { log.info("Validation exception: {}", e.message) }
+  @ExceptionHandler(value = [ValidationException::class, MethodArgumentNotValidException::class])
+  fun handleValidationExceptions(ex: Exception): ResponseEntity<ErrorResponse> {
+    val userMessage: String
+    val developerMessage: String
+
+    when (ex) {
+      is MethodArgumentNotValidException -> {
+        val errors = ex.bindingResult.fieldErrors.joinToString(", ") { "${it.field}: ${it.defaultMessage}" }
+        userMessage = "Validation failure: $errors"
+        developerMessage = errors
+      }
+
+      is ValidationException -> {
+        userMessage = "Validation failure: ${ex.message}"
+        developerMessage = ex.message ?: "Validation error"
+      }
+
+      else -> {
+        userMessage = "Validation failure"
+        developerMessage = "Unknown validation error"
+      }
+    }
+
+    val errorResponse = ErrorResponse(
+      status = HttpStatus.BAD_REQUEST,
+      userMessage = userMessage,
+      developerMessage = developerMessage,
+    )
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse).also {
+      log.info("Validation exception: {}", ex.message)
+    }
+  }
 
   @ExceptionHandler(NoResourceFoundException::class)
   fun handleNoResourceFoundException(e: NoResourceFoundException): ResponseEntity<ErrorResponse> = ResponseEntity
