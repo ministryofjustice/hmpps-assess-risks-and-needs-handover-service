@@ -1,0 +1,19 @@
+app:
+  services:
+    hmpps-auth:
+      base-url: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
+  self:
+    base-url: ${hmpps-handover.base-url:https://arns-handover-service-test.hmpps.service.justice.gov.uk}
+  clients:
+    sentence-plan:
+      secret: ${client.sp.secret}
+      oauth-redirect-uris:
+        - ${client.sp.oauth-redirect-uri:https://sentence-plan-test.hmpps.service.justice.gov.uk/sign-in/callback}
+        - http://localhost:3000/sign-in/callback
+      handover-redirect-uri: ${client.sp.handover-redirect-uri:https://sentence-plan-test.hmpps.service.justice.gov.uk/sign-in}
+    strengths-and-needs-assessment:
+      secret: ${client.san.secret}
+      oauth-redirect-uris:
+        - ${client.san.oauth-redirect-uri:https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in/callback}
+        - http://localhost:3000/sign-in/callback
+      handover-redirect-uri: ${client.san.handover-redirect-uri:https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in}

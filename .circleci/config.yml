@@ -9,7 +9,11 @@ parameters:
     default: "hmpps-assessments-notifications"
 #  releases-slack-channel:
 #    type: string
-#    default: 
+#    default:
+  deploy:
+    description: Trigger a manual deployment
+    type: string
+    default: ""
 
 jobs:
   validate:
@@ -34,6 +38,8 @@ jobs:
 workflows:
   version: 2
   build-test-and-deploy:
+    when:
+      not: << pipeline.parameters.deploy >>
     jobs:
       - validate:
           filters:
@@ -51,8 +57,8 @@ workflows:
           name: deploy_dev
           env: "dev"
           jira_update: true
-          pipeline_id: <<pipeline.id>>
-          pipeline_number: <<pipeline.number>>
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
           context: hmpps-common-vars
           filters:
             branches:
@@ -63,6 +69,34 @@ workflows:
             - build_docker
             - helm_lint
           helm_timeout: 5m
+
+  deploy-to-test-env:
+    when:
+      and:
+        - equal: [ "test", << pipeline.parameters.deploy >> ]
+    jobs:
+      - hmpps/build_docker:
+          name: build_docker
+          jira_update: true
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-handover-service-test
+      - hmpps/deploy_env:
+          name: deploy_test
+          env: "test"
+          jira_update: true
+          jira_env_type: testing
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-handover-service-test
+          requires:
+            - build_docker
+          helm_timeout: 5m
+
 #      - request-preprod-approval:
 #          type: approval
 #          requires:
