@@ -82,7 +82,7 @@ workflows:
           pipeline_number: << pipeline.number >>
           context:
             - hmpps-common-vars
-            - hmpps-strengths-based-needs-assessments-api-test
+            - hmpps-assess-risks-and-needs-handover-service-test
       - hmpps/deploy_env:
           name: deploy_test
           env: "test"
@@ -92,7 +92,7 @@ workflows:
           pipeline_number: << pipeline.number >>
           context:
             - hmpps-common-vars
-            - hmpps-strengths-based-needs-assessments-api-test
+            - hmpps-assess-risks-and-needs-handover-service-test
           requires:
             - build_docker
           helm_timeout: 5m
