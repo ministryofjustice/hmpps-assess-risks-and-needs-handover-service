@@ -30,7 +30,7 @@ class HandoverService(
 ) {
   fun createHandover(
     handoverRequest: CreateHandoverLinkRequest,
-    handoverSessionId: UUID = UUID.randomUUID(),
+    handoverSessionId: String = UUID.randomUUID().toString(),
   ): CreateHandoverLinkResponse {
     val handoverToken = HandoverToken(
       handoverSessionId = handoverSessionId,
@@ -61,7 +61,7 @@ class HandoverService(
     )
   }
 
-  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult {
+  fun consumeAndExchangeHandover(handoverCode: String): UseHandoverLinkResult {
     return when (validateToken(handoverCode)) {
       TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
       TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
@@ -78,11 +78,11 @@ class HandoverService(
     }
   }
 
-  private fun generateHandoverLink(handoverCode: UUID): String {
+  private fun generateHandoverLink(handoverCode: String): String {
     return "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
   }
 
-  private fun validateToken(code: UUID): TokenValidationResult {
+  private fun validateToken(code: String): TokenValidationResult {
     val token = handoverTokenRepository.findById(code).orElse(null)
       ?: return TokenValidationResult.NOT_FOUND
 
@@ -93,7 +93,7 @@ class HandoverService(
     return TokenValidationResult.VALID
   }
 
-  private fun consumeToken(code: UUID): HandoverToken {
+  private fun consumeToken(code: String): HandoverToken {
     val token = handoverTokenRepository.findById(code).orElse(null)
       ?: throw NoSuchElementException()
 

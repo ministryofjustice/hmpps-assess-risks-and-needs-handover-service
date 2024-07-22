@@ -11,7 +11,6 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.conf
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.JwtIssuerProperties
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.JwtProperties
 import java.util.Date
-import java.util.UUID
 
 @Component
 class JwtAuthHelper(
@@ -22,14 +21,14 @@ class JwtAuthHelper(
     return jwtProperties.issuers.find { it.issuerName == issuerName }
   }
 
-  fun generateHandoverToken(handoverSessionId: UUID, grantType: AuthorizationGrantType = AuthorizationGrantType.JWT_BEARER): String {
+  fun generateHandoverToken(handoverSessionId: String, grantType: AuthorizationGrantType = AuthorizationGrantType.JWT_BEARER): String {
     val hmppsHandover = getIssuerByIssuerName("HMPPS Handover")
       ?: throw IllegalStateException()
 
     val claimsSet = JWTClaimsSet.Builder()
       .issuer(hmppsHandover.issuerUri)
       .issueTime(Date())
-      .subject(handoverSessionId.toString())
+      .subject(handoverSessionId)
       .claim("grant_type", grantType.value)
       .expirationTime(Date(System.currentTimeMillis() + 3600 * 1000)) // 1 hour expiry
       .jwtID(WireMockExtension.KEY_ID)
