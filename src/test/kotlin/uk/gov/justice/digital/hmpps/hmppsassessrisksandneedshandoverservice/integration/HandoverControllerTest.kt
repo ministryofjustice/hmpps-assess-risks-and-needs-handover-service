@@ -56,7 +56,7 @@ class HandoverControllerTest : IntegrationTestBase() {
         .responseBody
 
       assertThat(response.handoverLink).startsWith(appConfiguration.self.externalUrl)
-      assertThat(response.handoverSessionId).toString().isNotEmpty()
+      assertThat(response.handoverSessionId).isNotEmpty
     }
 
     @Test
@@ -100,7 +100,7 @@ class HandoverControllerTest : IntegrationTestBase() {
       val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
         .bodyValue(handoverRequest)
         .header("Content-Type", "application/json")
-        .header("Authorization", "Bearer ${jwtHelper.generateHandoverToken(UUID.randomUUID())}")
+        .header("Authorization", "Bearer ${jwtHelper.generateHandoverToken("123")}")
         .exchange()
         .expectStatus().isForbidden
         .expectBody(ErrorResponse::class.java)
@@ -133,7 +133,7 @@ class HandoverControllerTest : IntegrationTestBase() {
 
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
+          handoverSessionId = UUID.randomUUID().toString(),
           principal = TestUtils.createPrincipal(),
         ),
       )
@@ -166,7 +166,7 @@ class HandoverControllerTest : IntegrationTestBase() {
 
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
+          handoverSessionId = UUID.randomUUID().toString(),
           principal = TestUtils.createPrincipal(),
         ),
       )

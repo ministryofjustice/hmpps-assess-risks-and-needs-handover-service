@@ -32,7 +32,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
   inner class UpdateContext {
     @Test
     fun `should return okay when updating the handover context with HMPPS Auth client credentials token `() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val oldHandoverContext = TestUtils.createHandoverContext(handoverSessionId)
       val newHandoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
@@ -92,7 +92,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
 
     @Test
     fun `should return forbidden when updating the handover context with a HMPPS ARNS Handover access token`() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val newHandoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
       val response = webTestClient.post().uri("${appConfiguration.self.endpoints.context}/$handoverSessionId")
@@ -110,7 +110,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
 
     @Test
     fun `should return unauthorized when updating the handover context without authorization`() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val newHandoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
       webTestClient.post().uri("${appConfiguration.self.endpoints.context}/$handoverSessionId")
@@ -122,7 +122,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
 
     @Test
     fun `should return not found when updating the handover context but handover context does not exist`() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val newHandoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
       webTestClient.post().uri("${appConfiguration.self.endpoints.context}/$handoverSessionId")
@@ -139,7 +139,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
   inner class GetContextByHandoverSessionId {
     @Test
     fun `should return okay when getting the handover context with HMPPS Auth client credentials token`() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val handoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
       // Setup an initial handover context
@@ -173,7 +173,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
   inner class GetContextByAuthentication {
     @Test
     fun `should return okay when getting the handover context using a HMPPS ARNS Handover access token`() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val handoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
       // Setup an initial handover context
@@ -192,7 +192,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
 
     @Test
     fun `should return forbidden when updating the handover context using HMPPS Auth client credentials token `() {
-      val handoverSessionId = UUID.randomUUID()
+      val handoverSessionId = UUID.randomUUID().toString()
       val handoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
       // Setup an initial handover context

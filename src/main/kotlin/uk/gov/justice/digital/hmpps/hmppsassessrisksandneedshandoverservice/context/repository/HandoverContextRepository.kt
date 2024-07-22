@@ -3,9 +3,8 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.con
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
-import java.util.UUID
 
 @Repository
-interface HandoverContextRepository : CrudRepository<HandoverContext, UUID?> {
-  fun findByHandoverSessionId(handoverSessionId: UUID): HandoverContext?
+interface HandoverContextRepository : CrudRepository<HandoverContext, String?> {
+  fun findByHandoverSessionId(handoverSessionId: String): HandoverContext?
 }

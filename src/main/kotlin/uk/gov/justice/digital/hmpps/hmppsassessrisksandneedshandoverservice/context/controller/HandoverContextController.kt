@@ -21,7 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
-import java.util.UUID
 
 @RestController
 @RequestMapping("\${app.self.endpoints.context}")
@@ -49,7 +48,7 @@ class HandoverContextController(
     ],
   )
   fun updateContext(
-    @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: UUID,
+    @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: String,
     @RequestBody @Valid handoverContext: UpdateHandoverContextRequest,
   ): ResponseEntity<Any> {
     return when (val result = handoverContextService.updateContext(handoverSessionId, handoverContext)) {
@@ -81,7 +80,7 @@ class HandoverContextController(
     ],
   )
   fun getContextByHandoverSessionId(
-    @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: UUID,
+    @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: String,
   ): ResponseEntity<Any> {
     return when (val result = handoverContextService.getContext(handoverSessionId)) {
       is GetHandoverContextResult.Success ->
@@ -112,7 +111,7 @@ class HandoverContextController(
     ],
   )
   fun getContextByAuthentication(): ResponseEntity<Any> {
-    val handoverSessionId: UUID = UUID.fromString(SecurityContextHolder.getContext().authentication.name)
+    val handoverSessionId: String = SecurityContextHolder.getContext().authentication.name
     return when (val result = handoverContextService.getContext(handoverSessionId)) {
       is GetHandoverContextResult.Success ->
         ResponseEntity
