@@ -27,15 +27,15 @@ import kotlin.test.assertContains
 class HandoverServiceTest {
 
   private lateinit var handoverService: HandoverService
+  private lateinit var handoverSessionId: UUID
   private val handoverTokenRepository: HandoverTokenRepository = mockk()
   private val handoverContextService: HandoverContextService = mockk()
   private val appConfiguration = mockk<AppConfiguration>(relaxed = true)
-  private var handoverSessionId = "testSessionId"
 
   @BeforeEach
   fun setUp() {
     handoverService = HandoverService(handoverTokenRepository, handoverContextService, appConfiguration)
-    handoverSessionId = UUID.randomUUID().toString()
+    handoverSessionId = UUID.randomUUID()
   }
 
   @Nested
@@ -119,7 +119,7 @@ class HandoverServiceTest {
       verify {
         handoverTokenRepository.save(
           withArg {
-            assertEquals(it.code, result.handoverLink.substringAfterLast('/'))
+            assertEquals(it.code.toString(), result.handoverLink.substringAfterLast('/'))
           },
         )
       }

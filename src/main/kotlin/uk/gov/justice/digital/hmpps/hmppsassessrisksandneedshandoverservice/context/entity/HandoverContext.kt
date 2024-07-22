@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.UUID
 
 enum class UserAccess(val value: String) {
   READ_ONLY("READ_ONLY"),
@@ -26,7 +27,7 @@ enum class UserAccess(val value: String) {
 
 @RedisHash("HandoverContext")
 data class HandoverContext(
-  @Id @Indexed var handoverSessionId: String,
+  @Id @Indexed var handoverSessionId: UUID,
   val createdAt: LocalDateTime = LocalDateTime.now(),
   val principal: HandoverPrincipal,
   val subject: SubjectDetails,
