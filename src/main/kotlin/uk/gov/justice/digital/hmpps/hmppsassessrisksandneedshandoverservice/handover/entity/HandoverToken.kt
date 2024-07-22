@@ -11,11 +11,11 @@ enum class TokenStatus {
   UNUSED,
 }
 
-@RedisHash("HandoverToken", timeToLive = 43200)
+@RedisHash("HandoverToken", timeToLive = 600)
 data class HandoverToken(
-  @Id var code: String = UUID.randomUUID().toString(),
+  @Id var code: UUID = UUID.randomUUID(),
   var tokenStatus: TokenStatus = TokenStatus.UNUSED,
   var createdAt: Instant = Instant.now(),
-  var handoverSessionId: String,
+  var handoverSessionId: UUID,
   var principal: HandoverPrincipal,
 )

@@ -29,14 +29,14 @@ class HandoverContextServiceTest {
   @Nested
   @DisplayName("updateContext")
   inner class UpdateContext {
-    private lateinit var handoverSessionId: String
+    private lateinit var handoverSessionId: UUID
     private lateinit var updateHandoverContextRequest: UpdateHandoverContextRequest
     private lateinit var existingContext: HandoverContext
     private lateinit var updatedContext: HandoverContext
 
     @BeforeEach
     fun setup() {
-      handoverSessionId = UUID.randomUUID().toString()
+      handoverSessionId = UUID.randomUUID()
       updateHandoverContextRequest = TestUtils.updateHandoverContextRequest()
       existingContext = TestUtils.createHandoverContext(handoverSessionId)
       updatedContext = existingContext.copy(
@@ -59,11 +59,12 @@ class HandoverContextServiceTest {
 
     @Test
     fun `should return not found when using invalid handover session id`() {
+      val invalidUUID = UUID.randomUUID()
       every { handoverContextRepository.findByHandoverSessionId(any()) } returns null
 
-      val result = handoverContextService.updateContext("invalid-session-id", updateHandoverContextRequest)
+      val result = handoverContextService.updateContext(invalidUUID, updateHandoverContextRequest)
 
-      verify { handoverContextRepository.findByHandoverSessionId(match { it == "invalid-session-id" }) }
+      verify { handoverContextRepository.findByHandoverSessionId(match { it == invalidUUID }) }
       assertEquals(result, GetHandoverContextResult.NotFound)
     }
 
@@ -94,12 +95,12 @@ class HandoverContextServiceTest {
   @Nested
   @DisplayName("getContext")
   inner class GetContext {
-    private lateinit var handoverSessionId: String
+    private lateinit var handoverSessionId: UUID
     private lateinit var existingContext: HandoverContext
 
     @BeforeEach
     fun setup() {
-      handoverSessionId = UUID.randomUUID().toString()
+      handoverSessionId = UUID.randomUUID()
       existingContext = TestUtils.createHandoverContext(handoverSessionId)
     }
 
@@ -115,11 +116,12 @@ class HandoverContextServiceTest {
 
     @Test
     fun `should return not found when using invalid handover session id`() {
+      val invalidUUID = UUID.randomUUID()
       every { handoverContextRepository.findByHandoverSessionId(any()) } returns null
 
-      val result = handoverContextService.getContext("invalid-session-id")
+      val result = handoverContextService.getContext(invalidUUID)
 
-      verify { handoverContextRepository.findByHandoverSessionId(match { it == "invalid-session-id" }) }
+      verify { handoverContextRepository.findByHandoverSessionId(match { it == invalidUUID }) }
       assertEquals(result, GetHandoverContextResult.NotFound)
     }
   }
@@ -127,12 +129,12 @@ class HandoverContextServiceTest {
   @Nested
   @DisplayName("saveContext")
   inner class SaveContext {
-    private lateinit var handoverSessionId: String
+    private lateinit var handoverSessionId: UUID
     private lateinit var handoverContext: HandoverContext
 
     @BeforeEach
     fun setup() {
-      handoverSessionId = UUID.randomUUID().toString()
+      handoverSessionId = UUID.randomUUID()
       handoverContext = TestUtils.createHandoverContext(handoverSessionId)
     }
 

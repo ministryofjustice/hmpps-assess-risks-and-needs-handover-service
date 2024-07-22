@@ -97,7 +97,7 @@ class HandoverController(
     val client = appConfiguration.clients[clientId]
       ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found")
 
-    return when (val result = handoverService.consumeAndExchangeHandover(handoverCode.toString())) {
+    return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
       is UseHandoverLinkResult.Success -> {
         strategy.context = strategy.createEmptyContext()
         strategy.context.authentication = result.authenticationToken
