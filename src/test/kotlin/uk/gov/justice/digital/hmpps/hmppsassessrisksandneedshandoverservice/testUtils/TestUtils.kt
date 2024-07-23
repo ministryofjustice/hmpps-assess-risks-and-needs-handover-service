@@ -14,6 +14,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import java.time.LocalDate
+import java.util.UUID
 
 object TestUtils {
   private var faker: Faker = Faker()
@@ -28,7 +29,7 @@ object TestUtils {
     )
   }
 
-  fun createHandoverContext(handoverSessionId: String): HandoverContext {
+  fun createHandoverContext(handoverSessionId: UUID): HandoverContext {
     return HandoverContext(
       handoverSessionId = handoverSessionId,
       principal = createPrincipal(),
@@ -89,7 +90,7 @@ object TestUtils {
   fun createHandoverToken(status: TokenStatus): HandoverToken {
     return HandoverToken(
       tokenStatus = status,
-      handoverSessionId = "sessionId",
+      handoverSessionId = UUID.randomUUID(),
       principal = createPrincipal(),
     )
   }
