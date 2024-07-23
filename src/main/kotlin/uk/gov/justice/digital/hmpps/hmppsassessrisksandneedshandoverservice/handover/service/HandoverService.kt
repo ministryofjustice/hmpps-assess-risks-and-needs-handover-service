@@ -69,7 +69,7 @@ class HandoverService(
         val handoverSessionId = consumeToken(handoverCode).handoverSessionId
         UseHandoverLinkResult.Success(
           UsernamePasswordAuthenticationToken(
-            handoverSessionId,
+            handoverSessionId.toString(),
             null,
             null,
           ),
