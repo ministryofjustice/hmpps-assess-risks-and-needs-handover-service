@@ -19,7 +19,7 @@ ENV TZ=Europe/London
 RUN cp "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
 
 RUN addgroup --gid 2000 --system appgroup && \
-    adduser --uid 2000 --system appuser appgroup
+    adduser --uid 2000 --system appuser --ingroup appgroup
 
 WORKDIR /app
 COPY --from=builder --chown=appuser:appgroup /app/build/libs/hmpps-assess-risks-and-needs-handover-service*.jar /app/app.jar
