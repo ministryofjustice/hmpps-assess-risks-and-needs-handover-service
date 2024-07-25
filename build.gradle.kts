@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.1"
   kotlin("plugin.spring") version "2.0.0"
@@ -19,7 +22,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.security:spring-security-config")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server")
-  implementation("org.springframework.security:spring-security-cas")
+
   implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.78.1")
 
@@ -40,9 +43,7 @@ kotlin {
 }
 
 tasks {
-  withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions {
-      jvmTarget = "21"
-    }
+  withType<KotlinCompile> {
+    compilerOptions.jvmTarget = JvmTarget.JVM_21
   }
 }
