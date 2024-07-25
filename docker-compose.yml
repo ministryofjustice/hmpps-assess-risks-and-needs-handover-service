@@ -1,9 +1,9 @@
 services:
-  hmpps-assess-risks-and-needs-handover-service:
+  handover-service:
     build:
       context: .
-    network_mode: "host"
-    container_name: hmpps-assess-risks-and-needs-handover-service
+    networks:
+      - hmpps
     ports:
       - "8081:8080"
     healthcheck:
@@ -13,7 +13,8 @@ services:
       - SPRING_PROFILES_ACTIVE=local
   redis:
     image: "bitnami/redis:7.0.11"
-    container_name: handover-service-redis-dev
+    networks:
+      - hmpps
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
