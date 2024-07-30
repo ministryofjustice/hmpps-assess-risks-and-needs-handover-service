@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   hmpps: ministryofjustice/hmpps@8.2
   mem: circleci/rememborb@0.0.2
+  slack: circleci/slack@4.13
 
 parameters:
   alerts-slack-channel:
@@ -183,6 +184,103 @@ workflows:
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
+      - slack/notify:
+          context:
+            - hmpps-common-vars
+          event: pass
+          channel: oasys-arns-intergration
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Deployment Successful! :happy_bunny:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*: SAN/SP"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "action_id": "success_deploy_view",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          context:
+            - hmpps-common-vars
+          event: fail
+          channel: oasys-arns-intergration
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Deployment Failed! :sadpanda:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "@arn-devs @sp-devs"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*: SAN/SP"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "action_id": "failed_deploy_view",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
 
 #      - request-preprod-approval:
 #          type: approval
