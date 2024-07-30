@@ -129,7 +129,7 @@ workflows:
           requires:
             - build_docker
       - hmpps/deploy_env:
-          name: Deploy Handover Service
+          name: deploy_test
           env: "test"
           jira_update: true
           jira_env_type: testing
@@ -141,6 +141,24 @@ workflows:
           requires:
             - publish_docker
           helm_timeout: 5m
+
+  weekly-deploy-to-test-env:
+    triggers:
+      - schedule:
+          cron: "0 20 * * 0"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/trigger_job:
+          name: Deploy Handover Service
+          repository: hmpps-assess-risks-and-needs-handover-service
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
       - hmpps/trigger_job:
           name: Deploy OASTUB UI
           repository: hmpps-assess-risks-and-needs-oastub-ui
