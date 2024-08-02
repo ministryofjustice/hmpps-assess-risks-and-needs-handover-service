@@ -55,6 +55,103 @@ jobs:
           command: make e2e-ci
       - store_artifacts:
           path: e2e/cypress/screenshots
+  notify_capita_slack:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          event: pass
+          channel: oasys-arns-intergration
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Deployment Successful! :happy_bunny:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*: SAN/SP"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "action_id": "success_deploy_view",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
+      - slack/notify:
+          event: fail
+          channel: oasys-arns-intergration
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Deployment Failed! :sadpanda:",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "@arn-devs @sp-devs"
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Project*: SAN/SP"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                    }
+                  ]
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "action_id": "failed_deploy_view",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "${CIRCLE_BUILD_URL}"
+                    }
+                  ]
+                }
+              ]
+            }
 
 workflows:
   version: 2
@@ -220,103 +317,9 @@ workflows:
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
-      - slack/notify:
+      - notify_capita_slack:
           context:
             - hmpps-common-vars
-          event: pass
-          channel: oasys-arns-intergration
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Deployment Successful! :happy_bunny:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Project*: SAN/SP"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
-                    }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "action_id": "success_deploy_view",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
-                }
-              ]
-            }
-      - slack/notify:
-          context:
-            - hmpps-common-vars
-          event: fail
-          channel: oasys-arns-intergration
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Deployment Failed! :sadpanda:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "@arn-devs @sp-devs"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Project*: SAN/SP"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
-                    }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "action_id": "failed_deploy_view",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
-                }
-              ]
-            }
 
   security:
     triggers:
