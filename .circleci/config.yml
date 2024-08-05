@@ -17,6 +17,53 @@ parameters:
     type: string
     default: ""
 
+notify-capita-slack-fail: &notify-capita-slack-fail
+  post-steps:
+    - slack/notify:
+        event: fail
+        channel: oasys-arns-intergration
+        custom: |
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Deployment Failed! :sadpanda:",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "@arn-devs @sp-devs"
+                }
+              },
+              {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Project*: SAN/SP \n *Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                  }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "action_id": "failed_deploy_view",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Job"
+                    },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                ]
+              }
+            ]
+          }
+
 jobs:
   validate:
     executor: java
@@ -36,6 +83,7 @@ jobs:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
+
   e2e_test:
     machine:
       image: ubuntu-2204:current
@@ -55,12 +103,13 @@ jobs:
           command: make e2e-ci
       - store_artifacts:
           path: e2e/cypress/screenshots
-  notify_capita_slack:
+
+  notify-capita-slack-success:
     docker:
       - image: cimg/base:stable
     steps:
       - slack/notify:
-          event: pass
+          event: always
           channel: oasys-arns-intergration
           custom: |
             {
@@ -74,17 +123,11 @@ jobs:
                   }
                 },
                 {
-                  "type": "section",
-                  "fields": [
-                    {
+                    "type": "section",
+                    "text": {
                       "type": "mrkdwn",
-                      "text": "*Project*: SAN/SP"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                      "text": "*Project*: SAN/SP \n *Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
                     }
-                  ]
                 },
                 {
                   "type": "actions",
@@ -96,57 +139,7 @@ jobs:
                         "type": "plain_text",
                         "text": "View Job"
                       },
-                      "url": "${CIRCLE_BUILD_URL}"
-                    }
-                  ]
-                }
-              ]
-            }
-      - slack/notify:
-          event: fail
-          channel: oasys-arns-intergration
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Deployment Failed! :sadpanda:",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "@arn-devs @sp-devs"
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Project*: SAN/SP"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
-                    }
-                  ]
-                },
-                {
-                  "type": "actions",
-                  "elements": [
-                    {
-                      "type": "button",
-                      "action_id": "failed_deploy_view",
-                      "text": {
-                        "type": "plain_text",
-                        "text": "View Job"
-                      },
-                      "url": "${CIRCLE_BUILD_URL}"
+                      "url": "https://app.circleci.com/pipelines/workflows/${CIRCLE_WORKFLOW_ID}"
                     }
                   ]
                 }
@@ -293,6 +286,7 @@ workflows:
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
       - hmpps/trigger_job:
           name: Deploy OASTUB UI
           repository: hmpps-assess-risks-and-needs-oastub-ui
@@ -301,6 +295,7 @@ workflows:
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
       - hmpps/trigger_job:
           name: Deploy SAN UI
           repository: hmpps-strengths-based-needs-assessments-ui
@@ -317,9 +312,15 @@ workflows:
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
-      - notify_capita_slack:
+          <<: *notify-capita-slack-fail
+      - notify-capita-slack-success:
           context:
             - hmpps-common-vars
+          requires:
+            - Deploy Handover Service
+            - Deploy OASTUB UI
+            - Deploy SAN UI
+            - Deploy SAN API
 
   security:
     triggers:
