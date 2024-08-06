@@ -148,55 +148,55 @@ jobs:
 
 workflows:
   version: 2
-  build-test-and-deploy:
-    when:
-      not: << pipeline.parameters.deploy >>
-    jobs:
-      - validate:
-          filters:
-            tags:
-              ignore: /.*/
-      - hmpps/helm_lint:
-          name: helm_lint
-      - hmpps/build_docker:
-          name: build_docker
-          publish: false
-          persist_container_image: true
-          jira_update: true
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
-          context: hmpps-common-vars
-      - e2e_test:
-          context: hmpps-common-vars
-          requires:
-            - build_docker
-      - hmpps/publish_docker:
-          name: publish_docker
-          publish_latest_tag: true
-          context: hmpps-common-vars
-          requires:
-            - validate
-            - build_docker
-            - e2e_test
-            - helm_lint
-          filters:
-            branches:
-              only:
-                - main
-      - hmpps/deploy_env:
-          name: deploy_dev
-          env: "dev"
-          jira_update: true
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
-          context: hmpps-common-vars
-          filters:
-            branches:
-              only:
-                - main
-          requires:
-            - publish_docker
-          helm_timeout: 5m
+#  build-test-and-deploy:
+#    when:
+#      not: << pipeline.parameters.deploy >>
+#    jobs:
+#      - validate:
+#          filters:
+#            tags:
+#              ignore: /.*/
+#      - hmpps/helm_lint:
+#          name: helm_lint
+#      - hmpps/build_docker:
+#          name: build_docker
+#          publish: false
+#          persist_container_image: true
+#          jira_update: true
+#          pipeline_id: << pipeline.id >>
+#          pipeline_number: << pipeline.number >>
+#          context: hmpps-common-vars
+#      - e2e_test:
+#          context: hmpps-common-vars
+#          requires:
+#            - build_docker
+#      - hmpps/publish_docker:
+#          name: publish_docker
+#          publish_latest_tag: true
+#          context: hmpps-common-vars
+#          requires:
+#            - validate
+#            - build_docker
+#            - e2e_test
+#            - helm_lint
+#          filters:
+#            branches:
+#              only:
+#                - main
+#      - hmpps/deploy_env:
+#          name: deploy_dev
+#          env: "dev"
+#          jira_update: true
+#          pipeline_id: << pipeline.id >>
+#          pipeline_number: << pipeline.number >>
+#          context: hmpps-common-vars
+#          filters:
+#            branches:
+#              only:
+#                - main
+#          requires:
+#            - publish_docker
+#          helm_timeout: 5m
 #      - request-preprod-approval:
 #          type: approval
 #          requires:
@@ -270,13 +270,13 @@ workflows:
           helm_timeout: 5m
 
   weekly-deploy-to-test-env:
-    triggers:
-      - schedule:
-          cron: "0 20 * * 0"
-          filters:
-            branches:
-              only:
-                - main
+#    triggers:
+#      - schedule:
+#          cron: "0 20 * * 0"
+#          filters:
+#            branches:
+#              only:
+#                - main
     jobs:
       - hmpps/trigger_job:
           name: Deploy Handover Service
