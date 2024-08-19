@@ -283,6 +283,7 @@ workflows:
           repository: hmpps-assess-risks-and-needs-handover-service
           branch: main
           build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
@@ -292,6 +293,7 @@ workflows:
           repository: hmpps-assess-risks-and-needs-oastub-ui
           branch: main
           build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
@@ -301,6 +303,7 @@ workflows:
           repository: hmpps-strengths-based-needs-assessments-ui
           branch: main
           build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
@@ -309,6 +312,7 @@ workflows:
           repository: hmpps-strengths-based-needs-assessments-api
           branch: main
           build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
