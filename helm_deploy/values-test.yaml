@@ -18,6 +18,9 @@ generic-service:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
 
   allowlist:
+    nat-gw-one: 35.178.209.113/31
+    nat-gw-two: 3.8.51.207/31
+    nat-gw-three: 35.177.252.54/31
     capita-dev: 51.104.16.30/31
     captia-further: 172.167.141.40/32
     capita-developers-vms-one: 85.115.52.180/32
