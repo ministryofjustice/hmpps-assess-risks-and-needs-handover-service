@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en"
+      xmlns:th="http://www.thymeleaf.org" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE"
+         th:text="${(param.error != null || error != null) ? 'Error: ' : ''} + 'Strengths and needs'">
+    Strengths and needs
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0c0c">
+
+  <link rel="icon" sizes="48x48" href="/assets/images/favicon.ico">
+  <link rel="icon" sizes="any" href="/assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="/assets/images/govuk-icon-mask.svg" color="#0b0c0c">
+  <link rel="apple-touch-icon" href="/assets/images/govuk-icon-180.png">
+  <link rel="manifest" href="/assets/manifest.json">
+
+  <link href="/govuk-frontend-5.6.0.min.css" rel="stylesheet"/>
+  <link href="/header-bar.css" rel="stylesheet"/>
+</head>
+<body class="govuk-template__body">
+  <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
+  <th:block th:replace="~{fragments/header :: header}"/>
+
+  <div class="govuk-width-container">
+    <main class="govuk-main-wrapper app-container govuk-body" id="main-content">
+      <th:block layout:fragment="content"/>
+    </main>
+  </div>
+
+  <th:block th:replace="~{fragments/footer :: footer}"/>
+
+  <th:block layout:fragment="script"></th:block>
+
+  <script th:src="@{/govuk-frontend-5.6.0.min.js}"></script>
+</body>
+</html>

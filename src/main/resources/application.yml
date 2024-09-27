@@ -45,6 +45,13 @@ spring:
       ssl:
         enabled: ${redis-ssl-enabled:true}
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    hiddenmethod:
+      filter:
+        enabled: true
+
 server:
   port: 8080
   servlet:
@@ -68,6 +75,8 @@ app:
   services:
     hmpps-auth:
       base-url: ${hmpps-auth.base-url}
+    oasys:
+      base-url: ${oasys.base-url}
   self:
     base-url: ${hmpps-handover.base-url}
     external-url: ${hmpps-handover-external-url:${app.self.base-url}}

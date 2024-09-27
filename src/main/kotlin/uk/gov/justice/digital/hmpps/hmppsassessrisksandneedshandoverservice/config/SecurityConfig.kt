@@ -9,6 +9,7 @@ import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver
 import org.springframework.security.web.SecurityFilterChain
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.UnauthorizedHandler
 
 @Configuration
 class SecurityConfig {
@@ -39,6 +40,12 @@ class SecurityConfig {
           "/v3/api-docs/**",
           "/swagger-ui.html",
           "/swagger-ui/**",
+          // Error pages
+          "/access-denied",
+          // Static resources
+          "/assets/**",
+          "*.css",
+          "*.js",
         ).permitAll()
 
       // Catch all
@@ -48,6 +55,7 @@ class SecurityConfig {
 
     return http
       .csrf { csrf -> csrf.disable() }
+      .exceptionHandling { it.authenticationEntryPoint(UnauthorizedHandler()) }
       .logout { logout ->
         logout
           .logoutSuccessUrl("https://www.gov.uk")
