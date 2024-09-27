@@ -18,6 +18,12 @@ generic-service:
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
 
   allowlist:
+    mp-nat-egress-one: 13.43.9.198/32
+    mp-nat-egress-two: 13.42.163.245/32
+    mp-nat-egress-three: 18.132.208.127/32    
+    nat-gw-one: 35.178.209.113/32
+    nat-gw-two: 3.8.51.207/32
+    nat-gw-three: 35.177.252.54/32
     capita-dev: 51.104.16.30/31
     captia-further: 172.167.141.40/32
     capita-developers-vms-one: 85.115.52.180/32
@@ -26,7 +32,8 @@ generic-service:
     capita-developers-vms-four: 85.115.53.200/29
     capita-developers-vms-five: 85.115.54.180/32
     capita-developers-vms-six: 85.115.54.200/29
-    
+    oasys-box-t2 : 10.26.12.211/32
+
     groups:
       - circleci
       - internal

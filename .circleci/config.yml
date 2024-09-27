@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   hmpps: ministryofjustice/hmpps@8.2
   mem: circleci/rememborb@0.0.2
+  slack: circleci/slack@4.13.3
 
 parameters:
   alerts-slack-channel:
@@ -15,6 +16,53 @@ parameters:
     description: Trigger a manual deployment
     type: string
     default: ""
+
+notify-capita-slack-fail: &notify-capita-slack-fail
+  post-steps:
+    - slack/notify:
+        event: fail
+        channel: oasys-arns-intergration
+        custom: |
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "Deployment Failed! :sadpanda:",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "@arn-devs @sp-devs"
+                }
+              },
+              {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Project*: SAN/SP \n *Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                  }
+              },
+              {
+                "type": "actions",
+                "elements": [
+                  {
+                    "type": "button",
+                    "action_id": "failed_deploy_view",
+                    "text": {
+                      "type": "plain_text",
+                      "text": "View Job"
+                    },
+                    "url": "${CIRCLE_BUILD_URL}"
+                  }
+                ]
+              }
+            ]
+          }
 
 jobs:
   validate:
@@ -35,6 +83,7 @@ jobs:
           path: build/test-results
       - store_artifacts:
           path: build/reports/tests
+
   e2e_test:
     machine:
       image: ubuntu-2204:current
@@ -54,6 +103,48 @@ jobs:
           command: make e2e-ci
       - store_artifacts:
           path: e2e/cypress/screenshots
+
+  notify-capita-slack-success:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          event: always
+          channel: oasys-arns-intergration
+          custom: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "Deployment Successful! :happy_bunny:",
+                    "emoji": true
+                  }
+                },
+                {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*Project*: SAN/SP \n *Environment*: <https://arns-oastub-test.hmpps.service.justice.gov.uk/|Test>"
+                    }
+                },
+                {
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "action_id": "success_deploy_view",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Job"
+                      },
+                      "url": "https://app.circleci.com/pipelines/workflows/${CIRCLE_WORKFLOW_ID}"
+                    }
+                  ]
+                }
+              ]
+            }
 
 workflows:
   version: 2
@@ -106,42 +197,6 @@ workflows:
           requires:
             - publish_docker
           helm_timeout: 5m
-
-  deploy-to-test-env:
-    when:
-      and:
-        - equal: [ "test", << pipeline.parameters.deploy >> ]
-    jobs:
-      - hmpps/build_docker:
-          name: build_docker
-          publish: false
-          persist_container_image: true
-          jira_update: true
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
-          context:
-            - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-integrations-test
-      - hmpps/publish_docker:
-          name: publish_docker
-          publish_latest_tag: false
-          context: hmpps-common-vars
-          requires:
-            - build_docker
-      - hmpps/deploy_env:
-          name: deploy_test
-          env: "test"
-          jira_update: true
-          jira_env_type: testing
-          pipeline_id: << pipeline.id >>
-          pipeline_number: << pipeline.number >>
-          context:
-            - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-integrations-test
-          requires:
-            - publish_docker
-          helm_timeout: 5m
-
 #      - request-preprod-approval:
 #          type: approval
 #          requires:
@@ -178,6 +233,98 @@ workflows:
 #          requires:
 #            - request-prod-approval
 #          helm_timeout: 5m
+
+  deploy-to-test-env:
+    when:
+      and:
+        - equal: [ "test", << pipeline.parameters.deploy >> ]
+    jobs:
+      - hmpps/build_docker:
+          name: build_docker
+          publish: false
+          persist_container_image: true
+          jira_update: true
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-handover-service-test
+      - hmpps/publish_docker:
+          name: publish_docker
+          publish_latest_tag: false
+          context: hmpps-common-vars
+          requires:
+            - build_docker
+      - hmpps/deploy_env:
+          name: deploy_test
+          env: "test"
+          jira_update: true
+          jira_env_type: testing
+          pipeline_id: << pipeline.id >>
+          pipeline_number: << pipeline.number >>
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-handover-service-test
+          requires:
+            - publish_docker
+          helm_timeout: 5m
+
+  weekly-deploy-to-test-env:
+    triggers:
+      - schedule:
+          cron: "0 20 * * 0"
+          filters:
+            branches:
+              only:
+                - main
+    jobs:
+      - hmpps/trigger_job:
+          name: Deploy Handover Service
+          repository: hmpps-assess-risks-and-needs-handover-service
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - hmpps/trigger_job:
+          name: Deploy OASTUB UI
+          repository: hmpps-assess-risks-and-needs-oastub-ui
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - hmpps/trigger_job:
+          name: Deploy SAN UI
+          repository: hmpps-strengths-based-needs-assessments-ui
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+      - hmpps/trigger_job:
+          name: Deploy SAN API
+          repository: hmpps-strengths-based-needs-assessments-api
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - notify-capita-slack-success:
+          context:
+            - hmpps-common-vars
+          requires:
+            - Deploy Handover Service
+            - Deploy OASTUB UI
+            - Deploy SAN UI
+            - Deploy SAN API
 
   security:
     triggers:
