@@ -43,9 +43,8 @@ class SecurityConfig {
           // Error pages
           "/access-denied",
           // Static resources
-          "/assets/**",
-          "*.css",
-          "*.js",
+          "/css/**",
+          "/webjars/**",
         ).permitAll()
 
       // Catch all

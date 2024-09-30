@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover
+package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service
 
 import io.mockk.Called
 import io.mockk.every
@@ -18,8 +18,6 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.UseHandoverLinkResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import java.util.*
 import kotlin.test.assertContains
