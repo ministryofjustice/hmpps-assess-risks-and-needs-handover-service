@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.WebJarsResourceResolver
 
 @Configuration
-class WebConfig: WebMvcConfigurer {
+class WebConfig : WebMvcConfigurer {
   override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
     registry
       .addResourceHandler("/webjars/**")
