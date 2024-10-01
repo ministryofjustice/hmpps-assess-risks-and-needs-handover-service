@@ -54,7 +54,9 @@ class JpaOAuth2AuthorizationService(
 
   override fun save(authorization: OAuth2Authorization) {
     jpaAuthorizationRepository.findByIdOrNull(authorization.id)?.let {
-      jpaAuthorizationRepository.deleteById(it.id)
+      it.id?.let { id ->
+        jpaAuthorizationRepository.deleteById(id)
+      }
     }
 
     jpaAuthorizationRepository.save(JpaAuthorization.from(authorization))

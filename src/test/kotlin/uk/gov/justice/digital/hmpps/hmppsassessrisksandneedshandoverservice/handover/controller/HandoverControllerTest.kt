@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.integration
+package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.controller
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpStatus
-import org.springframework.test.web.reactive.server.expectBody
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
@@ -18,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.WireMockExtension
 import java.time.LocalDate
@@ -94,7 +93,7 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return forbidden when unauthorized`() {
+    fun `should return forbidden when auth token is invalid`() {
       val handoverRequest = TestUtils.createHandoverRequest()
 
       val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
@@ -111,14 +110,15 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return forbidden when unauthenticated`() {
+    fun `should return access denied when unauthenticated`() {
       val handoverRequest = TestUtils.createHandoverRequest()
 
       webTestClient.post().uri(appConfiguration.self.endpoints.handover)
         .bodyValue(handoverRequest)
         .header("Content-Type", "application/json")
         .exchange()
-        .expectStatus().isUnauthorized
+        .expectStatus().isFound
+        .expectHeader().valueMatches("Location", "^https?://.*:\\d{0,4}/access-denied$")
     }
   }
 
@@ -146,22 +146,19 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return not found when using handover link with invalid code `() {
+    fun `should return access denied when using handover link with invalid code `() {
       val clientId = "test-client"
       val handoverCode = UUID.randomUUID().toString()
 
-      val response = webTestClient.get().uri("/handover/$handoverCode?clientId=$clientId")
+      webTestClient.get().uri("/handover/$handoverCode?clientId=$clientId")
         .exchange()
-        .expectStatus().isNotFound
-        .expectBody(String::class.java)
-        .returnResult()
-        .responseBody
-
-      assertThat(response).isEqualTo("Handover link expired or not found")
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", "/access-denied")
+        .expectCookie().doesNotExist(sessionCookieName)
     }
 
     @Test
-    fun `should return conflict when using handover link with already used code`() {
+    fun `should return access denied when using handover link with already used code`() {
       val clientId = "test-client"
 
       val handoverToken = handoverTokenRepository.save(
@@ -173,14 +170,11 @@ class HandoverControllerTest : IntegrationTestBase() {
 
       handoverService.consumeAndExchangeHandover(handoverToken.code)
 
-      val response = webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId")
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId")
         .exchange()
-        .expectStatus().isEqualTo(HttpStatus.CONFLICT)
-        .expectBody(String::class.java)
-        .returnResult()
-        .responseBody
-
-      assertThat(response).isEqualTo("Handover link has already been used")
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", "/access-denied")
+        .expectCookie().doesNotExist(sessionCookieName)
     }
   }
 }

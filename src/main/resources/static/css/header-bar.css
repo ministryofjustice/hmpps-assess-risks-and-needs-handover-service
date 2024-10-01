@@ -1,0 +1,444 @@
+.hmpps-header {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background-color: #0b0c0c;
+}
+.hmpps-header__container {
+    max-width: 960px;
+    margin-right: 15px;
+    margin-left: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+@supports (margin: max(calc(0px))) {
+    .hmpps-header__container {
+        margin-right: max(15px, calc(15px + env(safe-area-inset-right)));
+        margin-left: max(15px, calc(15px + env(safe-area-inset-left)));
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__container {
+        margin-right: 30px;
+        margin-left: 30px;
+    }
+    @supports (margin: max(calc(0px))) {
+        .hmpps-header__container {
+            margin-right: max(30px, calc(15px + env(safe-area-inset-right)));
+            margin-left: max(30px, calc(15px + env(safe-area-inset-left)));
+        }
+    }
+}
+@media (min-width: 1230px) {
+    .hmpps-header__container {
+        margin-right: auto;
+        margin-left: auto;
+    }
+    @supports (margin: max(calc(0px))) {
+        .hmpps-header__container {
+            margin-right: auto;
+            margin-left: auto;
+        }
+    }
+}
+.hmpps-header__logo {
+    margin-right: 10px;
+    position: relative;
+    top: -2px;
+    fill: #ffffff;
+}
+.hmpps-header__title {
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+}
+.hmpps-header__title__organisation-name {
+    margin-right: 10px;
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 1.125rem;
+    line-height: 1.1111111111;
+    display: flex;
+    align-items: center;
+}
+@media print {
+    .hmpps-header__title__organisation-name {
+        font-family: sans-serif;
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__title__organisation-name {
+        font-size: 1.5rem;
+        line-height: 1.25;
+    }
+}
+@media print {
+    .hmpps-header__title__organisation-name {
+        font-size: 18pt;
+        line-height: 1.15;
+    }
+}
+.hmpps-header__title__service-name {
+    display: none;
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 1.125rem;
+    line-height: 1.1111111111;
+}
+@media print {
+    .hmpps-header__title__service-name {
+        font-family: sans-serif;
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__title__service-name {
+        font-size: 1.5rem;
+        line-height: 1.25;
+    }
+}
+@media print {
+    .hmpps-header__title__service-name {
+        font-size: 18pt;
+        line-height: 1.15;
+    }
+}
+@media (min-width: 48.0625em) {
+    .hmpps-header__title__service-name {
+        display: inline-block;
+    }
+}
+.hmpps-header__link {
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: underline;
+    text-decoration-thickness: max(1px, .0625rem);
+    text-underline-offset: 0.1578em;
+}
+@media print {
+    .hmpps-header__link {
+        font-family: sans-serif;
+    }
+}
+.hmpps-header__link:hover {
+    text-decoration-thickness: max(3px, .1875rem, .12em);
+    -webkit-text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    text-decoration-skip: none;
+}
+.hmpps-header__link:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #ffdd00;
+    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    text-decoration: none;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+.hmpps-header__link:link {
+    color: #1d70b8;
+}
+.hmpps-header__link:visited {
+    color: #4c2c92;
+}
+.hmpps-header__link:hover {
+    color: #003078;
+}
+.hmpps-header__link:active {
+    color: #0b0c0c;
+}
+.hmpps-header__link:focus {
+    color: #0b0c0c;
+}
+.hmpps-header__link:link,
+.hmpps-header__link:visited,
+.hmpps-header__link:active {
+    color: #ffffff;
+    text-decoration: none;
+}
+.hmpps-header__link:hover {
+    text-decoration: underline;
+}
+.hmpps-header__link:focus {
+    color: #0b0c0c;
+}
+.hmpps-header__link:focus svg {
+    fill: #0b0c0c;
+}
+.hmpps-header__link__sub-text {
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.1428571429;
+    display: none;
+}
+@media print {
+    .hmpps-header__link__sub-text {
+        font-family: sans-serif;
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__link__sub-text {
+        font-size: 1rem;
+        line-height: 1.25;
+    }
+}
+@media print {
+    .hmpps-header__link__sub-text {
+        font-size: 14pt;
+        line-height: 1.2;
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__link__sub-text {
+        display: block;
+    }
+}
+.hmpps-header__navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__navigation {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+.hmpps-header__navigation__item {
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.25;
+    margin-bottom: 5px;
+    text-align: right;
+}
+@media print {
+    .hmpps-header__navigation__item {
+        font-family: sans-serif;
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__navigation__item {
+        font-size: 1.1875rem;
+        line-height: 1.3157894737;
+    }
+}
+@media print {
+    .hmpps-header__navigation__item {
+        font-size: 14pt;
+        line-height: 1.15;
+    }
+}
+@media (min-width: 47.5em) {
+    .hmpps-header__navigation__item {
+        margin-right: 15px;
+        padding-right: 15px;
+        margin-bottom: 0;
+        border-right: 1px solid #ffffff;
+    }
+}
+@media (min-width: 47.5em) and (min-width: 47.5em) {
+    .hmpps-header__navigation__item {
+        margin-right: 20px;
+    }
+}
+@media (min-width: 47.5em) and (min-width: 47.5em) {
+    .hmpps-header__navigation__item {
+        padding-right: 20px;
+    }
+}
+.hmpps-header__navigation__item a {
+    display: inline-block;
+}
+.hmpps-header__navigation__item:last-child {
+    margin-right: 0;
+    border-right: 0;
+    padding-right: 0;
+}
+@media print {
+    .hmpps-header {
+        display: none;
+    }
+}
+.location-bar {
+    max-width: 960px;
+    margin-right: 15px;
+    margin-left: 15px;
+    margin-bottom: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #b1b4b6;
+}
+@supports (margin: max(calc(0px))) {
+    .location-bar {
+        margin-right: max(15px, calc(15px + env(safe-area-inset-right)));
+        margin-left: max(15px, calc(15px + env(safe-area-inset-left)));
+    }
+}
+@media (min-width: 47.5em) {
+    .location-bar {
+        margin-right: 30px;
+        margin-left: 30px;
+    }
+    @supports (margin: max(calc(0px))) {
+        .location-bar {
+            margin-right: max(30px, calc(15px + env(safe-area-inset-right)));
+            margin-left: max(30px, calc(15px + env(safe-area-inset-left)));
+        }
+    }
+}
+@media (min-width: 1230px) {
+    .location-bar {
+        margin-right: auto;
+        margin-left: auto;
+    }
+    @supports (margin: max(calc(0px))) {
+        .location-bar {
+            margin-right: auto;
+            margin-left: auto;
+        }
+    }
+}
+.location-bar__location {
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.25;
+    margin-right: 15px;
+}
+@media print {
+    .location-bar__location {
+        font-family: sans-serif;
+    }
+}
+@media (min-width: 47.5em) {
+    .location-bar__location {
+        font-size: 1.1875rem;
+        line-height: 1.3157894737;
+    }
+}
+@media print {
+    .location-bar__location {
+        font-size: 14pt;
+        line-height: 1.15;
+    }
+}
+.location-bar__link {
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: underline;
+    text-decoration-thickness: max(1px, .0625rem);
+    text-underline-offset: 0.1578em;
+    font-family:
+            "GDS Transport",
+            arial,
+            sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 1rem;
+    line-height: 1.25;
+}
+@media print {
+    .location-bar__link {
+        font-family: sans-serif;
+    }
+}
+.location-bar__link:hover {
+    text-decoration-thickness: max(3px, .1875rem, .12em);
+    -webkit-text-decoration-skip-ink: none;
+    text-decoration-skip-ink: none;
+    -webkit-text-decoration-skip: none;
+    text-decoration-skip: none;
+}
+.location-bar__link:focus {
+    outline: 3px solid transparent;
+    color: #0b0c0c;
+    background-color: #ffdd00;
+    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+    text-decoration: none;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+.location-bar__link:link {
+    color: #1d70b8;
+}
+.location-bar__link:visited {
+    color: #4c2c92;
+}
+.location-bar__link:hover {
+    color: #003078;
+}
+.location-bar__link:active {
+    color: #0b0c0c;
+}
+.location-bar__link:focus {
+    color: #0b0c0c;
+}
+@media print {
+    .location-bar__link {
+        font-family: sans-serif;
+    }
+}
+@media (min-width: 47.5em) {
+    .location-bar__link {
+        font-size: 1.1875rem;
+        line-height: 1.3157894737;
+    }
+}
+@media print {
+    .location-bar__link {
+        font-size: 14pt;
+        line-height: 1.15;
+    }
+}
+@media print {
+    .location-bar {
+        display: none;
+    }
+}
+.header__user-details {
+    color: #ffffff;
+}
+.phase-tag {
+    margin-left: 15px;
+}

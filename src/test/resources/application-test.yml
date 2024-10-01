@@ -33,6 +33,8 @@ app:
   services:
     hmpps-auth:
       base-url: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
+    oasys:
+      base-url: ${oasys.base-url}
   self:
     base-url: ${hmpps-handover.base-url:http://localhost:${server.port}}
   clients:

@@ -29,6 +29,13 @@ dependencies {
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
 
+  // MVC
+  implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+  implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+  implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.3.0")
+  implementation("org.webjars.npm:govuk-frontend:5.6.0")
+  implementation("org.webjars:webjars-locator-core:0.58")
+
   // Test dependencies
   testImplementation(kotlin("test"))
   testImplementation("net.datafaker:datafaker:2.3.1")
