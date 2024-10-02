@@ -6,6 +6,18 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: yes
 
+  hmpps-auth:
+    image: quay.io/hmpps/hmpps-auth:latest
+    networks:
+      - hmpps
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
+    environment:
+      SERVER_PORT: 9090
+      SPRING_PROFILES_ACTIVE: dev
+      APPLICATION_AUTHENTICATION_UI_ALLOWLIST: 0.0.0.0/0
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+
   postgres:
     image: postgres:16
     networks:
@@ -13,20 +25,35 @@ services:
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: dev
+    tmpfs:
+      - /var/lib/postgresql
 
-  hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:latest
+  coordinator-api:
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs-coordinator-api:latest
     networks:
       - hmpps
+    depends_on:
+      - postgres
+      - hmpps-auth
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health" ]
+      test: [ "CMD", "curl", "-f", "http://coordinator-api:8080/health/ping" ]
       interval: 5s
       retries: 60
     environment:
-      SERVER_PORT: 9090
-      SPRING_PROFILES_ACTIVE: dev
-      APPLICATION_AUTHENTICATION_UI_ALLOWLIST: 0.0.0.0/0
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: postgres
+      APP_DB_ENDPOINT: postgres:5432
+      APP_DB_NAME: postgres
+      APP_DB_USERNAME: root
+      APP_DB_PASSWORD: dev
+      HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090/auth
+      SAN_API_BASE_URL: http://san-api:8080
+      # TODO: Need to get some proper credentials for below
+      SAN_API_CLIENT_ID: hmpps-strengths-and-needs-ui-client
+      SAN_API_CLIENT_SECRET: clientsecret
+      SP_API_BASE_URL: http://sp-api:8080
+      SP_API_CLIENT_ID: hmpps-strengths-and-needs-ui-client
+      SP_API_CLIENT_SECRET: clientsecret
 
   san-api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:latest
@@ -35,6 +62,7 @@ services:
     depends_on:
       - postgres
       - hmpps-auth
+      - san-ui
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://san-api:8080/health/ping" ]
       interval: 5s
@@ -53,9 +81,7 @@ services:
     depends_on:
       - redis
       - hmpps-auth
-      - handover-service
       - oasys-ui
-      - san-api
     healthcheck:
       test: [ "CMD", "node", "./docker/healthcheck.js" ]
       interval: 5s
@@ -63,10 +89,11 @@ services:
     environment:
       PORT: 3000
       REDIS_HOST: redis
-      HMPPS_AUTH_EXTERNAL_URL: http://hmpps-auth:9090/auth
+      HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
-      HMPPS_ARNS_HANDOVER_URL: http://handover-service:7070
-      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://handover-service:7070
+      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
+      OASYS_URL: http://localhost:7072
       HANDOVER_CLIENT_ID: strengths-and-needs-assessment
       HANDOVER_CLIENT_SECRET: san-secret
       TOKEN_VERIFICATION_ENABLED: false
@@ -77,25 +104,28 @@ services:
       SYSTEM_CLIENT_ID: hmpps-strengths-and-needs-ui-client
       SESSION_SECRET: sessionsecret
       SBNA_API_URL: http://san-api:8080
-      INGRESS_URL: http://san-ui:3000
+      INGRESS_URL: http://localhost:3000
       HTTPS: false
 
-  handover-service:
+  arns-handover:
     image: quay.io/hmpps/hmpps-assess-risks-and-needs-handover-service:${APP_VERSION:-latest}
+    build:
+      context: ../
     networks:
       - hmpps
     depends_on:
       - redis
+      - hmpps-auth
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://handover-service:7070/health/ping" ]
+      test: [ "CMD", "curl", "-f", "http://arns-handover:7070/health/ping" ]
+      interval: 5s
+      retries: 100
     environment:
       SERVER_PORT: 7070
       REDIS_HOST: redis
       SPRING_PROFILES_ACTIVE: local
-      HMPPS_HANDOVER_BASE_URL: http://handover-service:7070
-      HMPPS_HANDOVER_EXTERNAL_URL: http://handover-service:7070
-      CLIENT_SAN_OAUTH_REDIRECT_URI: http://san-ui:3000/sign-in/callback
-      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://san-ui:3000/sign-in
+      HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
+      HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
       SERVER_ERROR_WHITELABEL_ENABLED: true
 
@@ -106,35 +136,24 @@ services:
     depends_on:
       - redis
     healthcheck:
-      test: [ "CMD", "node", "/app/docker/healthcheck.js" ]
+      test: [ "CMD", "node", "./docker/healthcheck.js" ]
     environment:
       REDIS_ENABLED: "true"
       SYSTEM_CLIENT_SECRET: clientsecret
       SYSTEM_CLIENT_ID: hmpps-strengths-and-needs-ui-client
       SESSION_SECRET: sessionsecret
       REDIS_HOST: redis
-      INGRESS_URL: http://oasys-ui:3000
+      INGRESS_URL: http://localhost:7072
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
       TOKEN_VERIFICATION_ENABLED: "false"
       TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
-      HMPPS_ARNS_HANDOVER_URL: http://handover-service:7070
+      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
       SBNA_API_URL: "http://san-api:8080"
-      SP_API_URL: "http://¯\_(ツ)_/¯"
+      SP_API_URL: "http://sp-api:8080"
       ENVIRONMENT_NAME: DEV
       AUDIT_ENABLED: "false"
       PRODUCT_ID: FOO
 
-  cypress:
-    image: cypress/included
-    networks:
-      - hmpps
-    depends_on:
-      - handover-service
-      - oasys-ui
-      - san-ui
-    volumes:
-      - ./e2e:/e2e
-    working_dir: /e2e
-
 networks:
   hmpps:
+
