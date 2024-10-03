@@ -15,7 +15,6 @@ import java.time.Duration
 class ClientConfiguration(
   private val appConfiguration: AppConfiguration,
 ) {
-
   @Bean
   fun registeredClientRepository(): InMemoryRegisteredClientRepository {
     val tokenSettings = TokenSettings.builder()

@@ -50,6 +50,7 @@ data class HandoverPrincipal(
 }
 
 data class AssessmentContext(
+  val sanAssessmentId: UUID?,
   @field:Size(min = 1, max = 15)
   val oasysAssessmentPk: String,
   val assessmentId: UUID?,
@@ -57,6 +58,7 @@ data class AssessmentContext(
 )
 
 data class SentencePlanContext(
+  val sentencePlanId: UUID?,
   @field:Size(min = 1, max = 15)
   val oasysAssessmentPk: String,
   val planId: UUID?,

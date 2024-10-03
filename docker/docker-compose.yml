@@ -35,6 +35,7 @@ services:
     depends_on:
       - postgres
       - hmpps-auth
+      - san-api
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://coordinator-api:8080/health/ping" ]
       interval: 5s
@@ -51,6 +52,7 @@ services:
       SP_API_BASE_URL: http://sp-api:8080
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
+      APP_STRATEGIES_PLAN: false
 
   san-api:
     image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:latest
@@ -125,7 +127,10 @@ services:
       HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
       HMPPS_HANDOVER_EXTERNAL_URL: http://localhost:7070
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
+      COORDINATOR_API_BASE_URL: http://coordinator-api:8080
       SERVER_ERROR_WHITELABEL_ENABLED: true
+      CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
+      CLIENT_SECRET: clientsecret
 
   oasys-ui:
     image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest

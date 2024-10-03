@@ -39,16 +39,21 @@ class HandoverService(
       handoverSessionId = handoverSessionId,
       principal = handoverRequest.user,
     )
+
+    val associations = coordinatorService.getAssociations(handoverRequest.oasysAssessmentPk)
+
     val handoverContext = HandoverContext(
       handoverSessionId = handoverSessionId,
       principal = handoverRequest.user,
       subject = handoverRequest.subjectDetails,
       assessmentContext = AssessmentContext(
+        sanAssessmentId = associations.sanAssessmentId,
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         assessmentId = associations.sanAssessmentId,
         assessmentVersion = handoverRequest.assessmentVersion,
       ),
       sentencePlanContext = SentencePlanContext(
+        sentencePlanId = associations.sentencePlanId,
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         planId = associations.sentencePlanId,
         planVersion = handoverRequest.planVersion,
