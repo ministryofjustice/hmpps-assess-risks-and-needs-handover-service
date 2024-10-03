@@ -11,12 +11,12 @@ class CoordinatorService(
   val appConfiguration: AppConfiguration,
   val coordinatorApiWebClient: WebClient,
 ) {
-  private fun endpoint(endpoint: String): String = "${appConfiguration.services.coordinatorApi.baseUrl}${endpoint}"
+  private fun endpoint(endpoint: String): String = "${appConfiguration.services.coordinatorApi.baseUrl}$endpoint"
 
   fun getAssociations(oasysAssessmentPk: String): AssociationsResponse {
     try {
       return coordinatorApiWebClient.get()
-        .uri(endpoint("/oasys/${oasysAssessmentPk}/associations"))
+        .uri(endpoint("/oasys/$oasysAssessmentPk/associations"))
         .retrieve()
         .bodyToMono(AssociationsResponse::class.java)
         .block()
