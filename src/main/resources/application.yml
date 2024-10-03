@@ -77,6 +77,8 @@ app:
       base-url: ${hmpps-auth.base-url}
     oasys:
       base-url: ${oasys.base-url}
+    coordinator-api:
+      base-url: ${coordinator-api.base-url}
   self:
     base-url: ${hmpps-handover.base-url}
     external-url: ${hmpps-handover-external-url:${app.self.base-url}}
