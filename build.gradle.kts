@@ -11,6 +11,7 @@ configurations {
 }
 
 dependencies {
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.7")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // Redis dependencies
