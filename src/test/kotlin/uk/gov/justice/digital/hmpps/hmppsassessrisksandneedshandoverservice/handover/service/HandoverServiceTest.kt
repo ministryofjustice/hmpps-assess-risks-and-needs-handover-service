@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.AssociationsResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import java.util.*
 import kotlin.test.assertContains
@@ -29,6 +30,7 @@ class HandoverServiceTest {
   private lateinit var handoverService: HandoverService
   private lateinit var handoverSessionId: UUID
   private val handoverTokenRepository: HandoverTokenRepository = mockk()
+  private val coordinatorService: CoordinatorService = mockk()
   private val handoverContextService: HandoverContextService = mockk()
   private val coordinatorService: CoordinatorService = mockk()
   private val appConfiguration = mockk<AppConfiguration>(relaxed = true)
@@ -63,11 +65,13 @@ class HandoverServiceTest {
         principal = handoverRequest.user,
         subject = handoverRequest.subjectDetails,
         assessmentContext = AssessmentContext(
+          associations.sanAssessmentId,
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
           assessmentId = associations.sanAssessmentId,
           assessmentVersion = handoverRequest.assessmentVersion,
         ),
         sentencePlanContext = SentencePlanContext(
+          associations.sentencePlanId,
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
           planId = associations.sentencePlanId,
           planVersion = handoverRequest.planVersion,
