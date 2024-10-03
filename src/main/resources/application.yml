@@ -90,6 +90,9 @@ app:
     endpoints:
       handover: /handover
       context: /context
+  client:
+    id: ${client.id}
+    secret: ${client.secret}
 
 management:
   endpoints:
