@@ -12,6 +12,7 @@ services:
       - oasys-ui
       - san-ui
       - san-api
+      - coordinator-api
     environment:
       HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
       HMPPS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
