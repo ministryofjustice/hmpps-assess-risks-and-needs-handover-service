@@ -18,8 +18,13 @@ spring:
 
   security:
     oauth2:
+      client:
+        provider:
+          hmpps-auth:
+            token-uri: ${app.services.hmpps-auth.base-url}/auth/oauth/token
       resourceserver:
         jwt:
+          jwk-set-uri: ${app.services.hmpps-auth.base-url}/auth/.well-known/jwks.json
           issuers:
             - issuer-name: "HMPPS Handover"
               jwk-set-uri: ${app.self.base-url}/oauth2/jwks
