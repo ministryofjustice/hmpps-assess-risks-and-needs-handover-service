@@ -8,6 +8,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
@@ -26,12 +27,14 @@ enum class TokenValidationResult {
 class HandoverService(
   val handoverTokenRepository: HandoverTokenRepository,
   val handoverContextService: HandoverContextService,
+  val coordinatorService: CoordinatorService,
   val appConfiguration: AppConfiguration,
 ) {
   fun createHandover(
     handoverRequest: CreateHandoverLinkRequest,
     handoverSessionId: UUID = UUID.randomUUID(),
   ): CreateHandoverLinkResponse {
+    val associations = coordinatorService.getAssociations(handoverRequest.oasysAssessmentPk)
     val handoverToken = HandoverToken(
       handoverSessionId = handoverSessionId,
       principal = handoverRequest.user,
@@ -42,10 +45,12 @@ class HandoverService(
       subject = handoverRequest.subjectDetails,
       assessmentContext = AssessmentContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+        assessmentId = associations.sanAssessmentId,
         assessmentVersion = handoverRequest.assessmentVersion,
       ),
       sentencePlanContext = SentencePlanContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+        planId = associations.sentencePlanId,
         planVersion = handoverRequest.planVersion,
       ),
     )

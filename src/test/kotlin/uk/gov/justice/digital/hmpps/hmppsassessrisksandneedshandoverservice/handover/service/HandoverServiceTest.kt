@@ -14,6 +14,8 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.response.AssociationsResponse
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
@@ -28,11 +30,12 @@ class HandoverServiceTest {
   private lateinit var handoverSessionId: UUID
   private val handoverTokenRepository: HandoverTokenRepository = mockk()
   private val handoverContextService: HandoverContextService = mockk()
+  private val coordinatorService: CoordinatorService = mockk()
   private val appConfiguration = mockk<AppConfiguration>(relaxed = true)
 
   @BeforeEach
   fun setUp() {
-    handoverService = HandoverService(handoverTokenRepository, handoverContextService, appConfiguration)
+    handoverService = HandoverService(handoverTokenRepository, handoverContextService, coordinatorService, appConfiguration)
     handoverSessionId = UUID.randomUUID()
   }
 
@@ -42,9 +45,14 @@ class HandoverServiceTest {
     private lateinit var handoverRequest: CreateHandoverLinkRequest
     private lateinit var handoverToken: HandoverToken
     private lateinit var handoverContext: HandoverContext
+    private lateinit var associations: AssociationsResponse
 
     @BeforeEach
     fun setUp() {
+      associations = AssociationsResponse(
+        sanAssessmentId = UUID.randomUUID(),
+        sentencePlanId = UUID.randomUUID(),
+      )
       handoverRequest = TestUtils.createHandoverRequest()
       handoverToken = HandoverToken(
         handoverSessionId = handoverSessionId,
@@ -56,10 +64,12 @@ class HandoverServiceTest {
         subject = handoverRequest.subjectDetails,
         assessmentContext = AssessmentContext(
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+          assessmentId = associations.sanAssessmentId,
           assessmentVersion = handoverRequest.assessmentVersion,
         ),
         sentencePlanContext = SentencePlanContext(
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+          planId = associations.sentencePlanId,
           planVersion = handoverRequest.planVersion,
         ),
       )
@@ -67,6 +77,7 @@ class HandoverServiceTest {
 
     @Test
     fun `should save the handover context with correct properties`() {
+      every { coordinatorService.getAssociations(any()) } returns associations
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
 
@@ -87,6 +98,7 @@ class HandoverServiceTest {
 
     @Test
     fun `should save the handover token with the correct properties`() {
+      every { coordinatorService.getAssociations(any()) } returns associations
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
 
@@ -107,6 +119,7 @@ class HandoverServiceTest {
     fun `should return a valid handover link`() {
       val domain = "handover-service"
       val endpoints = TestUtils.createEndPoint()
+      every { coordinatorService.getAssociations(any()) } returns associations
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
       every { appConfiguration.self.externalUrl } returns domain

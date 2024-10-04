@@ -16,7 +16,8 @@ generic-service:
   env:
     SPRING_PROFILES_ACTIVE: "test"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
-    OASYS_BASE_URL: "https://arns-oastub-test.hmpps.service.justice.gov.uk/"
+    OASYS_BASE_URL: "https://arns-oastub-test.hmpps.service.justice.gov.uk"
+    COORDINATOR_API_BASE_URL: "https://arns-coordinator-api-dev.hmpps.service.justice.gov.uk"
 
   allowlist:
     mp-nat-egress-one: 13.43.9.198/32
