@@ -377,3 +377,4 @@ executors:
       - image: cimg/redis:7.2
         environment:
           ALLOW_EMPTY_PASSWORD: yes
+
