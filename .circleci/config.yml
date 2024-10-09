@@ -289,6 +289,16 @@ workflows:
           token: $CIRCLE_TOKEN
           <<: *notify-capita-slack-fail
       - hmpps/trigger_job:
+          name: Deploy Coordinator API
+          repository: hmpps-assess-risks-and-needs-coordinator-api
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - hmpps/trigger_job:
           name: Deploy OASTUB UI
           repository: hmpps-assess-risks-and-needs-oastub-ui
           branch: main
@@ -322,6 +332,7 @@ workflows:
             - hmpps-common-vars
           requires:
             - Deploy Handover Service
+            - Deploy Coordinator API
             - Deploy OASTUB UI
             - Deploy SAN UI
             - Deploy SAN API
