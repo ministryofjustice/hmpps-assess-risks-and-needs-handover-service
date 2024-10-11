@@ -31,8 +31,12 @@ spring:
 
 app:
   services:
+    coordinator-api:
+      base-url: ${test.wiremock.base-url:https://arns-coordinator-api-dev.hmpps.service.justice.gov.uk}
     hmpps-auth:
-      base-url: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
+      base-url: ${test.wiremock.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
+    oasys:
+      base-url: ${oasys.base-url}
   self:
     base-url: ${hmpps-handover.base-url:http://localhost:${server.port}}
   clients:
@@ -41,7 +45,9 @@ app:
       oauth-redirect-uris:
         - http://test-service:3000/sign-in/callback
       handover-redirect-uri: http://localhost:3000/sign-in
-
+  client:
+    id: ${client.id:test-client-credentials-id}
+    secret: ${client.secret:test-client-credentials-secret}
 
 test:
   wiremock:

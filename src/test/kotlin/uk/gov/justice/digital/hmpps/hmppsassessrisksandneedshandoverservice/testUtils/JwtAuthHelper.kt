@@ -52,6 +52,7 @@ class JwtAuthHelper(
     val claimsSet = JWTClaimsSet.Builder()
       .issuer(hmppsAuth.issuerUri)
       .issueTime(Date())
+      .subject("test-subject")
       .claim("grant_type", grantType.value)
       .expirationTime(Date(System.currentTimeMillis() + 3600 * 1000)) // 1 hour expiry
       .jwtID(WireMockExtension.KEY_ID)

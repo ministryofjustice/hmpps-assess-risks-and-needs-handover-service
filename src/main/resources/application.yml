@@ -18,8 +18,20 @@ spring:
 
   security:
     oauth2:
+      client:
+        provider:
+          hmpps-auth:
+            token-uri: ${app.services.hmpps-auth.base-url}/auth/oauth/token
+        registration:
+          coordinator-api:
+            provider: hmpps-auth
+            client-id: ${app.client.id}
+            client-secret: ${app.client.secret}
+            authorization-grant-type: client_credentials
+            scope: read, write
       resourceserver:
         jwt:
+          jwk-set-uri: ${app.services.hmpps-auth.base-url}/auth/.well-known/jwks.json
           issuers:
             - issuer-name: "HMPPS Handover"
               jwk-set-uri: ${app.self.base-url}/oauth2/jwks
@@ -45,6 +57,13 @@ spring:
       ssl:
         enabled: ${redis-ssl-enabled:true}
 
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+    hiddenmethod:
+      filter:
+        enabled: true
+
 server:
   port: 8080
   servlet:
@@ -68,12 +87,19 @@ app:
   services:
     hmpps-auth:
       base-url: ${hmpps-auth.base-url}
+    oasys:
+      base-url: ${oasys.base-url}
+    coordinator-api:
+      base-url: ${coordinator-api.base-url}
   self:
     base-url: ${hmpps-handover.base-url}
     external-url: ${hmpps-handover-external-url:${app.self.base-url}}
     endpoints:
       handover: /handover
       context: /context
+  client:
+    id: ${client.id}
+    secret: ${client.secret}
 
 management:
   endpoints:

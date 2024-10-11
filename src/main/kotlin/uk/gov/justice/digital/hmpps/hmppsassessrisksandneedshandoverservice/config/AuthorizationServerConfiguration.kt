@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver
 import org.springframework.security.web.SecurityFilterChain
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.UnauthorizedHandler
 
 @Configuration
 class AuthorizationServerConfiguration {
@@ -32,6 +33,7 @@ class AuthorizationServerConfiguration {
     http
       .securityMatcher { e -> urls.any { url -> url == e.requestURI } }
       .authorizeHttpRequests { authorize -> authorize.anyRequest().denyAll() }
+      .exceptionHandling { it.authenticationEntryPoint(UnauthorizedHandler()) }
 
     return http.build()
   }
@@ -43,6 +45,8 @@ class AuthorizationServerConfiguration {
     http: HttpSecurity,
     issuerAuthenticationManagerResolver: JwtIssuerAuthenticationManagerResolver,
   ): SecurityFilterChain {
+    http.exceptionHandling { it.authenticationEntryPoint(UnauthorizedHandler()) }
+
     OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http)
 
     http.getConfigurer(OAuth2AuthorizationServerConfigurer::class.java)
