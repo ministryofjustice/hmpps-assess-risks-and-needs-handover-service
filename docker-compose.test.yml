@@ -15,7 +15,7 @@ services:
       POSTGRES_PASSWORD: dev
 
   hmpps-auth:
-    image: quay.io/hmpps/hmpps-auth:latest
+    image: quay.io/hmpps/hmpps-auth:2024-10-02.25761.db2ce3c
     networks:
       - hmpps
     healthcheck:
@@ -29,7 +29,7 @@ services:
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
 
   san-api:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:latest
+    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:2024-10-01.5237.fba1b24
     networks:
       - hmpps
     depends_on:
@@ -47,7 +47,7 @@ services:
       FORM_CONFIG_BASE_URL: http://san-ui:3000/config
 
   san-ui:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-ui:latest
+    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-ui:2024-10-02.17520.d803cbb
     networks:
       - hmpps
     depends_on:
@@ -67,6 +67,7 @@ services:
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
       HMPPS_ARNS_HANDOVER_URL: http://handover-service:7070
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://handover-service:7070
+      OASYS_URL: http://oasys-ui:3000
       HANDOVER_CLIENT_ID: strengths-and-needs-assessment
       HANDOVER_CLIENT_SECRET: san-secret
       TOKEN_VERIFICATION_ENABLED: false
@@ -100,7 +101,7 @@ services:
       SERVER_ERROR_WHITELABEL_ENABLED: true
 
   oasys-ui:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest
+    image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:2024-09-30.1447.2b08330
     networks:
       - hmpps
     depends_on:
@@ -120,6 +121,7 @@ services:
       HMPPS_ARNS_HANDOVER_URL: http://handover-service:7070
       SBNA_API_URL: "http://san-api:8080"
       SP_API_URL: "http://¯\_(ツ)_/¯"
+      COORDINATOR_API_URL: "http://¯\_(ツ)_/¯"
       ENVIRONMENT_NAME: DEV
       AUDIT_ENABLED: "false"
       PRODUCT_ID: FOO

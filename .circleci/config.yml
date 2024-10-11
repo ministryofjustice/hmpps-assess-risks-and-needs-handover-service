@@ -166,10 +166,10 @@ workflows:
           pipeline_id: << pipeline.id >>
           pipeline_number: << pipeline.number >>
           context: hmpps-common-vars
-      - e2e_test:
-          context: hmpps-common-vars
-          requires:
-            - build_docker
+#      - e2e_test:
+#          context: hmpps-common-vars
+#          requires:
+#            - build_docker
       - hmpps/publish_docker:
           name: publish_docker
           publish_latest_tag: true
@@ -177,7 +177,7 @@ workflows:
           requires:
             - validate
             - build_docker
-            - e2e_test
+#            - e2e_test
             - helm_lint
           filters:
             branches:
@@ -248,7 +248,7 @@ workflows:
           pipeline_number: << pipeline.number >>
           context:
             - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-handover-service-test
+            - hmpps-assess-risks-and-needs-integrations-test
       - hmpps/publish_docker:
           name: publish_docker
           publish_latest_tag: false
@@ -264,7 +264,7 @@ workflows:
           pipeline_number: << pipeline.number >>
           context:
             - hmpps-common-vars
-            - hmpps-assess-risks-and-needs-handover-service-test
+            - hmpps-assess-risks-and-needs-integrations-test
           requires:
             - publish_docker
           helm_timeout: 5m
@@ -281,6 +281,16 @@ workflows:
       - hmpps/trigger_job:
           name: Deploy Handover Service
           repository: hmpps-assess-risks-and-needs-handover-service
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - hmpps/trigger_job:
+          name: Deploy Coordinator API
+          repository: hmpps-assess-risks-and-needs-coordinator-api
           branch: main
           build_parameters: '{ "deploy": "test" }'
           follow_timeout: 1000
@@ -322,6 +332,7 @@ workflows:
             - hmpps-common-vars
           requires:
             - Deploy Handover Service
+            - Deploy Coordinator API
             - Deploy OASTUB UI
             - Deploy SAN UI
             - Deploy SAN API

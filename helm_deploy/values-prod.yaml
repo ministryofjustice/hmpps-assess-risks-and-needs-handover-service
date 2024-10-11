@@ -8,6 +8,7 @@ generic-service:
   env:
     SPRING_PROFILES_ACTIVE: "prod"
     APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
+    COORDINATOR_API_BASE_URL: "https://arns-coordinator-api.hmpps.service.justice.gov.uk"
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
