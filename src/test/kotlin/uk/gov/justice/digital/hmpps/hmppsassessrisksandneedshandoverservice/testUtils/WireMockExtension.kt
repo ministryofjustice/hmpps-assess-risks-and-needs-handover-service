@@ -1,10 +1,15 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils
 
 import com.github.tomakehurst.wiremock.WireMockServer
+import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.post
+import com.github.tomakehurst.wiremock.client.WireMock.urlMatching
 import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.http.HttpHeader
+import com.github.tomakehurst.wiremock.http.HttpHeaders
 import com.nimbusds.jose.jwk.JWKSet
 import com.nimbusds.jose.jwk.RSAKey
 import org.junit.jupiter.api.extension.AfterAllCallback
@@ -13,6 +18,9 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import java.security.KeyPair
 import java.security.KeyPairGenerator
 import java.security.interfaces.RSAPublicKey
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.*
 
 class WireMockExtension : BeforeAllCallback, AfterAllCallback {
   companion object {
@@ -36,6 +44,32 @@ class WireMockExtension : BeforeAllCallback, AfterAllCallback {
             .withBody(jwksResponse),
         ),
     )
+
+    wireMockServer.stubFor(
+      post(WireMock.urlEqualTo("/auth/oauth/token"))
+        .willReturn(
+          aResponse()
+            .withHeaders(HttpHeaders(HttpHeader("Content-Type", "application/json")))
+            .withBody(
+              """
+              {
+                "token_type": "bearer",
+                "access_token": "ABCDE",
+                "expires_in": ${LocalDateTime.now().plusHours(2).toEpochSecond(ZoneOffset.UTC)}
+              }
+              """.trimIndent(),
+            ),
+        ),
+    )
+
+    wireMockServer.stubFor(
+      get(urlMatching("/oasys/.*/associations"))
+        .willReturn(
+          aResponse()
+            .withHeader("Content-Type", "application/json")
+            .withBody(createAssociationsResponse()),
+        ),
+    )
   }
 
   override fun afterAll(context: ExtensionContext) {
@@ -54,5 +88,14 @@ class WireMockExtension : BeforeAllCallback, AfterAllCallback {
       .build()
     val jwkSet = JWKSet(rsaKey)
     return jwkSet.toJSONObject().toString()
+  }
+
+  private fun createAssociationsResponse(): String {
+    return """
+      {
+        "sentencePlanId": "${UUID.randomUUID()}",
+        "sanAssessmentId": "${UUID.randomUUID()}"
+      }
+    """.trimIndent()
   }
 }

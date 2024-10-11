@@ -1,4 +1,4 @@
-package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.integration
+package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.controller
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.repository.HandoverContextRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.ErrorResponse
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.integration.IntegrationTestBase
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.WireMockExtension
 import java.time.LocalDate
@@ -109,7 +110,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return unauthorized when updating the handover context without authorization`() {
+    fun `should return access denied when updating the handover context without authorization`() {
       val handoverSessionId = UUID.randomUUID()
       val newHandoverContext = TestUtils.createHandoverContext(handoverSessionId)
 
@@ -117,7 +118,8 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         .bodyValue(newHandoverContext)
         .header("Content-Type", "application/json")
         .exchange()
-        .expectStatus().isUnauthorized
+        .expectStatus().isFound
+        .expectHeader().valueMatches("Location", "^https?://.*:\\d{0,4}/access-denied$")
     }
 
     @Test

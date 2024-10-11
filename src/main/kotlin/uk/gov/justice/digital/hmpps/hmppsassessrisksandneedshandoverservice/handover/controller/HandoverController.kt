@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -94,8 +95,14 @@ class HandoverController(
   ): ResponseEntity<Any> {
     val strategy = SecurityContextHolder.getContextHolderStrategy()
     val repo = HttpSessionSecurityContextRepository()
+
+    val accessDenied = ResponseEntity
+      .status(HttpStatus.FOUND)
+      .header("Location", "/access-denied")
+      .build<Any?>()
+
     val client = appConfiguration.clients[clientId]
-      ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found")
+      ?: return accessDenied.also { log.info("Client not found") }
 
     return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
       is UseHandoverLinkResult.Success -> {
@@ -105,12 +112,14 @@ class HandoverController(
 
         ResponseEntity.status(HttpStatus.FOUND).header("Location", client.handoverRedirectUri).build()
       }
-      UseHandoverLinkResult.HandoverLinkNotFound -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Handover link expired or not found")
-      UseHandoverLinkResult.HandoverLinkAlreadyUsed -> ResponseEntity.status(HttpStatus.CONFLICT).body("Handover link has already been used")
+      UseHandoverLinkResult.HandoverLinkNotFound -> accessDenied.also { log.info("Handover link expired or not found") }
+      UseHandoverLinkResult.HandoverLinkAlreadyUsed -> accessDenied.also { log.info("Handover link has already been used") }
     }
   }
 
-  companion object {
+  private companion object {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     const val HANDOVER_REQUEST_EXAMPLE = """{
       "user": {
         "identifier": "RBACKENT",

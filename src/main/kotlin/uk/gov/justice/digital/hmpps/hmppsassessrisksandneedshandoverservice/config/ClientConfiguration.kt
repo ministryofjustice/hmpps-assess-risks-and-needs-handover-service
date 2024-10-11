@@ -19,8 +19,8 @@ class ClientConfiguration(
   @Bean
   fun registeredClientRepository(): InMemoryRegisteredClientRepository {
     val tokenSettings = TokenSettings.builder()
-      .accessTokenTimeToLive(Duration.ofHours(1))
-      .refreshTokenTimeToLive(Duration.ofDays(2))
+      .accessTokenTimeToLive(Duration.ofDays(1L))
+      .refreshTokenTimeToLive(Duration.ofDays(2L))
       .build()
 
     val registeredClients = appConfiguration.clients.map { (clientId, clientProperties) ->

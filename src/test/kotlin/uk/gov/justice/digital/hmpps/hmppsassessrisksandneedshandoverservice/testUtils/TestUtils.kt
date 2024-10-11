@@ -50,11 +50,13 @@ object TestUtils {
 
   fun createAssessmentContext() = AssessmentContext(
     oasysAssessmentPk = (100_000..999_999).random().toString(),
+    assessmentId = UUID.randomUUID(),
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
   fun createSentencePlanContext() = SentencePlanContext(
     oasysAssessmentPk = (100_000..999_999).random().toString(),
+    planId = UUID.randomUUID(),
     planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 

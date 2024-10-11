@@ -13,6 +13,7 @@ class AppConfiguration {
   class Services {
     lateinit var hmppsAuth: Service
     lateinit var oasys: Service
+    lateinit var coordinatorApi: Service
 
     class Service {
       lateinit var baseUrl: String

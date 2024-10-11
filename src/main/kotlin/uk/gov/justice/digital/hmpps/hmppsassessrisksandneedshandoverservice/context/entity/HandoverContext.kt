@@ -52,12 +52,14 @@ data class HandoverPrincipal(
 data class AssessmentContext(
   @field:Size(min = 1, max = 15)
   val oasysAssessmentPk: String,
+  val assessmentId: UUID?,
   val assessmentVersion: Long?,
 )
 
 data class SentencePlanContext(
   @field:Size(min = 1, max = 15)
   val oasysAssessmentPk: String,
+  val planId: UUID?,
   val planVersion: Long?,
 )
 

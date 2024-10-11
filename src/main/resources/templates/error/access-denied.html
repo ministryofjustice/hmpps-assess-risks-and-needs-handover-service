@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" lang="en"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <title>Access Denied</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <h1>You need to sign in to use this service</h1>
+  <p>This could be because you've used a bookmarked link, or your session has expired due to inactivity.</p>
+  <p><a th:href="${oasysUrl}">Go to the OASys homepage</a> to sign in again.</p>
+</div>
+</body>
+</html>
