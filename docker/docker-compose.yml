@@ -35,7 +35,6 @@ services:
     depends_on:
       - postgres
       - hmpps-auth
-      - san-api
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://coordinator-api:8080/health/ping" ]
       interval: 5s
