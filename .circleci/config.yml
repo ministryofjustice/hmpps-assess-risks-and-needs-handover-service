@@ -9,9 +9,9 @@ parameters:
   alerts-slack-channel:
     type: string
     default: "hmpps-assessments-notifications"
-#  releases-slack-channel:
-#    type: string
-#    default:
+  releases-slack-channel:
+    type: string
+    default: hmpps-assessments-notifications
   deploy:
     description: Trigger a manual deployment
     type: string
@@ -197,42 +197,42 @@ workflows:
           requires:
             - publish_docker
           helm_timeout: 5m
-#      - request-preprod-approval:
-#          type: approval
-#          requires:
-#            - deploy_dev
-#      - hmpps/deploy_env:
-#          name: deploy_preprod
-#          env: "preprod"
-#          jira_update: true
-#          jira_env_type: staging
-#          pipeline_id: <<pipeline.id>>
-#          pipeline_number: <<pipeline.number>>
-#          context:
-#            - hmpps-common-vars
-#            - hmpps-assess-risks-and-needs-handover-service-preprod
-#          requires:
-#            - request-preprod-approval
-#          helm_timeout: 5m
-#      - request-prod-approval:
-#          type: approval
-#          requires:
-#            - deploy_preprod
-#      - hmpps/deploy_env:
-#          name: deploy_prod
-#          env: "prod"
-#          jira_update: true
-#          jira_env_type: production
-#          pipeline_id: <<pipeline.id>>
-#          pipeline_number: <<pipeline.number>>
-#          slack_notification: true
-#          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
-#          context:
-#            - hmpps-common-vars
-#            - hmpps-assess-risks-and-needs-handover-service-prod
-#          requires:
-#            - request-prod-approval
-#          helm_timeout: 5m
+      - hmpps/deploy_env:
+          name: deploy_preprod
+          env: "preprod"
+          jira_update: true
+          jira_env_type: staging
+          pipeline_id: <<pipeline.id>>
+          pipeline_number: <<pipeline.number>>
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-handover-service-preprod
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - deploy_dev
+          helm_timeout: 5m
+      - hmpps/deploy_env:
+          name: deploy_prod
+          env: "prod"
+          jira_update: true
+          jira_env_type: production
+          pipeline_id: <<pipeline.id>>
+          pipeline_number: <<pipeline.number>>
+          slack_notification: true
+          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
+          context:
+            - hmpps-common-vars
+            - hmpps-assess-risks-and-needs-handover-service-prod
+          filters:
+            branches:
+              only:
+                - main
+          requires:
+            - deploy_preprod
+          helm_timeout: 5m
 
   deploy-to-test-env:
     when:
@@ -317,9 +317,30 @@ workflows:
           context:
             - hmpps-common-vars
           token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
       - hmpps/trigger_job:
           name: Deploy SAN API
           repository: hmpps-strengths-based-needs-assessments-api
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - hmpps/trigger_job:
+          name: Deploy Sentence Plan UI
+          repository: hmpps-sentence-plan-ui
+          branch: main
+          build_parameters: '{ "deploy": "test" }'
+          follow_timeout: 1000
+          context:
+            - hmpps-common-vars
+          token: $CIRCLE_TOKEN
+          <<: *notify-capita-slack-fail
+      - hmpps/trigger_job:
+          name: Deploy Sentence Plan API
+          repository: hmpps-sentence-plan
           branch: main
           build_parameters: '{ "deploy": "test" }'
           follow_timeout: 1000
@@ -336,6 +357,8 @@ workflows:
             - Deploy OASTUB UI
             - Deploy SAN UI
             - Deploy SAN API
+            - Deploy Sentence Plan UI
+            - Deploy Sentence Plan API
 
   security:
     triggers:
