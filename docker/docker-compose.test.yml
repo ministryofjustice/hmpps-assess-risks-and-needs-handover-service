@@ -7,7 +7,13 @@ services:
       OASYS_URL: http://oasys-ui:3000
       KEEP_ALIVE: 30000
 
+  coordinator-api:
+    environment:
+      APP_STRATEGIES_PLAN: false
+
   arns-handover:
+    depends_on:
+      - san-api
     environment:
       HMPPS_HANDOVER_BASE_URL: http://arns-handover:7070
       HMPPS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
