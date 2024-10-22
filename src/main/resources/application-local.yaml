@@ -7,17 +7,10 @@ spring:
           pem-secret: ${jwk-pem.secret:SUPERHOT}
   data:
     redis:
-      host: ${redis-host:localhost}
       ssl:
         enabled: ${redis-ssl-enabled:false}
 
 app:
-  services:
-    hmpps-auth:
-#      TODO: change to localhost
-      base-url: ${hmpps-auth.base-url:https://sign-in-dev.hmpps.service.justice.gov.uk}
-  self:
-    base-url: ${hmpps-handover.base-url:http://localhost:${server.port}}
   clients:
     localhost:
       secret: secret
