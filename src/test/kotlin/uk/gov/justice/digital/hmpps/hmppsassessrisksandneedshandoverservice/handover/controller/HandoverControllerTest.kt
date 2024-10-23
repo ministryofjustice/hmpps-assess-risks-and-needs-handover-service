@@ -118,7 +118,7 @@ class HandoverControllerTest : IntegrationTestBase() {
         .header("Content-Type", "application/json")
         .exchange()
         .expectStatus().isFound
-        .expectHeader().valueMatches("Location", "^https?://.*:\\d{0,4}/access-denied$")
+        .expectHeader().valueMatches("Location", "^https?://.*:[0-9]+/access-denied$")
     }
   }
 
