@@ -12,6 +12,8 @@ services:
       - hmpps
     healthcheck:
       test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
+      interval: 5s
+      retries: 60
     environment:
       SERVER_PORT: 9090
       SPRING_PROFILES_ACTIVE: dev
