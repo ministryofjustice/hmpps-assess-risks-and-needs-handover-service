@@ -40,6 +40,7 @@ data class HandoverPrincipal(
   val identifier: String = "",
 
   @field:Size(min = 1, max = 50)
+  @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Display name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
   val returnUrl: String = "",
@@ -71,8 +72,10 @@ data class SubjectDetails(
   @field:Size(max = 50)
   val nomisId: String?,
   @field:Size(min = 1, max = 25)
+  @field:Pattern(regexp = "^[a-zA-Z\\-']+$", message = "Given name must contain only alphabetic characters, hyphens, or apostrophes")
   val givenName: String,
   @field:Size(min = 1, max = 25)
+  @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Family name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val familyName: String,
   @field:Past
   val dateOfBirth: LocalDate?,
