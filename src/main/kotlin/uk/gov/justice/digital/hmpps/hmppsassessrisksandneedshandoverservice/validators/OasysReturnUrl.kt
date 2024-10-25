@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import kotlin.reflect.KClass
 
-@MustBeDocumented
 @Constraint(validatedBy = [AllowedUrlValidator::class])
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
