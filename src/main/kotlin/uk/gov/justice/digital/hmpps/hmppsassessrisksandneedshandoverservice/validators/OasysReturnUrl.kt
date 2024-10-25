@@ -15,12 +15,12 @@ import kotlin.reflect.KClass
 annotation class OasysReturnUrl(
   val message: String = "OASys return URL is not on approved list",
   val groups: Array<KClass<*>> = [],
-  val payload: Array<KClass<out Payload>> = []
+  val payload: Array<KClass<out Payload>> = [],
 )
 
 @Component
 class AllowedUrlValidator(
-  private val appConfiguration: AppConfiguration
+  private val appConfiguration: AppConfiguration,
 ) : ConstraintValidator<OasysReturnUrl, String> {
 
   override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {

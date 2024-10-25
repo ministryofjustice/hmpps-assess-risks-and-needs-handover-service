@@ -19,7 +19,7 @@ class AppConfiguration {
       lateinit var baseUrl: String
     }
 
-    class OasysService: Service() {
+    class OasysService : Service() {
       lateinit var returnUrls: List<String>
     }
   }
