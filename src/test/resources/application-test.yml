@@ -28,6 +28,9 @@ spring:
 
 app:
   services:
+    oasys:
+      return-urls:
+        - http://test-oasys-return-url
     coordinator-api:
       base-url: ${test.wiremock.base-url}
     hmpps-auth:
