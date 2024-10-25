@@ -66,6 +66,15 @@ clean: ## Stops and removes all project containers. Deletes local build/cache di
 update: ## Downloads the latest versions of containers.
 	docker compose ${LOCAL_COMPOSE_FILES} pull
 
+dev-api-token: ## Generates a JWT for authenticating with the handover service.
+	docker compose ${DEV_COMPOSE_FILES} exec arns-handover \
+		curl --location 'http://hmpps-auth:9090/auth/oauth/token' \
+	--header 'authorization: Basic aG1wcHMtYXNzZXNzLXJpc2tzLWFuZC1uZWVkcy1vYXN0dWItdWk6Y2xpZW50c2VjcmV0' \
+	--header 'Content-Type: application/x-www-form-urlencoded' \
+	--data-urlencode 'grant_type=client_credentials' \
+	| jq -r '.access_token' \
+	| xargs printf "\nToken:\n%s\n"
+
 save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_DIR=
 	mkdir -p ${OUTPUT_LOGS_DIR}
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
