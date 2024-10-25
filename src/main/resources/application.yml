@@ -89,6 +89,7 @@ app:
       base-url: ${hmpps-auth.base-url}
     oasys:
       base-url: ${oasys.base-url}
+      return-urls: ${oasys.return-urls}
     coordinator-api:
       base-url: ${coordinator-api.base-url}
   self:
