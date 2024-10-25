@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.index.Indexed
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.OasysReturnUrl
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -43,6 +44,8 @@ data class HandoverPrincipal(
   @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Display name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
+
+  @field:OasysReturnUrl
   val returnUrl: String = "",
 ) {
   override fun toString(): String {
