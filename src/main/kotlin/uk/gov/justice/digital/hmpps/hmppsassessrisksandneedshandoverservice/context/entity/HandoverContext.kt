@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.RedisHash
 import org.springframework.data.redis.core.index.Indexed
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.OasysReturnUrl
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -40,8 +41,11 @@ data class HandoverPrincipal(
   val identifier: String = "",
 
   @field:Size(min = 1, max = 50)
+  @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Display name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
+
+  @field:OasysReturnUrl
   val returnUrl: String = "",
 ) {
   override fun toString(): String {
@@ -71,8 +75,10 @@ data class SubjectDetails(
   @field:Size(max = 50)
   val nomisId: String?,
   @field:Size(min = 1, max = 25)
+  @field:Pattern(regexp = "^[a-zA-Z\\-']+$", message = "Given name must contain only alphabetic characters, hyphens, or apostrophes")
   val givenName: String,
   @field:Size(min = 1, max = 25)
+  @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Family name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val familyName: String,
   @field:Past
   val dateOfBirth: LocalDate?,

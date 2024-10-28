@@ -12,11 +12,15 @@ class AppConfiguration {
 
   class Services {
     lateinit var hmppsAuth: Service
-    lateinit var oasys: Service
+    lateinit var oasys: OasysService
     lateinit var coordinatorApi: Service
 
-    class Service {
+    open class Service {
       lateinit var baseUrl: String
+    }
+
+    class OasysService : Service() {
+      lateinit var returnUrls: List<String>
     }
   }
 
