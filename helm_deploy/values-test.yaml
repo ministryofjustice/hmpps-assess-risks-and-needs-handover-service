@@ -12,7 +12,7 @@ generic-service:
     HMPPS_AUTH_BASE_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk"
     HMPPS_HANDOVER_BASE_URL: "https://arns-handover-service-test.hmpps.service.justice.gov.uk"
     OASYS_BASE_URL: "https://arns-oastub-test.hmpps.service.justice.gov.uk"
-    OASYS_RETURN_URLS: "https://arns-oastub-test.hmpps.service.justice.gov.uk"
+    OASYS_RETURN_URLS: "https://arns-oastub-test.hmpps.service.justice.gov.uk,http://10.0.1"
     COORDINATOR_API_BASE_URL: "https://arns-coordinator-api-test.hmpps.service.justice.gov.uk"
     CLIENT_SP_OAUTH_REDIRECT_URI: "https://sentence-plan-test.hmpps.service.justice.gov.uk/sign-in/callback"
     CLIENT_SP_HANDOVER_REDIRECT_URI: "https://sentence-plan-test.hmpps.service.justice.gov.uk/sign-in"
