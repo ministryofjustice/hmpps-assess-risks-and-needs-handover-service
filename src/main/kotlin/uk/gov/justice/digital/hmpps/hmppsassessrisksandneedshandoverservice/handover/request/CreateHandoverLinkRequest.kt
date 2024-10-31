@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.han
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Size
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.CriminogenicNeedsData
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
 
@@ -20,8 +21,11 @@ data class CreateHandoverLinkRequest(
   val oasysAssessmentPk: String,
 
   @Schema(description = "Version of the assessment")
-  val assessmentVersion: Long?,
+  val sanAssessmentVersion: Long? = null,
 
   @Schema(description = "Version of the sentence plan")
-  val planVersion: Long?,
+  val sentencePlanVersion: Long? = null,
+
+  @Schema(description = "Criminogenic Needs Data")
+  val criminogenicNeedsData: CriminogenicNeedsData? = null,
 )

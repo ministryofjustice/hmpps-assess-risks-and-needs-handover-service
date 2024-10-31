@@ -46,13 +46,14 @@ class HandoverService(
       assessmentContext = AssessmentContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         assessmentId = associations.sanAssessmentId,
-        assessmentVersion = handoverRequest.assessmentVersion,
+        assessmentVersion = handoverRequest.sanAssessmentVersion,
       ),
       sentencePlanContext = SentencePlanContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         planId = associations.sentencePlanId,
-        planVersion = handoverRequest.planVersion,
+        planVersion = handoverRequest.sentencePlanVersion,
       ),
+      criminogenicNeedsData = handoverRequest.criminogenicNeedsData,
     )
 
     handoverContextService.saveContext(handoverContext)

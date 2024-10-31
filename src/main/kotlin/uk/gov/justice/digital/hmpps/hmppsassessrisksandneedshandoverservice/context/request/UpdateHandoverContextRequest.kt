@@ -3,6 +3,7 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.con
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.CriminogenicNeedsData
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
@@ -23,4 +24,9 @@ data class UpdateHandoverContextRequest(
   @Schema(description = "Sentence plan context details")
   @field:Valid
   val sentencePlanContext: SentencePlanContext?,
+
+  @Schema(description = "Criminogenic Needs Data")
+  @field:Valid
+  val criminogenicNeedsData: CriminogenicNeedsData? = null,
+
 )

@@ -34,6 +34,7 @@ data class HandoverContext(
   val subject: SubjectDetails,
   val assessmentContext: AssessmentContext?,
   val sentencePlanContext: SentencePlanContext?,
+  val criminogenicNeedsData: CriminogenicNeedsData? = null,
 )
 
 data class HandoverPrincipal(
@@ -86,6 +87,90 @@ data class SubjectDetails(
   val location: Location,
   @field:Pattern(regexp = "YES|NO", message = "must be either 'YES' or 'NO'")
   val sexuallyMotivatedOffenceHistory: String?,
+)
+
+data class CriminogenicNeedsData(
+  val accommodation: Accommodation? = null,
+  val educationTrainingEmployability: EducationTrainingEmployability? = null,
+  val finance: Finance? = null,
+  val drugMisuse: DrugMisuse? = null,
+  val alcoholMisuse: AlcoholMisuse? = null,
+  val healthAndWellbeing: HealthAndWellbeing? = null,
+  val personalRelationshipsAndCommunity: PersonalRelationshipsAndCommunity? = null,
+  val thinkingBehaviourAndAttitudes: ThinkingBehaviourAndAttitudes? = null,
+  val lifestyleAndAssociates: LifestyleAndAssociates? = null,
+)
+
+data class Accommodation(
+  val accLinkedToHarm: String? = null,
+  val accLinkedToReoffending: String? = null,
+  val accStrengths: String? = null,
+  val accOtherWeightedScore: String? = null,
+  val accThreshold: String? = null,
+)
+
+data class EducationTrainingEmployability(
+  val eteLinkedToHarm: String? = null,
+  val eteLinkedToReoffending: String? = null,
+  val eteStrengths: String? = null,
+  val eteOtherWeightedScore: String? = null,
+  val eteThreshold: String? = null,
+)
+
+data class Finance(
+  val financeLinkedToHarm: String? = null,
+  val financeLinkedToReoffending: String? = null,
+  val financeStrengths: String? = null,
+  val financeOtherWeightedScore: String? = null,
+  val financeThreshold: String? = null,
+)
+
+data class DrugMisuse(
+  val drugLinkedToHarm: String? = null,
+  val drugLinkedToReoffending: String? = null,
+  val drugStrengths: String? = null,
+  val drugOtherWeightedScore: String? = null,
+  val drugThreshold: String? = null,
+)
+
+data class AlcoholMisuse(
+  val alcoholLinkedToHarm: String? = null,
+  val alcoholLinkedToReoffending: String? = null,
+  val alcoholStrengths: String? = null,
+  val alcoholOtherWeightedScore: String? = null,
+  val alcoholThreshold: String? = null,
+)
+
+data class HealthAndWellbeing(
+  val emoLinkedToHarm: String? = null,
+  val emoLinkedToReoffending: String? = null,
+  val emoStrengths: String? = null,
+  val emoOtherWeightedScore: String? = null,
+  val emoThreshold: String? = null,
+)
+
+data class PersonalRelationshipsAndCommunity(
+  val relLinkedToHarm: String? = null,
+  val relLinkedToReoffending: String? = null,
+  val relStrengths: String? = null,
+  val relOtherWeightedScore: String? = null,
+  val relThreshold: String? = null,
+)
+
+data class ThinkingBehaviourAndAttitudes(
+  val thinkLinkedToHarm: String? = null,
+  val thinkLinkedToReoffending: String? = null,
+  val thinkStrengths: String? = null,
+  val thinkOtherWeightedScore: String? = null,
+  val thinkThreshold: String? = null,
+)
+
+data class LifestyleAndAssociates(
+  val lifestyleLinkedToHarm: String? = null,
+  val lifestyleLinkedToReoffending: String? = null,
+  val lifestyleStrengths: String? = null,
+  val lifestyleOtherWeightedScore: String? = null,
+  val lifestyleThreshold: String? = null,
 )
 
 enum class Location {
