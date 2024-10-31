@@ -25,7 +25,7 @@ data class UpdateHandoverContextRequest(
   @field:Valid
   val sentencePlanContext: SentencePlanContext?,
 
-  @Schema(description = "Criminogenic Needs Scores")
+  @Schema(description = "Criminogenic Needs Data")
   @field:Valid
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 
