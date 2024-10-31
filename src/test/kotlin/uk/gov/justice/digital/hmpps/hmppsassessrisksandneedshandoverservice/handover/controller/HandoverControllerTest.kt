@@ -180,7 +180,7 @@ class HandoverControllerTest : IntegrationTestBase() {
   }
 
   @Test
-  fun `should cache and return crimiogenicNeeds when crimiogenicNeeds are sent in request`() {
+  fun `should cache and return crimiogenic needs data when crimiogenic needs data is sent in request`() {
     val handoverRequest = TestUtils.createHandoverRequestFromJson()
 
     val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
