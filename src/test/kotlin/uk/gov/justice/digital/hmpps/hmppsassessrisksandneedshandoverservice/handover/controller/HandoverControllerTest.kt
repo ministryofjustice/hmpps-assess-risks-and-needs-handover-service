@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.ErrorResponse
@@ -54,8 +55,8 @@ class HandoverControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response.handoverLink).startsWith(appConfiguration.self.externalUrl)
-      assertThat(response.handoverSessionId).toString().isNotEmpty()
+      assertThat(response?.handoverLink).startsWith(appConfiguration.self.externalUrl)
+      assertThat(response?.handoverSessionId).toString().isNotEmpty()
     }
 
     @Test
@@ -74,8 +75,8 @@ class HandoverControllerTest : IntegrationTestBase() {
           sexuallyMotivatedOffenceHistory = "invalid_answer",
         ),
         oasysAssessmentPk = "123",
-        assessmentVersion = 1,
-        planVersion = 1,
+        sanAssessmentVersion = 1,
+        sentencePlanVersion = 1,
       )
 
       val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
@@ -88,8 +89,8 @@ class HandoverControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response.userMessage).contains("subjectDetails.sexuallyMotivatedOffenceHistory: must be either 'YES' or 'NO'")
-      assertThat(response.userMessage).contains("subjectDetails.givenName: size must be between 1 and 25")
+      assertThat(response?.userMessage).contains("subjectDetails.sexuallyMotivatedOffenceHistory: must be either 'YES' or 'NO'")
+      assertThat(response?.userMessage).contains("subjectDetails.givenName: size must be between 1 and 25")
     }
 
     @Test
@@ -176,5 +177,30 @@ class HandoverControllerTest : IntegrationTestBase() {
         .expectHeader().valueEquals("Location", "/access-denied")
         .expectCookie().doesNotExist(sessionCookieName)
     }
+  }
+
+  @Test
+  fun `should cache and return crimiogenicNeeds when crimiogenicNeeds are sent in request`() {
+    val handoverRequest = TestUtils.createHandoverRequestFromJson()
+
+    val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+      .bodyValue(handoverRequest)
+      .header("Content-Type", "application/json")
+      .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(CreateHandoverLinkResponse::class.java)
+      .returnResult()
+      .responseBody
+
+    val response = webTestClient.get().uri("${appConfiguration.self.endpoints.context}/${postResponse!!.handoverSessionId}")
+      .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+      .exchange()
+      .expectStatus().isOk
+      .expectBody(HandoverContext::class.java)
+      .returnResult()
+      .responseBody
+
+    assertThat(response!!.criminogenicNeedsData).isEqualTo(handoverRequest.criminogenicNeedsData)
   }
 }
