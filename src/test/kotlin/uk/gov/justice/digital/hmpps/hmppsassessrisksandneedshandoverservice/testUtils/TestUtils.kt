@@ -32,8 +32,8 @@ object TestUtils {
       user = createPrincipal(),
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = (100_000..999_999).random().toString(),
-      sanAssessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-      sentencePlanVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+      assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+      planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
     )
   }
 
