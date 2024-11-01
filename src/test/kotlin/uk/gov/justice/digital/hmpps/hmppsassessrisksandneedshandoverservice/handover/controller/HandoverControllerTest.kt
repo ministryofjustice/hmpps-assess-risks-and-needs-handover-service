@@ -75,8 +75,8 @@ class HandoverControllerTest : IntegrationTestBase() {
           sexuallyMotivatedOffenceHistory = "invalid_answer",
         ),
         oasysAssessmentPk = "123",
-        sanAssessmentVersion = 1,
-        sentencePlanVersion = 1,
+        assessmentVersion = 1,
+        planVersion = 1,
       )
 
       val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)

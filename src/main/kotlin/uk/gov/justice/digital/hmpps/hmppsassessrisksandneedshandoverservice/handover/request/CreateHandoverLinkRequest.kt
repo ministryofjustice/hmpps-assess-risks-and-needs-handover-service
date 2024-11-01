@@ -21,10 +21,10 @@ data class CreateHandoverLinkRequest(
   val oasysAssessmentPk: String,
 
   @Schema(description = "Version of the assessment")
-  val sanAssessmentVersion: Long? = null,
+  val assessmentVersion: Long? = null,
 
   @Schema(description = "Version of the sentence plan")
-  val sentencePlanVersion: Long? = null,
+  val planVersion: Long? = null,
 
   @Schema(description = "Criminogenic Needs Data")
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
