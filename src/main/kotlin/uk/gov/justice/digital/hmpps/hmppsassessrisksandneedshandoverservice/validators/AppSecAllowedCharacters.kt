@@ -9,7 +9,7 @@ import kotlin.reflect.KClass
 @Pattern(regexp = "^[a-zA-Z0-9-'\\s,./]+$")
 @Constraint(validatedBy = [])
 @ReportAsSingleViolation
-annotation class AppSecAllowedCharacters (
+annotation class AppSecAllowedCharacters(
   val message: String = "Field must contain only alphanumeric characters, hyphens, spaces, commas, full stops, forward slashes, or apostrophes",
   val groups: Array<KClass<Any>> = [],
   val payload: Array<KClass<Payload>> = [],
