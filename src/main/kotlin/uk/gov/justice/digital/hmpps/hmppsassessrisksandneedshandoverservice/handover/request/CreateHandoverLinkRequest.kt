@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.CriminogenicNeedsData
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.AppSecAllowedCharacters
 
 data class CreateHandoverLinkRequest(
   @Schema(description = "Details of the practitioner/principal making the handover request")
@@ -18,6 +19,7 @@ data class CreateHandoverLinkRequest(
 
   @Schema(description = "Assessment PK used for matching OASys records to assessment UUID/plan UUID")
   @field:Size(min = 1, max = 15)
+  @field:AppSecAllowedCharacters
   val oasysAssessmentPk: String,
 
   @Schema(description = "Version of the assessment")
@@ -27,5 +29,6 @@ data class CreateHandoverLinkRequest(
   val planVersion: Long? = null,
 
   @Schema(description = "Criminogenic Needs Data")
+  @field:Valid
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 )
