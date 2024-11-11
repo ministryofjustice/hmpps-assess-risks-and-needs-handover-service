@@ -41,7 +41,7 @@ data class HandoverContext(
 
 data class HandoverPrincipal(
   @field:Size(min = 1, max = 50)
-  @field:AppSecAllowedCharacters
+  @field:Pattern(regexp = "^[a-zA-Z0-9-'\\s,./_]+$", message = "Field must contain only alphanumeric characters, hyphens, spaces, commas, full stops, forward slashes, or apostrophes and underscores")
   val identifier: String = "",
 
   @field:Size(min = 1, max = 50)
