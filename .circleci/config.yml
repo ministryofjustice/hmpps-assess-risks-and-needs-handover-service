@@ -285,96 +285,96 @@ workflows:
             - publish_docker
           helm_timeout: 5m
 
-  weekly-deploy-to-test-env:
-    triggers:
-      - schedule:
-          cron: "0 20 * * 0"
-          filters:
-            branches:
-              only:
-                - main
-    jobs:
-      - hmpps/trigger_job:
-          name: Deploy Handover Service
-          repository: hmpps-assess-risks-and-needs-handover-service
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - hmpps/trigger_job:
-          name: Deploy Coordinator API
-          repository: hmpps-assess-risks-and-needs-coordinator-api
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - hmpps/trigger_job:
-          name: Deploy OASTUB UI
-          repository: hmpps-assess-risks-and-needs-oastub-ui
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - hmpps/trigger_job:
-          name: Deploy SAN UI
-          repository: hmpps-strengths-based-needs-assessments-ui
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - hmpps/trigger_job:
-          name: Deploy SAN API
-          repository: hmpps-strengths-based-needs-assessments-api
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - hmpps/trigger_job:
-          name: Deploy Sentence Plan UI
-          repository: hmpps-sentence-plan-ui
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - hmpps/trigger_job:
-          name: Deploy Sentence Plan API
-          repository: hmpps-sentence-plan
-          branch: main
-          build_parameters: '{ "deploy": "test" }'
-          follow_timeout: 1000
-          context:
-            - hmpps-common-vars
-          token: $CIRCLE_TOKEN
-          <<: *notify-capita-slack-fail
-      - notify-capita-slack-success:
-          context:
-            - hmpps-common-vars
-          requires:
-            - Deploy Handover Service
-            - Deploy Coordinator API
-            - Deploy OASTUB UI
-            - Deploy SAN UI
-            - Deploy SAN API
-            - Deploy Sentence Plan UI
-            - Deploy Sentence Plan API
+  # weekly-deploy-to-test-env:
+  #   triggers:
+  #     - schedule:
+  #         cron: "0 20 * * 0"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #   jobs:
+  #     - hmpps/trigger_job:
+  #         name: Deploy Handover Service
+  #         repository: hmpps-assess-risks-and-needs-handover-service
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - hmpps/trigger_job:
+  #         name: Deploy Coordinator API
+  #         repository: hmpps-assess-risks-and-needs-coordinator-api
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - hmpps/trigger_job:
+  #         name: Deploy OASTUB UI
+  #         repository: hmpps-assess-risks-and-needs-oastub-ui
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - hmpps/trigger_job:
+  #         name: Deploy SAN UI
+  #         repository: hmpps-strengths-based-needs-assessments-ui
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - hmpps/trigger_job:
+  #         name: Deploy SAN API
+  #         repository: hmpps-strengths-based-needs-assessments-api
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - hmpps/trigger_job:
+  #         name: Deploy Sentence Plan UI
+  #         repository: hmpps-sentence-plan-ui
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - hmpps/trigger_job:
+  #         name: Deploy Sentence Plan API
+  #         repository: hmpps-sentence-plan
+  #         branch: main
+  #         build_parameters: '{ "deploy": "test" }'
+  #         follow_timeout: 1000
+  #         context:
+  #           - hmpps-common-vars
+  #         token: $CIRCLE_TOKEN
+  #         <<: *notify-capita-slack-fail
+  #     - notify-capita-slack-success:
+  #         context:
+  #           - hmpps-common-vars
+  #         requires:
+  #           - Deploy Handover Service
+  #           - Deploy Coordinator API
+  #           - Deploy OASTUB UI
+  #           - Deploy SAN UI
+  #           - Deploy SAN API
+  #           - Deploy Sentence Plan UI
+  #           - Deploy Sentence Plan API
 
   security:
     triggers:
