@@ -72,7 +72,7 @@ class HandoverServiceTest {
         sentencePlanContext = SentencePlanContext(
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
           planId = associations.sentencePlanId,
-          planVersion = handoverRequest.planVersion,
+          planVersion = handoverRequest.sentencePlanVersion,
         ),
         criminogenicNeedsData = CriminogenicNeedsData(
           accommodation = Accommodation(
