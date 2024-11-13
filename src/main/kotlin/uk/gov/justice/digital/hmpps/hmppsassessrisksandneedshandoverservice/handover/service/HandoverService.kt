@@ -51,7 +51,7 @@ class HandoverService(
       sentencePlanContext = SentencePlanContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         planId = associations.sentencePlanId,
-        planVersion = handoverRequest.planVersion,
+        planVersion = handoverRequest.sentencePlanVersion,
       ),
       criminogenicNeedsData = handoverRequest.criminogenicNeedsData,
     )

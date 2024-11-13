@@ -54,7 +54,7 @@ class AppSecAllowedCharactersTest : IntegrationTestBase() {
       ),
       oasysAssessmentPk = invalidString,
       assessmentVersion = 1,
-      planVersion = 1,
+      sentencePlanVersion = 1,
       criminogenicNeedsData = CriminogenicNeedsData(
         accommodation = Accommodation(
           accLinkedToHarm = invalidString,

@@ -33,7 +33,7 @@ object TestUtils {
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = (100_000..999_999).random().toString(),
       assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-      planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+      sentencePlanVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
     )
   }
 

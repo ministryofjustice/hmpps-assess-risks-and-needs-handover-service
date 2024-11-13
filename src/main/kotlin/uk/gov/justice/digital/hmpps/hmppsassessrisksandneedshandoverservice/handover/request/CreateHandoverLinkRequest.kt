@@ -26,7 +26,7 @@ data class CreateHandoverLinkRequest(
   val assessmentVersion: Long? = null,
 
   @Schema(description = "Version of the sentence plan")
-  val planVersion: Long? = null,
+  val sentencePlanVersion: Long? = null,
 
   @Schema(description = "Criminogenic Needs Data")
   @field:Valid
