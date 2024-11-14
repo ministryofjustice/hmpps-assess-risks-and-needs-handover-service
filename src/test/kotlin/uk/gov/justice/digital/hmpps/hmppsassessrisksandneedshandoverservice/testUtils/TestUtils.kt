@@ -1,5 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils
 
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.datafaker.Faker
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
@@ -19,13 +23,112 @@ import java.util.UUID
 object TestUtils {
   private var faker: Faker = Faker()
 
+  private var objectMapper: ObjectMapper = jacksonObjectMapper()
+    .registerModule(JavaTimeModule())
+    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
   fun createHandoverRequest(): CreateHandoverLinkRequest {
     return CreateHandoverLinkRequest(
       user = createPrincipal(),
       subjectDetails = createSubjectDetails(),
       oasysAssessmentPk = (100_000..999_999).random().toString(),
       assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-      planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+      sentencePlanVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+    )
+  }
+
+  fun createHandoverRequestFromJson(): CreateHandoverLinkRequest {
+    return objectMapper.readValue(
+      """
+      {
+        "user": {
+          "identifier": "IDENTIFIER",
+          "displayName": "Assessor TEST",
+          "accessMode": "READ_ONLY",
+          "planAccessMode": "READ_ONLY",
+          "returnUrl": "http://test-oasys-return-url"
+        },
+        "subjectDetails": {
+          "crn": "TP55229",
+          "pnc": "01/126XXX",
+          "nomisId": null,
+          "givenName": "TestGivenName",
+          "familyName": "TestSurname",
+          "dateOfBirth": "1959-01-01",
+          "gender": "1",
+          "location": "COMMUNITY",
+          "sexuallyMotivatedOffenceHistory": "NO"
+        },
+        "oasysAssessmentPk": 2164180,
+        "sentencePlanVersion": "0",
+        "criminogenicNeedsData": {
+          "accommodation": {
+            "accLinkedToHarm": "NO",
+            "accLinkedToReoffending": "YES",
+            "accStrengths": "NO",
+            "accOtherWeightedScore": "6",
+            "accThreshold": "YES"
+          },
+          "educationTrainingEmployability": {
+            "eteLinkedToHarm": "NO",
+            "eteLinkedToReoffending": "YES",
+            "eteStrengths": "YES",
+            "eteOtherWeightedScore": "2",
+            "eteThreshold": "YES"
+          },
+          "finance": {
+            "financeLinkedToHarm ": "NO",
+            "financeLinkedToReoffending ": "NO",
+            "financeStrengths": "NO",
+            "financeOtherWeightedScore ": "N/A",
+            "financeThreshold": "N/A"
+          },
+          "drugMisuse": {
+            "drugLinkedToHarm": "NO",
+            "drugLinkedToReoffending": "NO",
+            "drugStrengths": "NO",
+            "drugOtherWeightedScore": "0",
+            "drugThreshold": "NO"
+          },
+          "alcoholMisuse": {
+            "alcoholLinkedToHarm": "NO",
+            "alcoholLinkedToReoffending": "YES",
+            "alcoholStrengths": "YES",
+            "alcoholOtherWeightedScore": "3",
+            "alcoholThreshold": "YES"
+          },
+          "healthAndWellbeing": {
+            "emoLinkedToHarm": "NO",
+            "emoLinkedToReoffending": "NO",
+            "emoStrengths": "NO",
+            "emoOtherWeightedScore": "N/A",
+            "emoThreshold": "N/A"
+          },
+          "personalRelationshipsAndCommunity": {
+            "relLinkedToHarm": "NO",
+            "relLinkedToReoffending": "NO",
+            "relStrengths": "NO",
+            "relOtherWeightedScore": "6",
+            "relThreshold": "YES"
+          },
+          "thinkingBehaviourAndAttitudes ": {
+            "thinkLinkedToHarm": "NO",
+            "thinkLinkedToReoffending": "NO",
+            "thinkStrengths": "NO",
+            "thinkOtherWeightedScore": "10",
+            "thinkThreshold": "YES"
+          },
+          "lifestyleAndAssociates ": {
+            "lifestyleLinkedToHarm": "N/A",
+            "lifestyleLinkedToReoffending": "N/A",
+            "lifestyleStrengths": "N/A",
+            "lifestyleOtherWeightedScore": "6",
+            "lifestyleThreshold": "YES"
+          }
+        }
+      }
+      """.trimIndent(),
+      CreateHandoverLinkRequest::class.java,
     )
   }
 

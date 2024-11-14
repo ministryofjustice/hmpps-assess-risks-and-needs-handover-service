@@ -10,7 +10,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Accommodation
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.CriminogenicNeedsData
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
@@ -70,7 +72,12 @@ class HandoverServiceTest {
         sentencePlanContext = SentencePlanContext(
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
           planId = associations.sentencePlanId,
-          planVersion = handoverRequest.planVersion,
+          planVersion = handoverRequest.sentencePlanVersion,
+        ),
+        criminogenicNeedsData = CriminogenicNeedsData(
+          accommodation = Accommodation(
+            accLinkedToHarm = "YES",
+          ),
         ),
       )
     }
