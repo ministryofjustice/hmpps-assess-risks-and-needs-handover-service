@@ -16,6 +16,10 @@ generic-service:
     CLIENT_SP_HANDOVER_REDIRECT_URI: "https://sentence-plan-preprod.hmpps.service.justice.gov.uk/sign-in"
     CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-preprod.hmpps.service.justice.gov.uk/sign-in/callback"
     CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-preprod.hmpps.service.justice.gov.uk/sign-in"
+  
+  allowlist:
+    groups:
+      - mod-platform-live
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
 # See https://user-guide.cloud-platform.service.justice.gov.uk/documentation/monitoring-an-app/how-to-create-alarms.html#creating-your-own-custom-alerts
