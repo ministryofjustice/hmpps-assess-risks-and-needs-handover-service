@@ -1,7 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service
 
 import io.mockk.Called
+import io.mockk.Runs
+import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -15,6 +18,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.CriminogenicNeedsData
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.response.AssociationsResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
@@ -22,6 +26,8 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.Event
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import java.util.*
 import kotlin.test.assertContains
@@ -32,12 +38,13 @@ class HandoverServiceTest {
   private lateinit var handoverSessionId: UUID
   private val handoverTokenRepository: HandoverTokenRepository = mockk()
   private val handoverContextService: HandoverContextService = mockk()
+  private val telemetryService: TelemetryService = mockk()
   private val coordinatorService: CoordinatorService = mockk()
   private val appConfiguration = mockk<AppConfiguration>(relaxed = true)
 
   @BeforeEach
   fun setUp() {
-    handoverService = HandoverService(handoverTokenRepository, handoverContextService, coordinatorService, appConfiguration)
+    handoverService = HandoverService(handoverTokenRepository, handoverContextService, coordinatorService, appConfiguration, telemetryService)
     handoverSessionId = UUID.randomUUID()
   }
 
@@ -51,6 +58,8 @@ class HandoverServiceTest {
 
     @BeforeEach
     fun setUp() {
+      clearAllMocks()
+
       associations = AssociationsResponse(
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
@@ -80,14 +89,15 @@ class HandoverServiceTest {
           ),
         ),
       )
+
+      every { coordinatorService.getAssociations(any()) } returns associations
+      every { handoverContextService.saveContext(any()) } returns handoverContext
+      every { handoverTokenRepository.save(any()) } returns handoverToken
+      every { telemetryService.track(any(), any()) } just Runs
     }
 
     @Test
     fun `should save the handover context with correct properties`() {
-      every { coordinatorService.getAssociations(any()) } returns associations
-      every { handoverContextService.saveContext(any()) } returns handoverContext
-      every { handoverTokenRepository.save(any()) } returns handoverToken
-
       handoverService.createHandover(handoverRequest, handoverSessionId)
 
       verify {
@@ -104,11 +114,22 @@ class HandoverServiceTest {
     }
 
     @Test
-    fun `should save the handover token with the correct properties`() {
-      every { coordinatorService.getAssociations(any()) } returns associations
-      every { handoverContextService.saveContext(any()) } returns handoverContext
-      every { handoverTokenRepository.save(any()) } returns handoverToken
+    fun `should track a telemetry event`() {
+      handoverService.createHandover(handoverRequest, handoverSessionId)
 
+      verify(exactly = 1) {
+        telemetryService.track(
+          Event.ONE_TIME_LINK_CREATED,
+          withArg {
+            assertEquals(handoverSessionId, it.handoverSessionId)
+            assertEquals(handoverContext.principal, it.principal)
+          },
+        )
+      }
+    }
+
+    @Test
+    fun `should save the handover token with the correct properties`() {
       handoverService.createHandover(handoverRequest, handoverSessionId)
 
       verify {
@@ -126,11 +147,9 @@ class HandoverServiceTest {
     fun `should return a valid handover link`() {
       val domain = "handover-service"
       val endpoints = TestUtils.createEndPoint()
-      every { coordinatorService.getAssociations(any()) } returns associations
-      every { handoverContextService.saveContext(any()) } returns handoverContext
-      every { handoverTokenRepository.save(any()) } returns handoverToken
       every { appConfiguration.self.externalUrl } returns domain
       every { appConfiguration.self.endpoints } returns endpoints
+      every { telemetryService.track(any(), any()) } just Runs
 
       val result = handoverService.createHandover(handoverRequest, handoverSessionId)
       assertContains(result.handoverLink, "${domain}${endpoints.handover}")
@@ -149,19 +168,20 @@ class HandoverServiceTest {
   inner class ConsumeAndExchangeHandover {
     @Test
     fun `should return authenticated token when valid token is used `() {
+      val handoverContext: HandoverContext = mockk()
       val handoverToken = TestUtils.createHandoverToken(TokenStatus.UNUSED)
-      val consumedToken = handoverToken.copy(
-        tokenStatus = TokenStatus.USED,
-      )
 
       every { handoverTokenRepository.findById(any()) } returns Optional.of(handoverToken)
       every { handoverTokenRepository.save(any()) } returns handoverToken
+      every { handoverContextService.getContext(any()) } returns GetHandoverContextResult.Success(handoverContext)
+      every { telemetryService.track(any(), any()) } just Runs
 
       val result = handoverService.consumeAndExchangeHandover(handoverToken.code)
 
       assertEquals(true, (result as UseHandoverLinkResult.Success).authenticationToken.isAuthenticated)
       verify { handoverTokenRepository.findById(any()) }
       verify { handoverTokenRepository.save(handoverToken) }
+      verify(exactly = 1) { telemetryService.track(Event.ONE_TIME_LINK_USED, handoverContext) }
     }
 
     @Test

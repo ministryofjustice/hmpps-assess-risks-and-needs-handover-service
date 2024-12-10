@@ -90,3 +90,17 @@ This request will return an object formatted like
 ```
 where the value of property `handoverLink` will be a URL that can be used within the browser to begin the handover
 process.
+
+## Connecting to a remote Redis instance in dev/preprod/prod
+
+1. Switch to the Kubernetes context/namespace of the Redis instance you are connecting to
+2. `make redis-port-forward-pod` to create a Redis port-forwarding pod in the namespace
+3. `make redis-port-forward` to forward traffic from your machine to the pod
+
+Then open a new terminal and either:
+
+`make redis-connect` to connect to the remote Redis instance on the command line
+
+or
+
+`make redis-auth-token` to output an authentication token for connecting to Redis via your Database IDE
