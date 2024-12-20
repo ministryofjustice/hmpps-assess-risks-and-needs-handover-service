@@ -104,3 +104,7 @@ Then open a new terminal and either:
 or
 
 `make redis-auth-token` to output an authentication token for connecting to Redis via your Database IDE
+
+Redis command to extract the data stored in a session:
+
+`HGETALL HandoverContext:{handover_session_id}`
