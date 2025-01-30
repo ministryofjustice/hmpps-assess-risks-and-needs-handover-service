@@ -83,3 +83,19 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
 	docker logs ${PROJECT_NAME}-san-ui-1 > ${OUTPUT_LOGS_DIR}/san-ui.log
 	docker logs ${PROJECT_NAME}-san-api-1 > ${OUTPUT_LOGS_DIR}/san-api.log
+
+REDIS_PORT_FORWARD_PORT=6379
+redis-port-forward-pod: ## Creates a Redis port-forwarding pod in your currently active Kubernetes context
+	kubectl delete pod --ignore-not-found=true port-forward-pod
+	INSTANCE_ADDRESS=$$(kubectl get secret hmpps-assess-risks-and-needs-integrations-elasticache-redis -o json | jq -r '.data.primary_endpoint_address' | base64 --decode) \
+	; kubectl run port-forward-pod --image=ministryofjustice/port-forward --port=6379 --env="REMOTE_HOST=$$INSTANCE_ADDRESS" --env="LOCAL_PORT=6379" --env="REMOTE_PORT=6379"
+
+redis-port-forward: ## Forwards port 6379 on your local machine to port 6379 on the port-forwarding pod. Override the local port with REDIS_PORT_FORWARD_PORT=XXXX
+	kubectl wait --for=jsonpath='{.status.phase}'=Running pod/port-forward-pod
+	kubectl port-forward port-forward-pod ${REDIS_PORT_FORWARD_PORT}:6379
+
+redis-auth-token: ## Outputs an authentication token for the remote Redis instance
+	@kubectl get secret hmpps-assess-risks-and-needs-integrations-elasticache-redis -o json | jq -r '.data.auth_token' | base64 --decode
+
+redis-connect: ## Connects to the remote Redis instance though the port-forwarding pod
+	redis-cli --tls -h localhost -p ${REDIS_PORT_FORWARD_PORT} -a $$(make redis-auth-token)

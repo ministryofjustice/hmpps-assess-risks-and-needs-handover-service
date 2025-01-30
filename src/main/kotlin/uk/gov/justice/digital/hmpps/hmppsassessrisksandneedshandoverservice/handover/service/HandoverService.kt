@@ -1,12 +1,12 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service
 
-import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
@@ -14,8 +14,9 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.Event
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.TelemetryService
 import java.util.*
-import kotlin.NoSuchElementException
 
 enum class TokenValidationResult {
   VALID,
@@ -29,6 +30,7 @@ class HandoverService(
   val handoverContextService: HandoverContextService,
   val coordinatorService: CoordinatorService,
   val appConfiguration: AppConfiguration,
+  val telemetryService: TelemetryService,
 ) {
   fun createHandover(
     handoverRequest: CreateHandoverLinkRequest,
@@ -60,6 +62,8 @@ class HandoverService(
     handoverTokenRepository.save(handoverToken)
     val handoverLink = generateHandoverLink(handoverToken.code)
 
+    telemetryService.track(Event.ONE_TIME_LINK_CREATED, handoverContext)
+
     return CreateHandoverLinkResponse(
       handoverLink = handoverLink,
       handoverSessionId = handoverSessionId,
@@ -73,6 +77,11 @@ class HandoverService(
       TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
       TokenValidationResult.VALID -> {
         val handoverSessionId = consumeToken(handoverCode).handoverSessionId
+        handoverContextService.getContext(handoverSessionId).let {
+          if (it is GetHandoverContextResult.Success) {
+            telemetryService.track(Event.ONE_TIME_LINK_USED, it.handoverContext)
+          }
+        }
         UseHandoverLinkResult.Success(
           UsernamePasswordAuthenticationToken(
             handoverSessionId.toString(),
@@ -105,10 +114,6 @@ class HandoverService(
 
     token.tokenStatus = TokenStatus.USED
     return handoverTokenRepository.save(token)
-  }
-
-  companion object {
-    private val log = LoggerFactory.getLogger(HandoverService::class.java)
   }
 }
 
