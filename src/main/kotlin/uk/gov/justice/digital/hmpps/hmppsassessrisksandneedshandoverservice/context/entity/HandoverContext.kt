@@ -20,11 +20,9 @@ enum class UserAccess(val value: String) {
   READ_WRITE("READ_WRITE"),
   ;
 
-  fun toAuthorities(): List<GrantedAuthority> {
-    return when (this) {
-      READ_ONLY -> listOf(SimpleGrantedAuthority("READ"))
-      READ_WRITE -> listOf(SimpleGrantedAuthority("READ"), SimpleGrantedAuthority("WRITE"))
-    }
+  fun toAuthorities(): List<GrantedAuthority> = when (this) {
+    READ_ONLY -> listOf(SimpleGrantedAuthority("READ"))
+    READ_WRITE -> listOf(SimpleGrantedAuthority("READ"), SimpleGrantedAuthority("WRITE"))
   }
 }
 
@@ -53,9 +51,7 @@ data class HandoverPrincipal(
   @field:OasysReturnUrl
   val returnUrl: String = "",
 ) {
-  override fun toString(): String {
-    return identifier
-  }
+  override fun toString(): String = identifier
 }
 
 data class AssessmentContext(

@@ -68,7 +68,5 @@ class SecurityConfig {
   }
 
   @Bean
-  fun sessionRegistry(): SessionRegistry {
-    return SessionRegistryImpl()
-  }
+  fun sessionRegistry(): SessionRegistry = SessionRegistryImpl()
 }

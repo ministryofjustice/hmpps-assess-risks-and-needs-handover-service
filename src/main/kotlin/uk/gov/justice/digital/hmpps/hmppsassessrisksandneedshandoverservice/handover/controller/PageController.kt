@@ -10,9 +10,7 @@ class PageController(
   val appConfiguration: AppConfiguration,
 ) {
   @GetMapping("/access-denied")
-  fun accessDenied(): ModelAndView {
-    return ModelAndView("error/access-denied").apply {
-      addObject("oasysUrl", appConfiguration.services.oasys.baseUrl)
-    }
+  fun accessDenied(): ModelAndView = ModelAndView("error/access-denied").apply {
+    addObject("oasysUrl", appConfiguration.services.oasys.baseUrl)
   }
 }
