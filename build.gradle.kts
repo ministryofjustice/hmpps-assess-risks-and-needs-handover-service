@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "6.0.8"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "7.0.0"
   kotlin("plugin.spring") version "2.0.21"
 }
 
@@ -11,7 +11,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.0.8")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.1.1")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // Redis dependencies
@@ -28,7 +28,7 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.79")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.4")
 
   // MVC
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

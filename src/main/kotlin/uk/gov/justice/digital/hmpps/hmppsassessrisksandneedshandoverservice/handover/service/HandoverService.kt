@@ -71,31 +71,27 @@ class HandoverService(
     )
   }
 
-  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult {
-    return when (validateToken(handoverCode)) {
-      TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
-      TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
-      TokenValidationResult.VALID -> {
-        val handoverSessionId = consumeToken(handoverCode).handoverSessionId
-        handoverContextService.getContext(handoverSessionId).let {
-          if (it is GetHandoverContextResult.Success) {
-            telemetryService.track(Event.ONE_TIME_LINK_USED, it.handoverContext)
-          }
+  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
+    TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
+    TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
+    TokenValidationResult.VALID -> {
+      val handoverSessionId = consumeToken(handoverCode).handoverSessionId
+      handoverContextService.getContext(handoverSessionId).let {
+        if (it is GetHandoverContextResult.Success) {
+          telemetryService.track(Event.ONE_TIME_LINK_USED, it.handoverContext)
         }
-        UseHandoverLinkResult.Success(
-          UsernamePasswordAuthenticationToken(
-            handoverSessionId.toString(),
-            null,
-            null,
-          ),
-        )
       }
+      UseHandoverLinkResult.Success(
+        UsernamePasswordAuthenticationToken(
+          handoverSessionId.toString(),
+          null,
+          null,
+        ),
+      )
     }
   }
 
-  private fun generateHandoverLink(handoverCode: UUID): String {
-    return "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
-  }
+  private fun generateHandoverLink(handoverCode: UUID): String = "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
 
   private fun validateToken(code: UUID): TokenValidationResult {
     val token = handoverTokenRepository.findById(code).orElse(null)

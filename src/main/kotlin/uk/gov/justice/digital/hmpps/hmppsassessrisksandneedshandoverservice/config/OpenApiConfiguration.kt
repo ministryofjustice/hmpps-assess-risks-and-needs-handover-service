@@ -21,31 +21,30 @@ class OpenApiConfiguration(
   }
 
   @Bean
-  fun customOpenAPI(buildProperties: BuildProperties, appConfiguration: AppConfiguration): OpenAPI =
-    OpenAPI()
-      .info(
-        Info()
-          .title("HMPPS ARNS Handover Service")
-          .version(buildProperties.version)
-          .description("Authentication and management of context data for applications in the ARNS space")
-          .contact(
-            Contact()
-              .name("HMPPS ARNS Handover GitHub Project")
-              .url("https://github.com/ministryofjustice/hmpps-asses-risk-and-needs-handover-service"),
-          ),
-      )
-      .components(
-        Components().addSecuritySchemes(
-          "bearer-jwt",
-          SecurityScheme()
-            .type(SecurityScheme.Type.HTTP)
-            .scheme("bearer")
-            .bearerFormat("JWT")
-            .`in`(SecurityScheme.In.HEADER)
-            .name("Authorization"),
+  fun customOpenAPI(buildProperties: BuildProperties, appConfiguration: AppConfiguration): OpenAPI = OpenAPI()
+    .info(
+      Info()
+        .title("HMPPS ARNS Handover Service")
+        .version(buildProperties.version)
+        .description("Authentication and management of context data for applications in the ARNS space")
+        .contact(
+          Contact()
+            .name("HMPPS ARNS Handover GitHub Project")
+            .url("https://github.com/ministryofjustice/hmpps-asses-risk-and-needs-handover-service"),
         ),
-      )
-      .addSecurityItem(SecurityRequirement().addList("bearer-jwt"))
+    )
+    .components(
+      Components().addSecuritySchemes(
+        "bearer-jwt",
+        SecurityScheme()
+          .type(SecurityScheme.Type.HTTP)
+          .scheme("bearer")
+          .bearerFormat("JWT")
+          .`in`(SecurityScheme.In.HEADER)
+          .name("Authorization"),
+      ),
+    )
+    .addSecurityItem(SecurityRequirement().addList("bearer-jwt"))
 
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

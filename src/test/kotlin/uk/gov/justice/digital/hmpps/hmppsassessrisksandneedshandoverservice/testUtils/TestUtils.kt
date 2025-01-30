@@ -27,19 +27,16 @@ object TestUtils {
     .registerModule(JavaTimeModule())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-  fun createHandoverRequest(): CreateHandoverLinkRequest {
-    return CreateHandoverLinkRequest(
-      user = createPrincipal(),
-      subjectDetails = createSubjectDetails(),
-      oasysAssessmentPk = (100_000..999_999).random().toString(),
-      assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-      sentencePlanVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-    )
-  }
+  fun createHandoverRequest(): CreateHandoverLinkRequest = CreateHandoverLinkRequest(
+    user = createPrincipal(),
+    subjectDetails = createSubjectDetails(),
+    oasysAssessmentPk = (100_000..999_999).random().toString(),
+    assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+    sentencePlanVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+  )
 
-  fun createHandoverRequestFromJson(): CreateHandoverLinkRequest {
-    return objectMapper.readValue(
-      """
+  fun createHandoverRequestFromJson(): CreateHandoverLinkRequest = objectMapper.readValue(
+    """
       {
         "user": {
           "identifier": "IDENTIFIER",
@@ -127,29 +124,24 @@ object TestUtils {
           }
         }
       }
-      """.trimIndent(),
-      CreateHandoverLinkRequest::class.java,
-    )
-  }
+    """.trimIndent(),
+    CreateHandoverLinkRequest::class.java,
+  )
 
-  fun createHandoverContext(handoverSessionId: UUID): HandoverContext {
-    return HandoverContext(
-      handoverSessionId = handoverSessionId,
-      principal = createPrincipal(),
-      subject = createSubjectDetails(),
-      assessmentContext = createAssessmentContext(),
-      sentencePlanContext = createSentencePlanContext(),
-    )
-  }
+  fun createHandoverContext(handoverSessionId: UUID): HandoverContext = HandoverContext(
+    handoverSessionId = handoverSessionId,
+    principal = createPrincipal(),
+    subject = createSubjectDetails(),
+    assessmentContext = createAssessmentContext(),
+    sentencePlanContext = createSentencePlanContext(),
+  )
 
-  fun updateHandoverContextRequest(): UpdateHandoverContextRequest {
-    return UpdateHandoverContextRequest(
-      principal = createPrincipal(),
-      subject = createSubjectDetails(),
-      assessmentContext = createAssessmentContext(),
-      sentencePlanContext = createSentencePlanContext(),
-    )
-  }
+  fun updateHandoverContextRequest(): UpdateHandoverContextRequest = UpdateHandoverContextRequest(
+    principal = createPrincipal(),
+    subject = createSubjectDetails(),
+    assessmentContext = createAssessmentContext(),
+    sentencePlanContext = createSentencePlanContext(),
+  )
 
   fun createAssessmentContext() = AssessmentContext(
     oasysAssessmentPk = (100_000..999_999).random().toString(),
@@ -193,11 +185,9 @@ object TestUtils {
     return endpoints
   }
 
-  fun createHandoverToken(status: TokenStatus): HandoverToken {
-    return HandoverToken(
-      tokenStatus = status,
-      handoverSessionId = UUID.randomUUID(),
-      principal = createPrincipal(),
-    )
-  }
+  fun createHandoverToken(status: TokenStatus): HandoverToken = HandoverToken(
+    tokenStatus = status,
+    handoverSessionId = UUID.randomUUID(),
+    principal = createPrincipal(),
+  )
 }

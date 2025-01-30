@@ -18,9 +18,7 @@ class JwtAuthHelper(
   private val jwtProperties: JwtProperties,
   private val jwkProperties: JwkProperties,
 ) {
-  private fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? {
-    return jwtProperties.issuers.find { it.issuerName == issuerName }
-  }
+  private fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? = jwtProperties.issuers.find { it.issuerName == issuerName }
 
   fun generateHandoverToken(handoverSessionId: UUID, grantType: AuthorizationGrantType = AuthorizationGrantType.JWT_BEARER): String {
     val hmppsHandover = getIssuerByIssuerName("HMPPS Handover")

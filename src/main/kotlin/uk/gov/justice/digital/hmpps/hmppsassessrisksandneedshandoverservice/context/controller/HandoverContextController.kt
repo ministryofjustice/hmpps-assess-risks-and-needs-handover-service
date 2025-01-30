@@ -51,16 +51,14 @@ class HandoverContextController(
   fun updateContext(
     @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: UUID,
     @RequestBody @Valid handoverContext: UpdateHandoverContextRequest,
-  ): ResponseEntity<Any> {
-    return when (val result = handoverContextService.updateContext(handoverSessionId, handoverContext)) {
-      is GetHandoverContextResult.Success ->
-        ResponseEntity
-          .ok(result.handoverContext)
-      GetHandoverContextResult.NotFound ->
-        ResponseEntity
-          .status(HttpStatus.NOT_FOUND)
-          .body("No handover context found for session ID $handoverSessionId")
-    }
+  ): ResponseEntity<Any> = when (val result = handoverContextService.updateContext(handoverSessionId, handoverContext)) {
+    is GetHandoverContextResult.Success ->
+      ResponseEntity
+        .ok(result.handoverContext)
+    GetHandoverContextResult.NotFound ->
+      ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body("No handover context found for session ID $handoverSessionId")
   }
 
   @PreAuthorize("@jwt.isIssuedByHmppsAuth() and @jwt.isClientCredentialsGrant()")
@@ -82,16 +80,14 @@ class HandoverContextController(
   )
   fun getContextByHandoverSessionId(
     @Parameter(description = "Handover session ID") @PathVariable handoverSessionId: UUID,
-  ): ResponseEntity<Any> {
-    return when (val result = handoverContextService.getContext(handoverSessionId)) {
-      is GetHandoverContextResult.Success ->
-        ResponseEntity
-          .ok(result.handoverContext)
-      GetHandoverContextResult.NotFound ->
-        ResponseEntity
-          .status(HttpStatus.NOT_FOUND)
-          .body("No handover context found for session ID $handoverSessionId")
-    }
+  ): ResponseEntity<Any> = when (val result = handoverContextService.getContext(handoverSessionId)) {
+    is GetHandoverContextResult.Success ->
+      ResponseEntity
+        .ok(result.handoverContext)
+    GetHandoverContextResult.NotFound ->
+      ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body("No handover context found for session ID $handoverSessionId")
   }
 
   @PreAuthorize("@jwt.isIssuedByHmppsHandover()")

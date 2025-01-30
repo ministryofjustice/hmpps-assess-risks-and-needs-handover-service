@@ -58,12 +58,10 @@ class ClientConfiguration(
   companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    private fun isUriValid(uri: String): Boolean {
-      return try {
-        URI(uri).fragment == null
-      } catch (_: URISyntaxException) {
-        false
-      }
+    private fun isUriValid(uri: String): Boolean = try {
+      URI(uri).fragment == null
+    } catch (_: URISyntaxException) {
+      false
     }
   }
 }

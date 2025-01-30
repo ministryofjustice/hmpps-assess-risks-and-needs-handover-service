@@ -13,6 +13,5 @@ class WebClientConfiguration(
   @Value("\${api.timeout:20s}") val timeout: Duration,
 ) {
   @Bean
-  fun coordinatorApiWebClient(authorizedClientManager: org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient =
-    builder.authorisedWebClient(authorizedClientManager, registrationId = "coordinator-api", url = coordinatorApiUri, timeout)
+  fun coordinatorApiWebClient(authorizedClientManager: org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager, builder: WebClient.Builder): WebClient = builder.authorisedWebClient(authorizedClientManager, registrationId = "coordinator-api", url = coordinatorApiUri, timeout)
 }

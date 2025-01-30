@@ -25,9 +25,7 @@ data class JwtIssuerProperties(
   val jwkSetUri: String,
   val issuerUri: String,
 ) {
-  fun checkIssuerMatch(tokenIssuerUri: String): Boolean {
-    return (tokenIssuerUri == issuerUri)
-  }
+  fun checkIssuerMatch(tokenIssuerUri: String): Boolean = (tokenIssuerUri == issuerUri)
 }
 
 @Configuration("jwt")
@@ -36,20 +34,18 @@ class JwtConfiguration(
   private val jwtProperties: JwtProperties,
 ) {
   @Bean
-  fun issuerAuthenticationManagerResolver(): JwtIssuerAuthenticationManagerResolver {
-    return JwtIssuerAuthenticationManagerResolver { issuerUri: String ->
-      val issuer = getIssuerByIssuerUri(issuerUri)
-        ?: throw AccessDeniedException("Invalid issuer: $issuerUri")
+  fun issuerAuthenticationManagerResolver(): JwtIssuerAuthenticationManagerResolver = JwtIssuerAuthenticationManagerResolver { issuerUri: String ->
+    val issuer = getIssuerByIssuerUri(issuerUri)
+      ?: throw AccessDeniedException("Invalid issuer: $issuerUri")
 
-      val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuer.jwkSetUri)
-        .build()
-        .apply {
-          setJwtValidator(JwtValidators.createDefaultWithIssuer(issuerUri))
-        }
-
-      AuthenticationManager { authentication ->
-        JwtAuthenticationProvider(jwtDecoder).authenticate(authentication)
+    val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuer.jwkSetUri)
+      .build()
+      .apply {
+        setJwtValidator(JwtValidators.createDefaultWithIssuer(issuerUri))
       }
+
+    AuthenticationManager { authentication ->
+      JwtAuthenticationProvider(jwtDecoder).authenticate(authentication)
     }
   }
 
@@ -74,9 +70,7 @@ class JwtConfiguration(
     return true
   }
 
-  private fun getIssuerByIssuerUri(issuerUri: String): JwtIssuerProperties? {
-    return jwtProperties.issuers.find { it.issuerUri == issuerUri }
-  }
+  private fun getIssuerByIssuerUri(issuerUri: String): JwtIssuerProperties? = jwtProperties.issuers.find { it.issuerUri == issuerUri }
 
   private fun isIssuer(issuer: JwtIssuerProperties): Boolean {
     val authentication = SecurityContextHolder.getContext().authentication
@@ -94,9 +88,7 @@ class JwtConfiguration(
     return true
   }
 
-  private fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? {
-    return jwtProperties.issuers.find { it.issuerName == issuerName }
-  }
+  private fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? = jwtProperties.issuers.find { it.issuerName == issuerName }
 
   init {
     log.info("Application is configured to use the following JWT issuers:")

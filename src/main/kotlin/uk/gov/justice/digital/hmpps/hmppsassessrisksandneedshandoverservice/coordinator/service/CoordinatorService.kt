@@ -13,19 +13,17 @@ class CoordinatorService(
 ) {
   private fun endpoint(endpoint: String): String = "${appConfiguration.services.coordinatorApi.baseUrl}$endpoint"
 
-  fun getAssociations(oasysAssessmentPk: String): AssociationsResponse {
-    return try {
-      val result = coordinatorApiWebClient.get()
-        .uri(endpoint("/oasys/$oasysAssessmentPk/associations"))
-        .retrieve()
-        .bodyToMono(AssociationsResponse::class.java)
-        .block()
+  fun getAssociations(oasysAssessmentPk: String): AssociationsResponse = try {
+    val result = coordinatorApiWebClient.get()
+      .uri(endpoint("/oasys/$oasysAssessmentPk/associations"))
+      .retrieve()
+      .bodyToMono(AssociationsResponse::class.java)
+      .block()
 
-      result ?: throw IllegalStateException("Unexpected empty associations response for OASys Assessment PK $oasysAssessmentPk")
-    } catch (ex: WebClientResponseException) {
-      throw Exception("Unexpected associations response code ${ex.statusCode}")
-    } catch (ex: Exception) {
-      throw Exception("Unexpected associations exception: ${ex.message}")
-    }
+    result ?: throw IllegalStateException("Unexpected empty associations response for OASys Assessment PK $oasysAssessmentPk")
+  } catch (ex: WebClientResponseException) {
+    throw Exception("Unexpected associations response code ${ex.statusCode}")
+  } catch (ex: Exception) {
+    throw Exception("Unexpected associations exception: ${ex.message}")
   }
 }
