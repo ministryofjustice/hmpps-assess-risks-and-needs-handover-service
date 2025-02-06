@@ -22,7 +22,9 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-class WireMockExtension : BeforeAllCallback, AfterAllCallback {
+class WireMockExtension :
+  BeforeAllCallback,
+  AfterAllCallback {
   companion object {
     // todo - is there a way to get this port from the confjg?
     val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
@@ -90,12 +92,10 @@ class WireMockExtension : BeforeAllCallback, AfterAllCallback {
     return jwkSet.toJSONObject().toString()
   }
 
-  private fun createAssociationsResponse(): String {
-    return """
+  private fun createAssociationsResponse(): String = """
       {
         "sentencePlanId": "${UUID.randomUUID()}",
         "sanAssessmentId": "${UUID.randomUUID()}"
       }
-    """.trimIndent()
-  }
+  """.trimIndent()
 }

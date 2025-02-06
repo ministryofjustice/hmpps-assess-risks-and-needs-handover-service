@@ -13,7 +13,6 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 
 @Configuration
 class AuthorizationServerConfiguration {
-
   @Bean
   @Order(1)
   @Throws(Exception::class)

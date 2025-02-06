@@ -72,17 +72,15 @@ class HmppsAssessRisksAndNeedsHandoverServiceExceptionHandler {
     ).also { log.error("Unexpected exception", e) }
 
   @ExceptionHandler(org.springframework.security.access.AccessDeniedException::class)
-  fun handleAccessDeniedException(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> {
-    return ResponseEntity
-      .status(FORBIDDEN)
-      .body(
-        ErrorResponse(
-          status = FORBIDDEN,
-          userMessage = "Access denied",
-          developerMessage = ex.message ?: "",
-        ),
-      )
-  }
+  fun handleAccessDeniedException(ex: org.springframework.security.access.AccessDeniedException): ResponseEntity<ErrorResponse> = ResponseEntity
+    .status(FORBIDDEN)
+    .body(
+      ErrorResponse(
+        status = FORBIDDEN,
+        userMessage = "Access denied",
+        developerMessage = ex.message ?: "",
+      ),
+    )
 
   private companion object {
     private val log = LoggerFactory.getLogger(this::class.java)

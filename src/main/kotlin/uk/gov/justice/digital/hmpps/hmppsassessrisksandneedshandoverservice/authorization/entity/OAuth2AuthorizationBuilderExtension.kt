@@ -12,42 +12,34 @@ import org.springframework.util.StringUtils
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.service.JpaOAuth2AuthorizationService.Companion.parseMap
 
 object OAuth2AuthorizationBuilderExtension {
-  fun OAuth2Authorization.Builder.from(entity: JpaAuthorization): OAuth2Authorization.Builder {
-    return this
-      .id(entity.id)
-      .principalName(entity.principalName)
-      .authorizationGrantType(entity)
-      .authorizedScopes(entity)
-      .attributes(entity)
-      .buildAuthorizationCode(entity)
-      .buildAccessToken(entity)
-      .buildRefreshToken(entity)
-      .buildOidcToken(entity)
-      .buildUserCode(entity)
-      .buildDeviceCode(entity)
-  }
+  fun OAuth2Authorization.Builder.from(entity: JpaAuthorization): OAuth2Authorization.Builder = this
+    .id(entity.id)
+    .principalName(entity.principalName)
+    .authorizationGrantType(entity)
+    .authorizedScopes(entity)
+    .attributes(entity)
+    .buildAuthorizationCode(entity)
+    .buildAccessToken(entity)
+    .buildRefreshToken(entity)
+    .buildOidcToken(entity)
+    .buildUserCode(entity)
+    .buildDeviceCode(entity)
 
-  private fun OAuth2Authorization.Builder.authorizationGrantType(entity: JpaAuthorization): OAuth2Authorization.Builder {
-    return authorizationGrantType(
-      entity.authorizationGrantType?.let {
-        when (it) {
-          AuthorizationGrantType.AUTHORIZATION_CODE.value -> AuthorizationGrantType.AUTHORIZATION_CODE
-          AuthorizationGrantType.CLIENT_CREDENTIALS.value -> AuthorizationGrantType.CLIENT_CREDENTIALS
-          AuthorizationGrantType.REFRESH_TOKEN.value -> AuthorizationGrantType.REFRESH_TOKEN
-          AuthorizationGrantType.DEVICE_CODE.value -> AuthorizationGrantType.DEVICE_CODE
-          else -> AuthorizationGrantType(it)
-        }
-      },
-    )
-  }
+  private fun OAuth2Authorization.Builder.authorizationGrantType(entity: JpaAuthorization): OAuth2Authorization.Builder = authorizationGrantType(
+    entity.authorizationGrantType?.let {
+      when (it) {
+        AuthorizationGrantType.AUTHORIZATION_CODE.value -> AuthorizationGrantType.AUTHORIZATION_CODE
+        AuthorizationGrantType.CLIENT_CREDENTIALS.value -> AuthorizationGrantType.CLIENT_CREDENTIALS
+        AuthorizationGrantType.REFRESH_TOKEN.value -> AuthorizationGrantType.REFRESH_TOKEN
+        AuthorizationGrantType.DEVICE_CODE.value -> AuthorizationGrantType.DEVICE_CODE
+        else -> AuthorizationGrantType(it)
+      }
+    },
+  )
 
-  private fun OAuth2Authorization.Builder.authorizedScopes(entity: JpaAuthorization): OAuth2Authorization.Builder {
-    return authorizedScopes(StringUtils.commaDelimitedListToSet(entity.authorizedScopes).toSet())
-  }
+  private fun OAuth2Authorization.Builder.authorizedScopes(entity: JpaAuthorization): OAuth2Authorization.Builder = authorizedScopes(StringUtils.commaDelimitedListToSet(entity.authorizedScopes).toSet())
 
-  private fun OAuth2Authorization.Builder.attributes(entity: JpaAuthorization): OAuth2Authorization.Builder {
-    return attributes { attributes -> attributes.putAll(parseMap(entity.attributes)) }
-  }
+  private fun OAuth2Authorization.Builder.attributes(entity: JpaAuthorization): OAuth2Authorization.Builder = attributes { attributes -> attributes.putAll(parseMap(entity.attributes)) }
 
   private fun OAuth2Authorization.Builder.buildAuthorizationCode(entity: JpaAuthorization): OAuth2Authorization.Builder {
     if (entity.authorizationCodeValue == null) return this

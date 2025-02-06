@@ -72,9 +72,7 @@ class HandoverController(
   )
   fun createHandoverLink(
     @RequestBody @Valid handoverRequest: CreateHandoverLinkRequest,
-  ): ResponseEntity<CreateHandoverLinkResponse> {
-    return ResponseEntity.ok(handoverService.createHandover(handoverRequest))
-  }
+  ): ResponseEntity<CreateHandoverLinkResponse> = ResponseEntity.ok(handoverService.createHandover(handoverRequest))
 
   @GetMapping("/{handoverCode}")
   @Operation(

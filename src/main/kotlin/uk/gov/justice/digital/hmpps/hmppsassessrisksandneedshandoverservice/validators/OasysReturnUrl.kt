@@ -22,7 +22,5 @@ class AllowedUrlValidator(
   private val appConfiguration: AppConfiguration,
 ) : ConstraintValidator<OasysReturnUrl, String> {
 
-  override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
-    return value != null && appConfiguration.services.oasys.returnUrls.any { value.startsWith(it) }
-  }
+  override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean = value != null && appConfiguration.services.oasys.returnUrls.any { value.startsWith(it) }
 }

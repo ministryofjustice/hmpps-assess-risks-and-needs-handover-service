@@ -35,20 +35,16 @@ class JpaOAuth2AuthorizationService(
       objectMapper.registerModule(OAuth2AuthorizationServerJackson2Module())
     }
 
-    fun parseMap(data: String?): Map<String, Any> {
-      return try {
-        objectMapper.readValue(data, object : TypeReference<Map<String, Any>>() {})
-      } catch (ex: Exception) {
-        throw IllegalArgumentException(ex.message, ex)
-      }
+    fun parseMap(data: String?): Map<String, Any> = try {
+      objectMapper.readValue(data, object : TypeReference<Map<String, Any>>() {})
+    } catch (ex: Exception) {
+      throw IllegalArgumentException(ex.message, ex)
     }
 
-    fun writeMap(metadata: Map<String, Any>): String {
-      return try {
-        objectMapper.writeValueAsString(metadata)
-      } catch (ex: Exception) {
-        throw IllegalArgumentException(ex.message, ex)
-      }
+    fun writeMap(metadata: Map<String, Any>): String = try {
+      objectMapper.writeValueAsString(metadata)
+    } catch (ex: Exception) {
+      throw IllegalArgumentException(ex.message, ex)
     }
   }
 
@@ -102,10 +98,8 @@ class JpaOAuth2AuthorizationService(
     }
   }
 
-  private fun getRedisJpaAuthorizingClient(entity: JpaAuthorization): RegisteredClient {
-    return this.registeredClientRepository.findById(entity.registeredClientId)
-      ?: throw DataRetrievalFailureException(
-        "The RegisteredClient with id '${entity.registeredClientId}' was not found in the RegisteredClientRepository.",
-      )
-  }
+  private fun getRedisJpaAuthorizingClient(entity: JpaAuthorization): RegisteredClient = this.registeredClientRepository.findById(entity.registeredClientId)
+    ?: throw DataRetrievalFailureException(
+      "The RegisteredClient with id '${entity.registeredClientId}' was not found in the RegisteredClientRepository.",
+    )
 }
