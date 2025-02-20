@@ -1,4 +1,4 @@
-name: Main pipeline [build -> test -> deploy]
+name: Main
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
 
   build_docker:
     name: Build docker image
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@upload-image-to-artifacts-demo
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
@@ -54,7 +54,7 @@ jobs:
       - build_docker
       - e2e_test
       - helm_lint
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_push.yml@v2
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_push.yml@upload-image-to-artifacts-demo
     with:
       docker_registry: 'ghcr.io'
       registry_org: 'ministryofjustice'
