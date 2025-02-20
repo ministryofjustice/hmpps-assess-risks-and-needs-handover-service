@@ -108,7 +108,7 @@ services:
       NODE_ENV: development
 
   arns-handover:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-handover-service:${APP_VERSION:-latest}
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:${APP_VERSION:-latest}
     build:
       context: ../
     networks:
@@ -139,7 +139,7 @@ services:
       CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
 
   oasys-ui:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-oastub-ui:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-oastub-ui:latest
     networks:
       - hmpps
     depends_on:
