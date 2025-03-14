@@ -112,18 +112,24 @@ class HandoverController(
       true
     } else {
       providedRedirectUri == baseClientRedirectUri ||
-        (providedRedirectUri.scheme == baseClientRedirectUri.scheme &&
-          providedRedirectUri.port == baseClientRedirectUri.port &&
-          (providedRedirectUri.host == baseClientRedirectUri.host ||
-            providedRedirectUri.host.endsWith("." + baseClientRedirectUri.host)))
+        (
+          providedRedirectUri.scheme == baseClientRedirectUri.scheme &&
+            providedRedirectUri.port == baseClientRedirectUri.port &&
+            (
+              providedRedirectUri.host == baseClientRedirectUri.host ||
+                providedRedirectUri.host.endsWith("." + baseClientRedirectUri.host)
+              )
+          )
     }
 
     if (!validRedirect) {
-      return accessDenied.also { log.info(
-        "Invalid redirect URI: {} does not match or is not a subdomain of configured URI: {}",
-        redirectUri,
-        client.handoverRedirectUri
-      )}
+      return accessDenied.also {
+        log.info(
+          "Invalid redirect URI: {} does not match or is not a subdomain of configured URI: {}",
+          redirectUri,
+          client.handoverRedirectUri,
+        )
+      }
     }
 
     return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
