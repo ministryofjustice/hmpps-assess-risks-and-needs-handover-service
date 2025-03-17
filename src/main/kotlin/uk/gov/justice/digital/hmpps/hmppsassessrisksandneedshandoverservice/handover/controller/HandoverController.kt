@@ -130,10 +130,7 @@ class HandoverController(
         strategy.context.authentication = result.authenticationToken
         repo.saveContext(strategy.context, request, response)
 
-        ResponseEntity
-          .status(HttpStatus.FOUND)
-          .header("Location", finalRedirectUri)
-          .build()
+        ResponseEntity.status(HttpStatus.FOUND).header("Location", finalRedirectUri).build()
       }
       UseHandoverLinkResult.HandoverLinkNotFound -> accessDenied.also { log.info("Handover link expired or not found") }
       UseHandoverLinkResult.HandoverLinkAlreadyUsed -> accessDenied.also { log.info("Handover link has already been used") }
