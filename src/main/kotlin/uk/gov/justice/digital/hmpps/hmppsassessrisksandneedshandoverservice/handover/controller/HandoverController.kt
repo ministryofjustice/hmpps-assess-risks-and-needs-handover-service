@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.extensions.isSubdomainOf
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
@@ -104,33 +105,24 @@ class HandoverController(
     val client = appConfiguration.clients[clientId]
       ?: return accessDenied.also { log.info("Client not found") }
 
-    val baseClientRedirectUri = URI(client.handoverRedirectUri)
+    val finalRedirectUri = redirectUri
+      ?.takeIf { it.isNotBlank() }
+      ?.let { uriString ->
+        val uri = URI(uriString)
+        val clientRedirectUri = URI(client.handoverRedirectUri)
 
-    val providedRedirectUri = redirectUri?.takeIf { it.isNotBlank() }?.let { URI(it) }
+        if (uri != clientRedirectUri && !uri.isSubdomainOf(clientRedirectUri)) {
+          return accessDenied.also {
+            log.info(
+              "Invalid redirect URI: {} does not match or is not a subdomain of configured URI: {}",
+              uriString,
+              client.handoverRedirectUri,
+            )
+          }
+        }
 
-    val validRedirect = if (providedRedirectUri == null) {
-      true
-    } else {
-      providedRedirectUri == baseClientRedirectUri ||
-        (
-          providedRedirectUri.scheme == baseClientRedirectUri.scheme &&
-            providedRedirectUri.port == baseClientRedirectUri.port &&
-            (
-              providedRedirectUri.host == baseClientRedirectUri.host ||
-                providedRedirectUri.host.endsWith("." + baseClientRedirectUri.host)
-              )
-          )
-    }
-
-    if (!validRedirect) {
-      return accessDenied.also {
-        log.info(
-          "Invalid redirect URI: {} does not match or is not a subdomain of configured URI: {}",
-          redirectUri,
-          client.handoverRedirectUri,
-        )
-      }
-    }
+        uri.toString()
+      } ?: client.handoverRedirectUri
 
     return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
       is UseHandoverLinkResult.Success -> {
@@ -138,7 +130,6 @@ class HandoverController(
         strategy.context.authentication = result.authenticationToken
         repo.saveContext(strategy.context, request, response)
 
-        val finalRedirectUri = providedRedirectUri?.toString() ?: client.handoverRedirectUri
         ResponseEntity
           .status(HttpStatus.FOUND)
           .header("Location", finalRedirectUri)
