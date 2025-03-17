@@ -147,6 +147,73 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
+    fun `should return found with same redirectUri as configured`() {
+      val clientId = "test-client"
+      val client: AppConfiguration.Client = appConfiguration.clients[clientId]
+        ?: throw IllegalStateException("Client not found for test")
+
+      val handoverToken = handoverTokenRepository.save(
+        HandoverToken(
+          handoverSessionId = UUID.randomUUID(),
+          principal = TestUtils.createPrincipal(),
+        ),
+      )
+
+      val exactMatchUri = client.handoverRedirectUri
+
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId&redirectUri=$exactMatchUri")
+        .exchange()
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", exactMatchUri)
+        .expectCookie().exists(sessionCookieName)
+    }
+
+    @Test
+    fun `should return found with valid subdomain redirectUri`() {
+      val clientId = "test-client"
+      val client: AppConfiguration.Client = appConfiguration.clients[clientId]
+        ?: throw IllegalStateException("Client not found for test")
+
+      val validSubdomainUri = "http://subdomain." +
+        client.handoverRedirectUri.removePrefix("http://")
+
+      val handoverToken = handoverTokenRepository.save(
+        HandoverToken(
+          handoverSessionId = UUID.randomUUID(),
+          principal = TestUtils.createPrincipal(),
+        ),
+      )
+
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId&redirectUri=$validSubdomainUri")
+        .exchange()
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", validSubdomainUri)
+        .expectCookie().exists(sessionCookieName)
+    }
+
+    @Test
+    fun `should return access denied when redirectUri is invalid subdomain`() {
+      val clientId = "test-client"
+      val client: AppConfiguration.Client = appConfiguration.clients[clientId]
+        ?: throw IllegalStateException("Client not found for test")
+
+      val invalidSubdomainUri = "https://subdomain.otherdomain.com/callback"
+
+      val handoverToken = handoverTokenRepository.save(
+        HandoverToken(
+          handoverSessionId = UUID.randomUUID(),
+          principal = TestUtils.createPrincipal(),
+        ),
+      )
+
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId&redirectUri=$invalidSubdomainUri")
+        .exchange()
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", "/access-denied")
+        .expectCookie().doesNotExist(sessionCookieName)
+    }
+
+    @Test
     fun `should return access denied when using handover link with invalid code `() {
       val clientId = "test-client"
       val handoverCode = UUID.randomUUID().toString()
