@@ -71,7 +71,7 @@ server:
     session:
       cookie:
         name: HMPPS_ARNS_HANDOVER_SESSION
-        same-site: strict
+        same-site: lax
   forward-headers-strategy: native
   tomcat:
     remoteip:
