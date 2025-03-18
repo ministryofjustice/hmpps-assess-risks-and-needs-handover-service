@@ -77,17 +77,15 @@ class AuthorizationServerConfiguration {
   }
 }
 
-private fun configureAuthenticationValidator(): Consumer<List<AuthenticationProvider>> {
-  return Consumer<List<AuthenticationProvider>> { authenticationProviders ->
-    authenticationProviders.forEach { authenticationProvider ->
-      if (authenticationProvider is OAuth2AuthorizationCodeRequestAuthenticationProvider) {
-        val authenticationValidator: Consumer<OAuth2AuthorizationCodeRequestAuthenticationContext> =
-          WildcardRedirectUriValidator()
-            .andThen(OAuth2AuthorizationCodeRequestAuthenticationValidator.DEFAULT_SCOPE_VALIDATOR)
+private fun configureAuthenticationValidator(): Consumer<List<AuthenticationProvider>> = Consumer<List<AuthenticationProvider>> { authenticationProviders ->
+  authenticationProviders.forEach { authenticationProvider ->
+    if (authenticationProvider is OAuth2AuthorizationCodeRequestAuthenticationProvider) {
+      val authenticationValidator: Consumer<OAuth2AuthorizationCodeRequestAuthenticationContext> =
+        WildcardRedirectUriValidator()
+          .andThen(OAuth2AuthorizationCodeRequestAuthenticationValidator.DEFAULT_SCOPE_VALIDATOR)
 
-        authenticationProvider
-          .setAuthenticationValidator(authenticationValidator)
-      }
+      authenticationProvider
+        .setAuthenticationValidator(authenticationValidator)
     }
   }
 }
