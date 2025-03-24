@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.0.0"
-  kotlin("plugin.spring") version "2.1.10"
+  kotlin("plugin.spring") version "2.1.20"
 }
 
 configurations {
@@ -11,7 +11,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.2")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // Redis dependencies
@@ -21,14 +21,14 @@ dependencies {
 
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-config:6.4.3")
+  implementation("org.springframework.security:spring-security-config:6.4.4")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.3.4")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.80")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.80")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
 
   // MVC
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
