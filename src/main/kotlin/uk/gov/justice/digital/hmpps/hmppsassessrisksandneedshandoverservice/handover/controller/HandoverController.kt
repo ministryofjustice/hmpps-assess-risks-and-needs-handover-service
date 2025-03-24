@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.extensions.isSubdomainOf
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.HandoverService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service.UseHandoverLinkResult
+import java.net.URI
 import java.util.*
 
 @RestController
@@ -88,6 +90,7 @@ class HandoverController(
   fun useHandoverLink(
     @Parameter(description = "Handover code") @PathVariable handoverCode: UUID,
     @Parameter(description = "Client ID") @RequestParam clientId: String,
+    @Parameter(description = "Redirect URI") @RequestParam(required = false) redirectUri: String?,
     request: HttpServletRequest,
     response: HttpServletResponse,
   ): ResponseEntity<Any> {
@@ -102,13 +105,32 @@ class HandoverController(
     val client = appConfiguration.clients[clientId]
       ?: return accessDenied.also { log.info("Client not found") }
 
+    val finalRedirectUri = redirectUri
+      ?.takeIf { it.isNotBlank() }
+      ?.let { uriString ->
+        val uri = URI(uriString)
+        val clientRedirectUri = URI(client.handoverRedirectUri)
+
+        if (uri != clientRedirectUri && !uri.isSubdomainOf(clientRedirectUri)) {
+          return accessDenied.also {
+            log.info(
+              "Invalid redirect URI: {} does not match or is not a subdomain of configured URI: {}",
+              uriString,
+              client.handoverRedirectUri,
+            )
+          }
+        }
+
+        uri.toString()
+      } ?: client.handoverRedirectUri
+
     return when (val result = handoverService.consumeAndExchangeHandover(handoverCode)) {
       is UseHandoverLinkResult.Success -> {
         strategy.context = strategy.createEmptyContext()
         strategy.context.authentication = result.authenticationToken
         repo.saveContext(strategy.context, request, response)
 
-        ResponseEntity.status(HttpStatus.FOUND).header("Location", client.handoverRedirectUri).build()
+        ResponseEntity.status(HttpStatus.FOUND).header("Location", finalRedirectUri).build()
       }
       UseHandoverLinkResult.HandoverLinkNotFound -> accessDenied.also { log.info("Handover link expired or not found") }
       UseHandoverLinkResult.HandoverLinkAlreadyUsed -> accessDenied.also { log.info("Handover link has already been used") }
