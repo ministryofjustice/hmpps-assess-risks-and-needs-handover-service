@@ -1,5 +1,7 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
@@ -9,13 +11,15 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.AuditEvent
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
-import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.Event
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.TelemetryEvent
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.TelemetryService
+import uk.gov.justice.hmpps.sqs.audit.HmppsAuditService
 import java.util.*
 
 enum class TokenValidationResult {
@@ -31,8 +35,10 @@ class HandoverService(
   val coordinatorService: CoordinatorService,
   val appConfiguration: AppConfiguration,
   val telemetryService: TelemetryService,
+  @Autowired
+  val auditService: HmppsAuditService,
 ) {
-  fun createHandover(
+  suspend fun createHandover(
     handoverRequest: CreateHandoverLinkRequest,
     handoverSessionId: UUID = UUID.randomUUID(),
   ): CreateHandoverLinkResponse {
@@ -62,7 +68,8 @@ class HandoverService(
     handoverTokenRepository.save(handoverToken)
     val handoverLink = generateHandoverLink(handoverToken.code)
 
-    telemetryService.track(Event.ONE_TIME_LINK_CREATED, handoverContext)
+    telemetryService.track(TelemetryEvent.ONE_TIME_LINK_CREATED, handoverContext)
+    publishAuditEvent(AuditEvent.ONE_TIME_LINK_CREATED, handoverContext)
 
     return CreateHandoverLinkResponse(
       handoverLink = handoverLink,
@@ -71,14 +78,15 @@ class HandoverService(
     )
   }
 
-  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
+  suspend fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
     TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
     TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
     TokenValidationResult.VALID -> {
       val handoverSessionId = consumeToken(handoverCode).handoverSessionId
       handoverContextService.getContext(handoverSessionId).let {
         if (it is GetHandoverContextResult.Success) {
-          telemetryService.track(Event.ONE_TIME_LINK_USED, it.handoverContext)
+          telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, it.handoverContext)
+          publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, it.handoverContext)
         }
       }
       UseHandoverLinkResult.Success(
@@ -111,6 +119,20 @@ class HandoverService(
     token.tokenStatus = TokenStatus.USED
     return handoverTokenRepository.save(token)
   }
+
+  private suspend fun publishAuditEvent(
+    event: AuditEvent,
+    context: HandoverContext,
+    @Value("\${spring.application.name}")
+    service: String? = null,
+  ) =
+    auditService.publishEvent(
+      what = event.name,
+      subjectId = context.subject.crn,
+      subjectType = "CRN",
+      who = context.principal.identifier,
+      service = service,
+    )
 }
 
 sealed class UseHandoverLinkResult {

@@ -3,17 +3,13 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.ser
 import com.microsoft.applicationinsights.TelemetryClient
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
-
-enum class Event {
-  ONE_TIME_LINK_CREATED,
-  ONE_TIME_LINK_USED,
-}
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.TelemetryEvent
 
 @Service
 class TelemetryService(
   val client: TelemetryClient,
 ) {
-  fun track(event: Event, handoverContext: HandoverContext) = client.trackEvent(
+  fun track(event: TelemetryEvent, handoverContext: HandoverContext) = client.trackEvent(
     event.name,
     mapOf(
       "USER_ID" to handoverContext.principal.identifier,
