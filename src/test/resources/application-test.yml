@@ -48,3 +48,10 @@ app:
 test:
   wiremock:
     base-url: http://localhost:8089
+
+hmpps.sqs:
+  provider: localstack
+  localstackUrl: http://localstack:4566
+  queues:
+    audit:
+      queueName: audit-queue

@@ -17,3 +17,10 @@ app:
       oauth-redirect-uris:
         - ${client.localhost.oauth-redirect-uri:http://localhost:3000/sign-in/callback}
       handover-redirect-uri: ${client.localhost.handover-redirect-uri:http://localhost:3000/sign-in}
+
+hmpps.sqs:
+  provider: localstack
+  localstackUrl: http://localstack:4566
+  queues:
+    audit:
+      queueName: audit-queue
