@@ -18,3 +18,7 @@ services:
   oasys-ui:
     ports:
       - "7072:3000"
+
+  localstack:
+    ports:
+      - "4566:4566"
