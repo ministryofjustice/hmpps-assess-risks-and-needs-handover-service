@@ -27,6 +27,9 @@ dependencies {
   implementation("org.bouncycastle:bcprov-jdk18on:1.80")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.80")
 
+  // Audit
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.2")
+
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
 
@@ -44,6 +47,8 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.12.1")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }
 
 kotlin {

@@ -72,7 +72,7 @@ class HandoverController(
       ApiResponse(responseCode = "403", description = "Forbidden"),
     ],
   )
-  fun createHandoverLink(
+  suspend fun createHandoverLink(
     @RequestBody @Valid handoverRequest: CreateHandoverLinkRequest,
   ): ResponseEntity<CreateHandoverLinkResponse> = ResponseEntity.ok(handoverService.createHandover(handoverRequest))
 
@@ -87,7 +87,7 @@ class HandoverController(
       ApiResponse(responseCode = "409", description = "Handover link has already been used"),
     ],
   )
-  fun useHandoverLink(
+  suspend fun useHandoverLink(
     @Parameter(description = "Handover code") @PathVariable handoverCode: UUID,
     @Parameter(description = "Client ID") @RequestParam clientId: String,
     @Parameter(description = "Redirect URI") @RequestParam(required = false) redirectUri: String?,

@@ -50,11 +50,11 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response.handoverSessionId).isEqualTo(newHandoverContext.handoverSessionId)
-      assertThat(response.principal).isEqualTo(newHandoverContext.principal)
-      assertThat(response.subject).isEqualTo(newHandoverContext.subject)
-      assertThat(response.assessmentContext).isEqualTo(newHandoverContext.assessmentContext)
-      assertThat(response.sentencePlanContext).isEqualTo(newHandoverContext.sentencePlanContext)
+      assertThat(response?.handoverSessionId).isEqualTo(newHandoverContext.handoverSessionId)
+      assertThat(response?.principal).isEqualTo(newHandoverContext.principal)
+      assertThat(response?.subject).isEqualTo(newHandoverContext.subject)
+      assertThat(response?.assessmentContext).isEqualTo(newHandoverContext.assessmentContext)
+      assertThat(response?.sentencePlanContext).isEqualTo(newHandoverContext.sentencePlanContext)
     }
 
     @Test
@@ -87,8 +87,8 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response.userMessage).contains("subject.familyName: size must be between 1 and 25")
-      assertThat(response.userMessage).contains("subject.crn: size must be between 1 and 15")
+      assertThat(response?.userMessage).contains("subject.familyName: size must be between 1 and 25")
+      assertThat(response?.userMessage).contains("subject.crn: size must be between 1 and 15")
     }
 
     @Test
@@ -106,7 +106,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response.developerMessage).isEqualTo("Token needs to be issued by HMPPS Auth")
+      assertThat(response?.developerMessage).isEqualTo("Token needs to be issued by HMPPS Auth")
     }
 
     @Test
@@ -208,7 +208,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response.developerMessage).isEqualTo("Token needs to be issued by HMPPS Handover")
+      assertThat(response?.developerMessage).isEqualTo("Token needs to be issued by HMPPS Handover")
     }
   }
 }

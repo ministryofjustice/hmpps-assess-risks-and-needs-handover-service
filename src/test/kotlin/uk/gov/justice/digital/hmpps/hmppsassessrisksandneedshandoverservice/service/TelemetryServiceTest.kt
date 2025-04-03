@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.TelemetryEvent
 import java.util.UUID
 
 class TelemetryServiceTest {
@@ -55,8 +56,8 @@ class TelemetryServiceTest {
   }
 
   @ParameterizedTest
-  @EnumSource(Event::class)
-  fun `test event is tracked`(event: Event) {
+  @EnumSource(TelemetryEvent::class)
+  fun `test event is tracked`(event: TelemetryEvent) {
     every { telemetryClient.trackEvent(any<String>(), any<Map<String, String>>(), null) } just Runs
 
     telemetryService.track(event, handoverContext)
