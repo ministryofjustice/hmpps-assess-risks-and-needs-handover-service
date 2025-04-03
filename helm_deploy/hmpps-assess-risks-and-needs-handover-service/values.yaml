@@ -1,5 +1,5 @@
 generic-service:
-  serviceAccountName: hmpps-assess-risks-and-needs-handover-service
+  serviceAccountName: hmpps-assess-risks-and-needs-integrations
   nameOverride: hmpps-assess-risks-and-needs-handover-service
   productId: "" # productId for the product that this belongs too, i.e. DPS001, see README.md for details
 
