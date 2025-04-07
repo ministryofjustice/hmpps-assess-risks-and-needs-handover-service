@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.service
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
@@ -121,14 +120,12 @@ class HandoverService(
   private suspend fun publishAuditEvent(
     event: AuditEvent,
     context: HandoverContext,
-    @Value("\${spring.application.name}")
-    service: String = "",
   ) = auditService.publishEvent(
     what = event.name,
     subjectId = context.subject.crn,
     subjectType = "CRN",
     who = context.principal.identifier,
-    service = service,
+    service = appConfiguration.name,
   )
 }
 
