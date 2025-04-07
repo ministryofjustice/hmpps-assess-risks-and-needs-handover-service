@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties("app")
 class AppConfiguration {
+  lateinit var name: String
   lateinit var services: Services
   lateinit var self: Self
   lateinit var clients: Map<String, Client>
