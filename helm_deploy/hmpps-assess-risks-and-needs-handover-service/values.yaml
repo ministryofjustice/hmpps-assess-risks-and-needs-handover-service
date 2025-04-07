@@ -47,7 +47,7 @@ generic-service:
     hmpps-assess-risks-and-needs-integrations-elasticache-redis:
       REDIS_HOST: "primary_endpoint_address"
       REDIS_AUTH_TOKEN: "auth_token"
-    sqs-hmpps-audit-secret:
+    hmpps-sqs-audit-queue:
       HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: "sqs_queue_name"
 
   allowlist:
