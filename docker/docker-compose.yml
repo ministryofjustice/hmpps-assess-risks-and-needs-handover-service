@@ -31,7 +31,7 @@ services:
       - /var/lib/postgresql
 
   coordinator-api:
-    image: quay.io/hmpps/hmpps-assess-risks-and-needs-coordinator-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:latest
     networks:
       - hmpps
     depends_on:
@@ -55,7 +55,7 @@ services:
       CLIENT_SECRET: clientsecret
 
   san-api:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:latest
     networks:
       - hmpps
     depends_on:
@@ -74,7 +74,7 @@ services:
       FORM_CONFIG_BASE_URL: http://san-ui:3000/config
 
   san-ui:
-    image: quay.io/hmpps/hmpps-strengths-based-needs-assessments-ui:latest
+    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:latest
     networks:
       - hmpps
     depends_on:
@@ -117,6 +117,7 @@ services:
       - redis
       - hmpps-auth
       - coordinator-api
+      - localstack
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://arns-handover:7070/health/ping" ]
       interval: 5s
@@ -164,6 +165,27 @@ services:
       AUDIT_ENABLED: "false"
       PRODUCT_ID: FOO
 
+  localstack:
+    image: localstack/localstack:3
+    networks:
+      - hmpps
+    container_name: localstack-sqs
+    environment:
+      - SERVICES=sqs
+      - LOCALSTACK_HOST=localstack:4566
+      - DEBUG=1
+      - DEFAULT_REGION=eu-west-2
+      - AWS_DEFAULT_REGION=eu-west-2
+      - USE_SSL=false
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "./scripts/localstack/init:/etc/localstack/init/ready.d"
+      - "./scripts/localstack/wait:/scripts/wait"
+    healthcheck:
+      test: [ "CMD", "bash", "/scripts/wait/healthcheck.sh" ]
+      interval: 5s
+      timeout: 10s
+      retries: 50
+
 networks:
   hmpps:
-

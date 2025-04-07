@@ -71,6 +71,7 @@ server:
     session:
       cookie:
         name: HMPPS_ARNS_HANDOVER_SESSION
+        same-site: lax
   forward-headers-strategy: native
   tomcat:
     remoteip:
@@ -104,13 +105,11 @@ app:
   clients:
     sentence-plan:
       secret: ${client.sp.secret}
-      oauth-redirect-uris:
-        - ${client.sp.oauth-redirect-uri}
+      oauth-redirect-uris: ${client.sp.oauth-redirect-uri}
       handover-redirect-uri: ${client.sp.handover-redirect-uri}
     strengths-and-needs-assessment:
       secret: ${client.san.secret}
-      oauth-redirect-uris:
-        - ${client.san.oauth-redirect-uri}
+      oauth-redirect-uris: ${client.san.oauth-redirect-uri}
       handover-redirect-uri: ${client.san.handover-redirect-uri}
 
 management:
