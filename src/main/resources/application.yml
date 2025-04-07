@@ -85,6 +85,7 @@ server:
       enabled: true
 
 app:
+  name: ${spring.application.name}
   services:
     hmpps-auth:
       base-url: ${hmpps-auth.base-url}

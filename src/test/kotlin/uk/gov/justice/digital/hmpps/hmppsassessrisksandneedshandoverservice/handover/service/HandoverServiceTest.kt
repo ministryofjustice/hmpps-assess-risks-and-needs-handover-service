@@ -103,6 +103,7 @@ class HandoverServiceTest {
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
       every { telemetryService.track(any(), any()) } just Runs
+      every { appConfiguration.name } returns "service-name"
       coEvery {
         auditService.publishEvent(
           what = any(),
@@ -161,7 +162,7 @@ class HandoverServiceTest {
           correlationId = null,
           `when` = any(),
           who = handoverContext.principal.identifier,
-          service = "",
+          service = "service-name",
           details = null,
         )
       }
@@ -218,6 +219,7 @@ class HandoverServiceTest {
       every { subjectDetails.crn } returns "CRN1234"
       every { handoverContext.subject } returns subjectDetails
       every { handoverContext.principal } returns HandoverPrincipal(identifier = "USER_1234")
+      every { appConfiguration.name } returns "service-name"
       coEvery {
         auditService.publishEvent(
           what = any(),
@@ -245,7 +247,7 @@ class HandoverServiceTest {
           correlationId = null,
           `when` = any(),
           who = "USER_1234",
-          service = "",
+          service = "service-name",
           details = null,
         )
       }
