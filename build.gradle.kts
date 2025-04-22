@@ -21,7 +21,7 @@ dependencies {
 
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-config:6.4.4")
+  implementation("org.springframework.security:spring-security-config:6.4.5")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.3.4")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.80")
@@ -37,18 +37,18 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0")
-  implementation("org.webjars.npm:govuk-frontend:5.9.0")
+  implementation("org.webjars.npm:govuk-frontend:5.10.0-internal.0")
   implementation("org.webjars:webjars-locator-core:0.59")
 
   // Test dependencies
   testImplementation(kotlin("test"))
-  testImplementation("net.datafaker:datafaker:2.4.2")
+  testImplementation("net.datafaker:datafaker:2.4.3")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("org.wiremock:wiremock-standalone:3.12.1")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.12.6")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.1")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 }
 
 kotlin {
