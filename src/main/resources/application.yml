@@ -10,6 +10,8 @@ logging:
         security.jackson2: info
 
 spring:
+  session:
+    timeout: 12h
   application:
     name: hmpps-assess-risks-and-needs-handover-service
 
