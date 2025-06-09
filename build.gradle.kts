@@ -11,7 +11,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.5")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.6")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // Redis dependencies
@@ -24,8 +24,8 @@ dependencies {
   implementation("org.springframework.security:spring-security-config:6.5.0")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.3.4")
 
-  implementation("org.bouncycastle:bcprov-jdk18on:1.80")
-  implementation("org.bouncycastle:bcpkix-jdk18on:1.80")
+  implementation("org.bouncycastle:bcprov-jdk18on:1.81")
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.81")
 
   // Audit
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.5")
@@ -37,7 +37,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0")
-  implementation("org.webjars.npm:govuk-frontend:5.10.1")
+  implementation("org.webjars.npm:govuk-frontend:5.10.2")
   implementation("org.webjars:webjars-locator-core:0.59")
 
   // Test dependencies
