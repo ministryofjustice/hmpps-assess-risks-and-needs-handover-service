@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "8.3.4"
   kotlin("plugin.spring") version "2.2.0"
 }
 
@@ -11,7 +11,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.9")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.4.11")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // Redis dependencies
@@ -21,14 +21,14 @@ dependencies {
 
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-config:6.5.1")
+  implementation("org.springframework.security:spring-security-config:6.5.2")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.3.4")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.81")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.81")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.8")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.4.10")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.9")
@@ -37,7 +37,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0")
-  implementation("org.webjars.npm:govuk-frontend:5.11.0")
+  implementation("org.webjars.npm:govuk-frontend:5.11.1")
   implementation("org.webjars:webjars-locator-core:0.59")
 
   // Test dependencies
