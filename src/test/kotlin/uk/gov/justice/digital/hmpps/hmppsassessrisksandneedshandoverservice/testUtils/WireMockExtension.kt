@@ -89,7 +89,7 @@ class WireMockExtension :
       .keyID(keyId)
       .build()
     val jwkSet = JWKSet(rsaKey)
-    return jwkSet.toJSONObject().toString()
+    return jwkSet.toString()
   }
 
   private fun createAssociationsResponse(): String = """

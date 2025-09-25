@@ -56,12 +56,6 @@ class AuthorizationServerConfiguration {
 
     http
       .getConfigurer(OAuth2AuthorizationServerConfigurer::class.java)
-      .oidc { oidc ->
-        oidc.providerConfigurationEndpoint(Customizer.withDefaults())
-      }
-
-    http
-      .getConfigurer(OAuth2AuthorizationServerConfigurer::class.java)
       .authorizationEndpoint { authorizationEndpoint ->
         authorizationEndpoint.authenticationProviders(
           configureAuthenticationValidator(),

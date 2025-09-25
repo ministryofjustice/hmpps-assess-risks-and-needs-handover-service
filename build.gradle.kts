@@ -22,7 +22,7 @@ dependencies {
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.security:spring-security-config:6.5.2")
-  implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.3.4")
+  implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.5.2")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.81")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.81")
@@ -59,4 +59,8 @@ tasks {
   withType<KotlinCompile> {
     compilerOptions.jvmTarget = JvmTarget.JVM_21
   }
+
+//  test {
+//    testLogging { showStandardStreams = true }
+//  }
 }
