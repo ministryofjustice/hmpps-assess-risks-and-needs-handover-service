@@ -59,8 +59,4 @@ tasks {
   withType<KotlinCompile> {
     compilerOptions.jvmTarget = JvmTarget.JVM_21
   }
-
-//  test {
-//    testLogging { showStandardStreams = true }
-//  }
 }
