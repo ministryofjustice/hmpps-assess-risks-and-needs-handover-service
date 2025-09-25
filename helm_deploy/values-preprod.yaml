@@ -17,6 +17,8 @@ generic-service:
     CLIENT_SP_HANDOVER_REDIRECT_URI: "https://sentence-plan-preprod.hmpps.service.justice.gov.uk/sign-in"
     CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-preprod.hmpps.service.justice.gov.uk/sign-in/callback"
     CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-preprod.hmpps.service.justice.gov.uk/sign-in"
+    CLIENT_AAP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-preprod.hmpps.service.justice.gov.uk/sign-in/callback"
+    CLIENT_AAP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-preprod.hmpps.service.justice.gov.uk/sign-in"
 
   allowlist:
     mod-platform-live-eu-west-2a-nat: 13.41.38.176/32
