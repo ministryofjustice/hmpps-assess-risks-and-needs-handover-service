@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.3"
   kotlin("plugin.spring") version "2.2.20"
 }
 
@@ -42,7 +42,7 @@ dependencies {
 
   // Test dependencies
   testImplementation(kotlin("test"))
-  testImplementation("net.datafaker:datafaker:2.5.1")
+  testImplementation("net.datafaker:datafaker:2.5.2")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.1")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
