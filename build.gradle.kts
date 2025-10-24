@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.3"
-  kotlin("plugin.spring") version "2.2.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.4"
+  kotlin("plugin.spring") version "2.2.21"
 }
 
 configurations {
@@ -21,14 +21,14 @@ dependencies {
 
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-config:6.5.5")
+  implementation("org.springframework.security:spring-security-config:6.5.6")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.5.2")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.82")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.5.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.0")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
