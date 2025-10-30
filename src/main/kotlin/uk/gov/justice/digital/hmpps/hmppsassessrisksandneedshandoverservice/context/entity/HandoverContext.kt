@@ -72,7 +72,7 @@ data class SubjectDetails(
   @field:Size(min = 1, max = 15)
   @field:AppSecAllowedCharacters
   val crn: String?,
-  @field:Size(min = 1, max = 15)
+  @field:Size(min = 1, max = 25)
   @field:AppSecAllowedCharacters
   val pnc: String?,
   @field:Size(max = 50)
