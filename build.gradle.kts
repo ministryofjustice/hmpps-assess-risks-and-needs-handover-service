@@ -2,8 +2,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.1.3"
-  kotlin("plugin.spring") version "2.2.20"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.2.0"
+  kotlin("plugin.spring") version "2.2.21"
 }
 
 configurations {
@@ -11,7 +11,7 @@ configurations {
 }
 
 dependencies {
-  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.7.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:1.8.2")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // Redis dependencies
@@ -21,17 +21,17 @@ dependencies {
 
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-config:6.5.5")
+  implementation("org.springframework.security:spring-security-config:6.5.7")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.5.2")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.82")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.5.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.2")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
 
   // MVC
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -42,9 +42,9 @@ dependencies {
 
   // Test dependencies
   testImplementation(kotlin("test"))
-  testImplementation("net.datafaker:datafaker:2.5.2")
+  testImplementation("net.datafaker:datafaker:2.5.3")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
-  testImplementation("org.wiremock:wiremock-standalone:3.13.1")
+  testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
   testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
