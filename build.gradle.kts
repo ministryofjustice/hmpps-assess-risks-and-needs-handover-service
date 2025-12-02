@@ -24,11 +24,11 @@ dependencies {
   implementation("org.springframework.security:spring-security-config:6.5.7")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.5.2")
 
-  implementation("org.bouncycastle:bcprov-jdk18on:1.82")
-  implementation("org.bouncycastle:bcpkix-jdk18on:1.82")
+  implementation("org.bouncycastle:bcprov-jdk18on:1.83")
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.2")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.3")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.14")
