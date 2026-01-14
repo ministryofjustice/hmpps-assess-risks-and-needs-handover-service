@@ -114,10 +114,6 @@ app:
       secret: ${client.san.secret}
       oauth-redirect-uris: ${client.san.oauth-redirect-uri}
       handover-redirect-uri: ${client.san.handover-redirect-uri}
-    arns-assessment-platform:
-      secret: ${client.aap.secret}
-      oauth-redirect-uris: ${client.aap.oauth-redirect-uri}
-      handover-redirect-uri: ${client.aap.handover-redirect-uri}
 
 management:
   endpoints:

@@ -149,20 +149,6 @@ object TestUtils {
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
-  fun createAssessmentContextWithZeroedId() = AssessmentContext(
-    oasysAssessmentPk = (100_000..999_999).random().toString(),
-    assessmentId = UUID.fromString("00000000-0000-0000-0000-000000000000"),
-    assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-  )
-
-  fun createHandoverContextWithZeroedAssessmentId(handoverSessionId: UUID): HandoverContext = HandoverContext(
-    handoverSessionId = handoverSessionId,
-    principal = createPrincipal(),
-    subject = createSubjectDetails(),
-    assessmentContext = createAssessmentContextWithZeroedId(),
-    sentencePlanContext = createSentencePlanContext(),
-  )
-
   fun createSentencePlanContext() = SentencePlanContext(
     oasysAssessmentPk = (100_000..999_999).random().toString(),
     planId = UUID.randomUUID(),

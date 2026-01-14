@@ -78,29 +78,22 @@ class HandoverService(
   suspend fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
     TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
     TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
-    TokenValidationResult.VALID -> consumeValidToken(handoverCode)
-  }
-
-  private suspend fun consumeValidToken(handoverCode: UUID): UseHandoverLinkResult {
-    val handoverSessionId = consumeToken(handoverCode).handoverSessionId
-    val contextResult = handoverContextService.getContext(handoverSessionId)
-
-    if (contextResult !is GetHandoverContextResult.Success) {
-      return UseHandoverLinkResult.HandoverLinkNotFound
+    TokenValidationResult.VALID -> {
+      val handoverSessionId = consumeToken(handoverCode).handoverSessionId
+      handoverContextService.getContext(handoverSessionId).let {
+        if (it is GetHandoverContextResult.Success) {
+          telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, it.handoverContext)
+          publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, it.handoverContext)
+        }
+      }
+      UseHandoverLinkResult.Success(
+        UsernamePasswordAuthenticationToken(
+          handoverSessionId.toString(),
+          null,
+          null,
+        ),
+      )
     }
-
-    val handoverContext = contextResult.handoverContext
-    telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, handoverContext)
-    publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, handoverContext)
-
-    return UseHandoverLinkResult.Success(
-      authenticationToken = UsernamePasswordAuthenticationToken(
-        handoverSessionId.toString(),
-        null,
-        null,
-      ),
-      handoverContext = handoverContext,
-    )
   }
 
   private fun generateHandoverLink(handoverCode: UUID): String = "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
@@ -137,11 +130,7 @@ class HandoverService(
 }
 
 sealed class UseHandoverLinkResult {
-  data class Success(
-    val authenticationToken: UsernamePasswordAuthenticationToken,
-    val handoverContext: HandoverContext,
-  ) : UseHandoverLinkResult()
-
+  data class Success(val authenticationToken: UsernamePasswordAuthenticationToken) : UseHandoverLinkResult()
   data object HandoverLinkNotFound : UseHandoverLinkResult()
   data object HandoverLinkAlreadyUsed : UseHandoverLinkResult()
 }
