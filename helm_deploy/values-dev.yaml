@@ -15,7 +15,7 @@ generic-service:
     OASYS_RETURN_URLS: "https://arns-oastub-dev.hmpps.service.justice.gov.uk,https://t2.oasys.service.justice.gov.uk"
     COORDINATOR_API_BASE_URL: "https://arns-coordinator-api-dev.hmpps.service.justice.gov.uk"
     CLIENT_SP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback,https://*.arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback"
-    CLIENT_SP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/forms/sentence-plan/oasys"
+    CLIENT_SP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover?service=sentence-plan"
     CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback,https://*.strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback"
     CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in"
 
