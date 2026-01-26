@@ -100,7 +100,7 @@ class HandoverController(
     val accessDenied = ResponseEntity
       .status(HttpStatus.FOUND)
       .header("Location", "/access-denied")
-      .build<Any?>()
+      .build<Any>()
 
     val client = appConfiguration.clients[clientId]
       ?: return accessDenied.also { log.info("Client not found") }
