@@ -43,7 +43,7 @@ dependencies {
   // Test dependencies
   testImplementation(kotlin("test"))
   testImplementation("net.datafaker:datafaker:2.5.3")
-  testImplementation("com.ninja-squad:springmockk:4.0.2")
+  testImplementation("com.ninja-squad:springmockk:5.0.1")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")

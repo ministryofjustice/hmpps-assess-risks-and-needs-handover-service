@@ -18,8 +18,8 @@ generic-service:
     CLIENT_SP_HANDOVER_REDIRECT_URI: "https://sentence-plan-test.hmpps.service.justice.gov.uk/sign-in/handover"
     CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in/callback"
     CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in"
-    CLIENT_AAP_OAUTH_REDIRECT_URI:  "https://arns-assessment-platform-test.hmpps.service.justice.gov.uk/sign-in/callback"
-    CLIENT_AAP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-test.hmpps.service.justice.gov.uk/sign-in"
+    CLIENT_AAP_OAUTH_REDIRECT_URI:  "https://arns-assessment-platform-test.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_AAP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-test.hmpps.service.justice.gov.uk/sign-in/handover"
 
   allowlist:
     mp-nat-egress-one: 13.43.9.198/32

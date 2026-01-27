@@ -12,6 +12,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.conf
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
@@ -29,6 +30,9 @@ class HandoverControllerTest : IntegrationTestBase() {
 
   @Autowired
   lateinit var handoverTokenRepository: HandoverTokenRepository
+
+  @Autowired
+  lateinit var handoverContextService: HandoverContextService
 
   @Autowired
   lateinit var appConfiguration: AppConfiguration
@@ -128,15 +132,19 @@ class HandoverControllerTest : IntegrationTestBase() {
   @DisplayName("useHandoverLink")
   inner class UseHandoverLink {
     @Test
-    fun `should return found when using handover link with valid code `() {
+    fun `should return found when using handover link with valid code`() {
       val clientId = "test-client"
       val client: AppConfiguration.Client = appConfiguration.clients[clientId]
         ?: throw IllegalStateException()
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 
@@ -153,10 +161,14 @@ class HandoverControllerTest : IntegrationTestBase() {
       val client: AppConfiguration.Client = appConfiguration.clients[clientId]
         ?: throw IllegalStateException("Client not found for test")
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 
@@ -178,10 +190,14 @@ class HandoverControllerTest : IntegrationTestBase() {
       val validSubdomainUri = "http://subdomain." +
         client.handoverRedirectUri.removePrefix("http://")
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 
@@ -195,15 +211,17 @@ class HandoverControllerTest : IntegrationTestBase() {
     @Test
     fun `should return access denied when redirectUri is invalid subdomain`() {
       val clientId = "test-client"
-      val client: AppConfiguration.Client = appConfiguration.clients[clientId]
-        ?: throw IllegalStateException("Client not found for test")
 
       val invalidSubdomainUri = "https://subdomain.otherdomain.com/callback"
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 
@@ -215,7 +233,7 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return access denied when using handover link with invalid code `() {
+    fun `should return access denied when using handover link with invalid code`() {
       val clientId = "test-client"
       val handoverCode = UUID.randomUUID().toString()
 
@@ -230,10 +248,14 @@ class HandoverControllerTest : IntegrationTestBase() {
     fun `should return access denied when using handover link with already used code`() = runTest {
       val clientId = "test-client"
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 
@@ -244,6 +266,78 @@ class HandoverControllerTest : IntegrationTestBase() {
         .expectStatus().isFound
         .expectHeader().valueEquals("Location", "/access-denied")
         .expectCookie().doesNotExist(sessionCookieName)
+    }
+
+    @Test
+    fun `should redirect to AAP when sentence-plan client has zeroed assessmentId`() {
+      val clientId = "sentence-plan"
+      val aapClient: AppConfiguration.Client = appConfiguration.clients["arns-assessment-platform"]
+        ?: throw IllegalStateException("AAP client not found for test")
+
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContextWithZeroedAssessmentId(handoverSessionId))
+      val handoverToken = handoverTokenRepository.save(
+        HandoverToken(
+          handoverSessionId = handoverSessionId,
+          principal = principal,
+        ),
+      )
+
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId")
+        .exchange()
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", "${aapClient.handoverRedirectUri}?service=sentence-plan")
+        .expectCookie().exists(sessionCookieName)
+    }
+
+    @Test
+    fun `should redirect to sentence-plan when sentence-plan client has non-zeroed assessmentId`() {
+      val clientId = "sentence-plan"
+      val spClient: AppConfiguration.Client = appConfiguration.clients[clientId]
+        ?: throw IllegalStateException("Sentence Plan client not found for test")
+
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
+      val handoverToken = handoverTokenRepository.save(
+        HandoverToken(
+          handoverSessionId = handoverSessionId,
+          principal = principal,
+        ),
+      )
+
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId")
+        .exchange()
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", spClient.handoverRedirectUri)
+        .expectCookie().exists(sessionCookieName)
+    }
+
+    @Test
+    fun `should not redirect to AAP when non-sentence-plan client has zeroed assessmentId`() {
+      val clientId = "test-client"
+      val client: AppConfiguration.Client = appConfiguration.clients[clientId]
+        ?: throw IllegalStateException("Test client not found")
+
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContextWithZeroedAssessmentId(handoverSessionId))
+      val handoverToken = handoverTokenRepository.save(
+        HandoverToken(
+          handoverSessionId = handoverSessionId,
+          principal = principal,
+        ),
+      )
+
+      webTestClient.get().uri("/handover/${handoverToken.code}?clientId=$clientId")
+        .exchange()
+        .expectStatus().isFound
+        .expectHeader().valueEquals("Location", client.handoverRedirectUri)
+        .expectCookie().exists(sessionCookieName)
     }
   }
 
