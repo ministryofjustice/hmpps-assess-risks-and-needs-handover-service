@@ -130,15 +130,48 @@ class HandoverController(
         strategy.context.authentication = result.authenticationToken
         repo.saveContext(strategy.context, request, response)
 
-        ResponseEntity.status(HttpStatus.FOUND).header("Location", finalRedirectUri).build()
+        val resolvedRedirectUri = resolveRedirectUri(clientId, result, finalRedirectUri)
+        ResponseEntity.status(HttpStatus.FOUND).header("Location", resolvedRedirectUri).build()
       }
+
       UseHandoverLinkResult.HandoverLinkNotFound -> accessDenied.also { log.info("Handover link expired or not found") }
       UseHandoverLinkResult.HandoverLinkAlreadyUsed -> accessDenied.also { log.info("Handover link has already been used") }
     }
   }
 
+  /**
+   * Resolves the final redirect URI based on the handover context.
+   *
+   * When the client is sentence-plan and the assessmentId is zeroed (indicating an AAP-based
+   * sentence plan), routes to the AAP client's redirect URI with ?service=sentence-plan appended.
+   * TODO: This is a temporary workaround until old Sentence Plan is decommissioned.
+   */
+  private fun resolveRedirectUri(
+    clientId: String,
+    result: UseHandoverLinkResult.Success,
+    defaultRedirectUri: String,
+  ): String {
+    val assessmentId = result.handoverContext.assessmentContext?.assessmentId
+
+    if (clientId == SENTENCE_PLAN_CLIENT_ID && assessmentId == ZERO_UUID) {
+      val aapClient = appConfiguration.clients[AAP_CLIENT_ID]
+        ?: return defaultRedirectUri.also {
+          log.warn("AAP client not configured, falling back to default redirect URI")
+        }
+
+      return "${aapClient.handoverRedirectUri}?service=sentence-plan".also {
+        log.info("Routing sentence-plan handover with zeroed assessmentId to AAP: {}", it)
+      }
+    }
+
+    return defaultRedirectUri
+  }
+
   private companion object {
     private val log = LoggerFactory.getLogger(this::class.java)
+    private val ZERO_UUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
+    private const val SENTENCE_PLAN_CLIENT_ID = "sentence-plan"
+    private const val AAP_CLIENT_ID = "arns-assessment-platform"
 
     const val HANDOVER_REQUEST_EXAMPLE = """{
       "user": {

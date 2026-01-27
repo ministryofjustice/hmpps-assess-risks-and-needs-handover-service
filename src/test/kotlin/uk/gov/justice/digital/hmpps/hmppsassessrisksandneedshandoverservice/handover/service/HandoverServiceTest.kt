@@ -235,7 +235,9 @@ class HandoverServiceTest {
 
       val result = handoverService.consumeAndExchangeHandover(handoverToken.code)
 
-      assertEquals(true, (result as UseHandoverLinkResult.Success).authenticationToken.isAuthenticated)
+      val successResult = result as UseHandoverLinkResult.Success
+      assertEquals(true, successResult.authenticationToken.isAuthenticated)
+      assertEquals(handoverContext, successResult.handoverContext)
       verify { handoverTokenRepository.findById(any()) }
       verify { handoverTokenRepository.save(handoverToken) }
       verify(exactly = 1) { telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, handoverContext) }
