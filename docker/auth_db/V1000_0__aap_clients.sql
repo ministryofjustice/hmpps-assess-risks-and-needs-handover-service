@@ -1,0 +1,7 @@
+-- Add auth client (auth_code flow) for AAP-UI. Client secret is clientsecret
+INSERT INTO oauth_client_details (client_id, access_token_validity, additional_information, authorities, authorized_grant_types, autoapprove, client_secret, refresh_token_validity, resource_ids, scope, web_server_redirect_uri)
+VALUES ('hmpps-arns-assessment-platform-ui', 3600, '{}', null, 'authorization_code,refresh_token', 'read,write', '$2a$10$lBwbziQlLfiCnn8Kj1PfMujEcLdsJYlYSNJvBRO638gCYTS9yN0xm', 43200, null, 'read,write', 'http://localhost:3000,http://localhost:3000/sign-in/callback,http://localhost:3000/sign-in/hmpps-auth/callback,http://localhost:7072,http://localhost:7072/sign-in/callback,http://localhost:7072/sign-in/hmpps-auth/callback');
+
+-- Add system client (S2S calls) for AAP-UI with ARNS roles. Client secret is clientsecret
+INSERT INTO oauth_client_details (client_id, access_token_validity, additional_information, authorities, authorized_grant_types, autoapprove, client_secret, refresh_token_validity, resource_ids, scope, web_server_redirect_uri)
+VALUES ('hmpps-arns-assessment-platform-ui-system', 1200, '{}', 'ROLE_AAP__FRONTEND_RW,ROLE_STRENGTHS_AND_NEEDS_OASYS,ROLE_AAP__COORDINATOR_RW', 'client_credentials', 'read,write', '$2a$10$lBwbziQlLfiCnn8Kj1PfMujEcLdsJYlYSNJvBRO638gCYTS9yN0xm', 43200, null, 'read,write', null);

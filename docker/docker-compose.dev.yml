@@ -35,7 +35,7 @@ services:
       - ..:/app
       - ../.gradle:/home/gradle/.gradle
 
-  oasys-ui:
+  aap-ui:
     ports:
       - "7072:3000"
 
