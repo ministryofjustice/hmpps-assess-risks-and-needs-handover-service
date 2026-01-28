@@ -1,4 +1,8 @@
 services:
+  hmpps-auth:
+    ports:
+      - "9090:9090"
+
   coordinator-api:
     ports:
       - "8070:8080"
@@ -15,7 +19,7 @@ services:
     ports:
       - "7070:7070"
 
-  oasys-ui:
+  aap-ui:
     ports:
       - "7072:3000"
 
