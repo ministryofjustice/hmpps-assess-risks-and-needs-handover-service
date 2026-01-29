@@ -35,7 +35,7 @@ jobs:
       image_artifact_retention_days: 2
 
   e2e_test:
-    name: e2e_test
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "E2E tests removed - using AAP-UI training session launcher instead of OAStub"
+    needs: [build_docker]
+    uses: ./.github/workflows/e2e_test.yml
+    with:
+      app_version: ${{ needs.build_docker.outputs.app_version }}

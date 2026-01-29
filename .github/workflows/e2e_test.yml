@@ -1,0 +1,15 @@
+name: e2e_test
+
+on:
+  workflow_call:
+    inputs:
+      app_version:
+        type: string
+        required: false
+
+jobs:
+  e2e_test:
+    name: e2e_test
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "E2E tests removed - using AAP-UI training session launcher instead of OAStub"
