@@ -54,10 +54,6 @@ test-up: ## Stands up a test environment.
 test-down: ## Stops and removes all of the test containers.
 	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
-BASE_URL_CI ?= "http://aap-ui:3000"
-e2e-ci: ## Run the end-to-end tests in a headless browser. Used in CI. Override the default base URL with BASE_URL_CI=...
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test run --rm cypress --headless -c baseUrl=${BASE_URL_CI}
-
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down
 	docker volume ls -qf "dangling=true" | xargs -r docker volume rm

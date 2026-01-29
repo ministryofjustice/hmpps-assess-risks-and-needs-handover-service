@@ -30,13 +30,5 @@ services:
       HMPPS_AUTH_EXTERNAL_URL: http://hmpps-auth:9090/auth
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
 
-  cypress:
-    image: cypress/included
-    networks:
-      - hmpps
-    volumes:
-      - ../e2e:/e2e
-    working_dir: /e2e
-
 networks:
   hmpps:
