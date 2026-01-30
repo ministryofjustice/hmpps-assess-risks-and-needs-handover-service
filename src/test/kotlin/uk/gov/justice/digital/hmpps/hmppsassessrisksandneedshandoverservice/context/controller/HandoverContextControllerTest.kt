@@ -176,13 +176,14 @@ class HandoverContextControllerTest : IntegrationTestBase() {
     @Test
     fun `should return okay when getting the handover context using a HMPPS ARNS Handover access token`() {
       val handoverSessionId = UUID.randomUUID()
-      val handoverContext = TestUtils.createHandoverContext(handoverSessionId)
+      val principal = TestUtils.createPrincipal()
+      val handoverContext = TestUtils.createHandoverContext(handoverSessionId).copy(principal = principal)
 
       // Setup an initial handover context
       handoverContextRepository.save(handoverContext)
 
       val response = webTestClient.get().uri(appConfiguration.self.endpoints.context)
-        .header("Authorization", "Bearer ${jwtHelper.generateHandoverToken(handoverSessionId)}")
+        .header("Authorization", "Bearer ${jwtHelper.generateHandoverToken(handoverSessionId, principal)}")
         .exchange()
         .expectStatus().isOk
         .expectBody(HandoverContext::class.java)
