@@ -17,7 +17,11 @@ import org.springframework.stereotype.Service
 import org.springframework.util.Assert
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.JpaAuthorization
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.OAuth2AuthorizationBuilderExtension.from
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.jackson.HandoverAuthDetailsMixin
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.jackson.HandoverPrincipalMixin
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.repository.JpaAuthorizationRepository
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverAuthDetails
 
 @Service
 class JpaOAuth2AuthorizationService(
@@ -33,6 +37,8 @@ class JpaOAuth2AuthorizationService(
       val securityModules = SecurityJackson2Modules.getModules(classLoader)
       objectMapper.registerModules(securityModules)
       objectMapper.registerModule(OAuth2AuthorizationServerJackson2Module())
+      objectMapper.addMixIn(HandoverAuthDetails::class.java, HandoverAuthDetailsMixin::class.java)
+      objectMapper.addMixIn(HandoverPrincipal::class.java, HandoverPrincipalMixin::class.java)
     }
 
     fun parseMap(data: String?): Map<String, Any> = try {
