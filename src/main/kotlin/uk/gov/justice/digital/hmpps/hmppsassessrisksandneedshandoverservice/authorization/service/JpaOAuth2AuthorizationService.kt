@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.aut
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.jackson2.SecurityJackson2Modules
@@ -35,6 +36,7 @@ class JpaOAuth2AuthorizationService(
     init {
       val classLoader = JpaOAuth2AuthorizationService::class.java.classLoader
       val securityModules = SecurityJackson2Modules.getModules(classLoader)
+      objectMapper.registerKotlinModule()
       objectMapper.registerModules(securityModules)
       objectMapper.registerModule(OAuth2AuthorizationServerJackson2Module())
       objectMapper.addMixIn(HandoverAuthDetails::class.java, HandoverAuthDetailsMixin::class.java)
