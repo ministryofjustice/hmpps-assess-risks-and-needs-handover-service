@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.aut
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.jackson2.SecurityJackson2Modules
@@ -17,7 +18,11 @@ import org.springframework.stereotype.Service
 import org.springframework.util.Assert
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.JpaAuthorization
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.OAuth2AuthorizationBuilderExtension.from
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.jackson.HandoverAuthDetailsMixin
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.jackson.HandoverPrincipalMixin
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.repository.JpaAuthorizationRepository
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverAuthDetails
 
 @Service
 class JpaOAuth2AuthorizationService(
@@ -31,8 +36,11 @@ class JpaOAuth2AuthorizationService(
     init {
       val classLoader = JpaOAuth2AuthorizationService::class.java.classLoader
       val securityModules = SecurityJackson2Modules.getModules(classLoader)
+      objectMapper.registerKotlinModule()
       objectMapper.registerModules(securityModules)
       objectMapper.registerModule(OAuth2AuthorizationServerJackson2Module())
+      objectMapper.addMixIn(HandoverAuthDetails::class.java, HandoverAuthDetailsMixin::class.java)
+      objectMapper.addMixIn(HandoverPrincipal::class.java, HandoverPrincipalMixin::class.java)
     }
 
     fun parseMap(data: String?): Map<String, Any> = try {

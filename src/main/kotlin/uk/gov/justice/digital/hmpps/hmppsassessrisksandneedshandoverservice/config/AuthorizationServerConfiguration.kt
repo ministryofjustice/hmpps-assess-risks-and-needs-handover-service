@@ -28,10 +28,11 @@ class AuthorizationServerConfiguration {
       // OAuth2 Consent Flow
       "/oauth2/consent",
       "/oauth2/decision",
-      // OpenID Connect Logout
+      // OpenID Connect
       "/connect/logout",
-      // OpenID Client Registration
       "/connect/register",
+      "/userinfo",
+      "/.well-known/openid-configuration",
     )
 
     http

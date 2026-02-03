@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.JwkProperties
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.JwtIssuerProperties
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.JwtProperties
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import java.util.Date
 import java.util.UUID
 
@@ -20,16 +21,25 @@ class JwtAuthHelper(
 ) {
   private fun getIssuerByIssuerName(issuerName: String): JwtIssuerProperties? = jwtProperties.issuers.find { it.issuerName == issuerName }
 
-  fun generateHandoverToken(handoverSessionId: UUID, grantType: AuthorizationGrantType = AuthorizationGrantType.JWT_BEARER): String {
+  fun generateHandoverToken(
+    handoverSessionId: UUID,
+    principal: HandoverPrincipal = TestUtils.createPrincipal(),
+    grantType: AuthorizationGrantType = AuthorizationGrantType.JWT_BEARER,
+  ): String {
     val hmppsHandover = getIssuerByIssuerName("HMPPS Handover")
       ?: throw IllegalStateException()
 
     val claimsSet = JWTClaimsSet.Builder()
       .issuer(hmppsHandover.issuerUri)
       .issueTime(Date())
-      .subject(handoverSessionId.toString())
+      .subject(principal.identifier)
+      .claim("handover_session_id", handoverSessionId.toString())
+      .claim("user_name", principal.identifier)
+      .claim("name", principal.displayName)
+      .claim("auth_source", "OASys")
+      .claim("user_id", principal.identifier)
       .claim("grant_type", grantType.value)
-      .expirationTime(Date(System.currentTimeMillis() + 3600 * 1000)) // 1 hour expiry
+      .expirationTime(Date(System.currentTimeMillis() + 3600 * 1000))
       .jwtID(WireMockExtension.KEY_ID)
       .build()
 

@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.AppSecAllowedCharacters
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.OasysReturnUrl
+import java.io.Serializable
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
@@ -50,8 +51,12 @@ data class HandoverPrincipal(
 
   @field:OasysReturnUrl
   val returnUrl: String = "",
-) {
+) : Serializable {
   override fun toString(): String = identifier
+
+  companion object {
+    private const val serialVersionUID: Long = 1L
+  }
 }
 
 data class AssessmentContext(

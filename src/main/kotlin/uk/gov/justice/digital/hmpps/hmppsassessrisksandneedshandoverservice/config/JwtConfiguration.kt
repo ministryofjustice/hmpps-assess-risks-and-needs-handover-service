@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.jwt.JwtValidators
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver
+import java.util.UUID
 
 @ConfigurationProperties(prefix = "spring.security.oauth2.resourceserver.jwt")
 data class JwtProperties(
@@ -68,6 +69,16 @@ class JwtConfiguration(
     }
 
     return true
+  }
+
+  fun getHandoverSessionId(): UUID {
+    val jwt = SecurityContextHolder.getContext().authentication.principal as? Jwt
+      ?: throw AccessDeniedException("Expected JWT authentication")
+
+    val sessionId = jwt.claims["handover_session_id"]?.toString()
+      ?: throw AccessDeniedException("JWT does not contain handover_session_id")
+
+    return UUID.fromString(sessionId)
   }
 
   private fun getIssuerByIssuerUri(issuerUri: String): JwtIssuerProperties? = jwtProperties.issuers.find { it.issuerUri == issuerUri }
