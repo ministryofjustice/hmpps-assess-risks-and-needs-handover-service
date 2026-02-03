@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.AuditEvent
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.TelemetryEvent
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverAuthDetails
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.TokenStatus
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
@@ -79,20 +80,27 @@ class HandoverService(
     TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
     TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
     TokenValidationResult.VALID -> {
-      val handoverSessionId = consumeToken(handoverCode).handoverSessionId
-      handoverContextService.getContext(handoverSessionId).let {
-        if (it is GetHandoverContextResult.Success) {
-          telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, it.handoverContext)
-          publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, it.handoverContext)
-        }
+      val handoverToken = consumeToken(handoverCode)
+      val handoverSessionId = handoverToken.handoverSessionId
+      val contextResult = handoverContextService.getContext(handoverSessionId)
+
+      if (contextResult is GetHandoverContextResult.Success) {
+        telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, contextResult.handoverContext)
+        publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, contextResult.handoverContext)
+
+        val authToken = UsernamePasswordAuthenticationToken(
+          contextResult.handoverContext.principal.identifier,
+          null,
+          contextResult.handoverContext.principal.accessMode.toAuthorities(),
+        )
+        authToken.details = HandoverAuthDetails(
+          handoverSessionId = handoverSessionId,
+          principal = contextResult.handoverContext.principal,
+        )
+        UseHandoverLinkResult.Success(authToken)
+      } else {
+        UseHandoverLinkResult.HandoverLinkNotFound
       }
-      UseHandoverLinkResult.Success(
-        UsernamePasswordAuthenticationToken(
-          handoverSessionId.toString(),
-          null,
-          null,
-        ),
-      )
     }
   }
 
