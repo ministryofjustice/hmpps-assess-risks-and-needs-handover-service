@@ -24,7 +24,7 @@ build-api: ## Builds a production image of the API.
 
 dev-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005.
 	docker compose ${DEV_COMPOSE_FILES} down arns-handover
-	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate arns-handover
+	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate arns-handover aap-ui san-api
 
 dev-build: ## Builds a development image of the API.
 	docker compose ${DEV_COMPOSE_FILES} build arns-handover --no-cache
@@ -54,10 +54,6 @@ test-up: ## Stands up a test environment.
 test-down: ## Stops and removes all of the test containers.
 	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
-BASE_URL_CI ?= "http://oasys-ui:3000"
-e2e-ci: ## Run the end-to-end tests in a headless browser. Used in CI. Override the default base URL with BASE_URL_CI=...
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test run --rm cypress --headless -c baseUrl=${BASE_URL_CI}
-
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down
 	docker volume ls -qf "dangling=true" | xargs -r docker volume rm
@@ -69,7 +65,7 @@ update: ## Downloads the latest versions of containers.
 dev-api-token: ## Generates a JWT for authenticating with the handover service.
 	docker compose ${DEV_COMPOSE_FILES} exec arns-handover \
 		curl --location 'http://hmpps-auth:9090/auth/oauth/token' \
-	--header 'authorization: Basic aG1wcHMtYXNzZXNzLXJpc2tzLWFuZC1uZWVkcy1vYXN0dWItdWk6Y2xpZW50c2VjcmV0' \
+	--header 'authorization: Basic aG1wcHMtYXJucy1hc3Nlc3NtZW50LXBsYXRmb3JtLXVpLXN5c3RlbTpjbGllbnRzZWNyZXQ=' \
 	--header 'Content-Type: application/x-www-form-urlencoded' \
 	--data-urlencode 'grant_type=client_credentials' \
 	| jq -r '.access_token' \
@@ -79,7 +75,7 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	mkdir -p ${OUTPUT_LOGS_DIR}
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
-	docker logs ${PROJECT_NAME}-oasys-ui-1 > ${OUTPUT_LOGS_DIR}/oasys-ui.log
+	docker logs ${PROJECT_NAME}-aap-ui-1 > ${OUTPUT_LOGS_DIR}/aap-ui.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
 	docker logs ${PROJECT_NAME}-san-ui-1 > ${OUTPUT_LOGS_DIR}/san-ui.log
 	docker logs ${PROJECT_NAME}-san-api-1 > ${OUTPUT_LOGS_DIR}/san-api.log

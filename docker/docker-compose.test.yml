@@ -4,7 +4,7 @@ services:
       INGRESS_URL: http://san-ui:3000
       HMPPS_AUTH_EXTERNAL_URL: http://hmpps-auth:9090/auth
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
-      OASYS_URL: http://oasys-ui:3000
+      OASYS_URL: http://aap-ui:3000
       KEEP_ALIVE: 30000
 
   coordinator-api:
@@ -19,22 +19,16 @@ services:
       HMPPS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
       CLIENT_SAN_OAUTH_REDIRECT_URI: http://san-ui:3000/sign-in/callback
       CLIENT_SAN_HANDOVER_REDIRECT_URI: http://san-ui:3000/sign-in
-      OASYS_BASE_URL: http://oasys-ui:3000
-      OASYS_RETURN_URLS: http://oasys-ui:3000
+      OASYS_BASE_URL: http://aap-ui:3000
+      OASYS_RETURN_URLS: http://aap-ui:3000
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090
       SERVER_ERROR_WHITELABEL_ENABLED: true
 
-  oasys-ui:
+  aap-ui:
     environment:
-      INGRESS_URL: http://oasys-ui:3000
-
-  cypress:
-    image: cypress/included
-    networks:
-      - hmpps
-    volumes:
-      - ../e2e:/e2e
-    working_dir: /e2e
+      INGRESS_URL: http://aap-ui:3000
+      HMPPS_AUTH_EXTERNAL_URL: http://hmpps-auth:9090/auth
+      HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://arns-handover:7070
 
 networks:
   hmpps:
