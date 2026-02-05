@@ -28,7 +28,7 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:5.6.3")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.0.0")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.15")
