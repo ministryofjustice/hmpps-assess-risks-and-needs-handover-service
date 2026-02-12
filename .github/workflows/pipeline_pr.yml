@@ -21,21 +21,5 @@ jobs:
     with:
       environment: ${{ matrix.environments }}
 
-  build_docker:
-    name: Build docker image
-    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
-    with:
-      docker_registry: 'ghcr.io'
-      registry_org: 'ministryofjustice'
-      tag_latest: false
-      push: false
-      load: true
-      docker_multiplatform: false
-      upload_image_artifact: true
-      image_artifact_retention_days: 2
-
   e2e_test:
-    needs: [build_docker]
     uses: ./.github/workflows/e2e_test.yml
-    with:
-      app_version: ${{ needs.build_docker.outputs.app_version }}

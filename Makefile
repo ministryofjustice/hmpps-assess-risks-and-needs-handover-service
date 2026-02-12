@@ -49,7 +49,7 @@ lint-fix: ## Runs the Kotlin linter and auto-fixes.
 
 test-up: ## Stands up a test environment.
 	docker compose ${TEST_COMPOSE_FILES} pull --policy missing
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up arns-handover --wait
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up arns-handover --wait --build
 
 test-down: ## Stops and removes all of the test containers.
 	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
