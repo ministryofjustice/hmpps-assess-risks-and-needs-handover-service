@@ -15,8 +15,9 @@ spring:
   application:
     name: hmpps-assess-risks-and-needs-handover-service
 
-  codec:
-    max-in-memory-size: 10MB
+  http:
+    codecs:
+      max-in-memory-size: 10MB
 
   security:
     oauth2:
@@ -46,11 +47,6 @@ spring:
           pem-secret: ${jwk-pem.secret}
           pem-encoded: ${jwk-pem.encoded}
 
-  jackson:
-    date-format: "yyyy-MM-dd HH:mm:ss"
-    serialization:
-      WRITE_DATES_AS_TIMESTAMPS: false
-
   data:
     redis:
       host: ${redis-host}
@@ -60,8 +56,6 @@ spring:
         enabled: ${redis-ssl-enabled:true}
 
   mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
     hiddenmethod:
       filter:
         enabled: true
