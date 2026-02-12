@@ -159,6 +159,7 @@ object TestUtils {
     identifier = faker.idNumber().valid(),
     displayName = faker.name().firstName(),
     accessMode = UserAccess.READ_WRITE,
+    planAccessMode = UserAccess.READ_WRITE,
     returnUrl = "http://test-oasys-return-url",
   )
 
