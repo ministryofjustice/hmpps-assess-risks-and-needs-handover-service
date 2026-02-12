@@ -21,9 +21,9 @@ enum class UserAccess(val value: String) {
   READ_WRITE("READ_WRITE"),
   ;
 
-  fun toAuthorities(): List<GrantedAuthority> = when (this) {
-    READ_ONLY -> listOf(SimpleGrantedAuthority("READ"))
-    READ_WRITE -> listOf(SimpleGrantedAuthority("READ"), SimpleGrantedAuthority("WRITE"))
+  fun toAuthorities(prefix: String): List<GrantedAuthority> = when (this) {
+    READ_ONLY -> listOf(SimpleGrantedAuthority("${prefix}_READ"))
+    READ_WRITE -> listOf(SimpleGrantedAuthority("${prefix}_READ"), SimpleGrantedAuthority("${prefix}_WRITE"))
   }
 }
 
@@ -48,6 +48,7 @@ data class HandoverPrincipal(
   @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Display name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
+  val planAccessMode: UserAccess = UserAccess.READ_ONLY,
 
   @field:OasysReturnUrl
   val returnUrl: String = "",

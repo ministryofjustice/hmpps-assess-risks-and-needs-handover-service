@@ -100,7 +100,7 @@ class HandoverController(
     val accessDenied = ResponseEntity
       .status(HttpStatus.FOUND)
       .header("Location", "/access-denied")
-      .build<Any?>()
+      .build<Any>()
 
     val client = appConfiguration.clients[clientId]
       ?: return accessDenied.also { log.info("Client not found") }
@@ -145,6 +145,7 @@ class HandoverController(
         "identifier": "RBACKENT",
         "displayName": "KENT Assessor",
         "accessMode": "READ_WRITE",
+        "planAccessMode": "READ_WRITE",
         "returnUrl": "http://192.168.56.21:8080/ords/f?p=EORSAN010:SAN010_LANDING:11281584380154::NO:APP::&cs=3h8xw8SUx3QRT6kfPRzfTI31XMtHvLSh90b9Yw4EPgxDIUaIjBgoYndHHlCjtWwUanAQjejASWA1a7E6M6LIqLw"
       },
       "subjectDetails": {
