@@ -25,7 +25,7 @@ class OpenApiConfiguration(
     .info(
       Info()
         .title("HMPPS ARNS Handover Service")
-        .version(buildProperties.version)
+        .version(buildProperties.version ?: "unknown")
         .description("Authentication and management of context data for applications in the ARNS space")
         .contact(
           Contact()
