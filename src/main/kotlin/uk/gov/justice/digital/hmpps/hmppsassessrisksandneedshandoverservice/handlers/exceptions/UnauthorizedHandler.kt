@@ -8,14 +8,12 @@ import org.springframework.security.web.AuthenticationEntryPoint
 
 class UnauthorizedHandler : AuthenticationEntryPoint {
   override fun commence(
-    request: HttpServletRequest?,
-    response: HttpServletResponse?,
-    authException: AuthenticationException?,
+    request: HttpServletRequest,
+    response: HttpServletResponse,
+    authException: AuthenticationException,
   ) {
-    authException?.let {
-      log.info("Auth exception: {}", authException.message)
-      response?.sendRedirect("${request?.contextPath}/access-denied")
-    }
+    log.info("Auth exception: {}", authException.message)
+    response.sendRedirect("${request.contextPath}/access-denied")
   }
 
   private companion object {
