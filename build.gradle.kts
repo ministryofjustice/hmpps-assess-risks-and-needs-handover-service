@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("uk.gov.justice.hmpps.gradle-spring-boot") version "9.3.0"
-  kotlin("plugin.spring") version "2.3.0"
+  kotlin("plugin.spring") version "2.3.10"
 }
 
 configurations {
@@ -21,7 +21,7 @@ dependencies {
 
   // Security/oauth2 dependencies
   implementation("org.springframework.boot:spring-boot-starter-security")
-  implementation("org.springframework.security:spring-security-config:6.5.7")
+  implementation("org.springframework.security:spring-security-config:6.5.8")
   implementation("org.springframework.security:spring-security-oauth2-authorization-server:1.5.2")
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.83")
@@ -42,7 +42,7 @@ dependencies {
 
   // Test dependencies
   testImplementation(kotlin("test"))
-  testImplementation("net.datafaker:datafaker:2.5.3")
+  testImplementation("net.datafaker:datafaker:2.5.4")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
