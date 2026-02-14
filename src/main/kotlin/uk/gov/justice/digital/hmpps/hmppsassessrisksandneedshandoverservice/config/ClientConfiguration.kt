@@ -43,7 +43,7 @@ class ClientConfiguration(
           .scope(OidcScopes.OPENID)
           .scope(OidcScopes.PROFILE)
           .tokenSettings(tokenSettings)
-          .clientSettings(ClientSettings.builder().build())
+          .clientSettings(ClientSettings.builder().requireProofKey(false).build()) // TODO: Can enable PKCE when clients have it enabled too
 
         clientProperties.oauthRedirectUris.forEach { uri ->
           clientBuilder.redirectUri(uri)

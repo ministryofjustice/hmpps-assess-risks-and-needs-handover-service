@@ -3,10 +3,14 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "4 3 * * 1" # Every Monday at 03:04 UTC
+permissions:
+  contents: read
 jobs:
   security-veracode-policy-check:
     name: Project security veracode policy scan
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/security_veracode_policy_scan.yml@v2 # WORKFLOW_VERSION
     with:
       channel_id: ${{ vars.SECURITY_ALERTS_SLACK_CHANNEL_ID || 'NO_SLACK' }}
+      java-version: "25"
+      build_artifact_pattern: "hmpps-assess-risks-and-needs-handover-service-*.jar"
     secrets: inherit

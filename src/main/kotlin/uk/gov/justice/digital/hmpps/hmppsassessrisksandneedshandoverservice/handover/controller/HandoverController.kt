@@ -93,14 +93,14 @@ class HandoverController(
     @Parameter(description = "Redirect URI") @RequestParam(required = false) redirectUri: String?,
     request: HttpServletRequest,
     response: HttpServletResponse,
-  ): ResponseEntity<Any> {
+  ): ResponseEntity<Unit> {
     val strategy = SecurityContextHolder.getContextHolderStrategy()
     val repo = HttpSessionSecurityContextRepository()
 
     val accessDenied = ResponseEntity
       .status(HttpStatus.FOUND)
       .header("Location", "/access-denied")
-      .build<Any?>()
+      .build<Unit>()
 
     val client = appConfiguration.clients[clientId]
       ?: return accessDenied.also { log.info("Client not found") }
@@ -130,7 +130,10 @@ class HandoverController(
         strategy.context.authentication = result.authenticationToken
         repo.saveContext(strategy.context, request, response)
 
-        ResponseEntity.status(HttpStatus.FOUND).header("Location", finalRedirectUri).build()
+        ResponseEntity
+          .status(HttpStatus.FOUND)
+          .header("Location", finalRedirectUri)
+          .build()
       }
       UseHandoverLinkResult.HandoverLinkNotFound -> accessDenied.also { log.info("Handover link expired or not found") }
       UseHandoverLinkResult.HandoverLinkAlreadyUsed -> accessDenied.also { log.info("Handover link has already been used") }

@@ -47,6 +47,7 @@ class JwtConfiguration(
 
     AuthenticationManager { authentication ->
       JwtAuthenticationProvider(jwtDecoder).authenticate(authentication)
+        ?: throw AccessDeniedException("Authentication failed")
     }
   }
 
@@ -56,6 +57,8 @@ class JwtConfiguration(
 
   fun isClientCredentialsGrant(): Boolean {
     val authentication = SecurityContextHolder.getContext().authentication
+      ?: throw AccessDeniedException("No authentication found")
+
     val grantType = AuthorizationGrantType.CLIENT_CREDENTIALS.value
 
     val jwt = authentication.principal as? Jwt
@@ -72,7 +75,10 @@ class JwtConfiguration(
   }
 
   fun getHandoverSessionId(): UUID {
-    val jwt = SecurityContextHolder.getContext().authentication.principal as? Jwt
+    val authentication = SecurityContextHolder.getContext().authentication
+      ?: throw AccessDeniedException("No authentication found")
+
+    val jwt = authentication.principal as? Jwt
       ?: throw AccessDeniedException("Expected JWT authentication")
 
     val sessionId = jwt.claims["handover_session_id"]?.toString()
@@ -85,6 +91,7 @@ class JwtConfiguration(
 
   private fun isIssuer(issuer: JwtIssuerProperties): Boolean {
     val authentication = SecurityContextHolder.getContext().authentication
+      ?: throw AccessDeniedException("No authentication found")
 
     val jwt = authentication.principal as? Jwt
       ?: throw AccessDeniedException("Expected JWT authentication")

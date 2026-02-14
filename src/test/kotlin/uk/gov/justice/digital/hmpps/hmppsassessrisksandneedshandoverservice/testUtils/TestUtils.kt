@@ -1,10 +1,9 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils
 
-import com.fasterxml.jackson.databind.DeserializationFeature
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import net.datafaker.Faker
+import tools.jackson.databind.DeserializationFeature
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.module.kotlin.KotlinModule
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
@@ -23,9 +22,10 @@ import java.util.UUID
 object TestUtils {
   private var faker: Faker = Faker()
 
-  private var objectMapper: ObjectMapper = jacksonObjectMapper()
-    .registerModule(JavaTimeModule())
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+  private var objectMapper: JsonMapper = JsonMapper.builder()
+    .addModule(KotlinModule.Builder().build())
+    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    .build()
 
   fun createHandoverRequest(): CreateHandoverLinkRequest = CreateHandoverLinkRequest(
     user = createPrincipal(),

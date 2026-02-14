@@ -6,4 +6,4 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import java.util.UUID
 
 @Repository
-interface HandoverTokenRepository : CrudRepository<HandoverToken, UUID?>
+interface HandoverTokenRepository : CrudRepository<HandoverToken, UUID>
