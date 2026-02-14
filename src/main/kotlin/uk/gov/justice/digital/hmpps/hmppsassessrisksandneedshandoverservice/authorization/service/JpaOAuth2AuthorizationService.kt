@@ -3,9 +3,6 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.aut
 import org.springframework.dao.DataRetrievalFailureException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.jackson.SecurityJacksonModules
-import tools.jackson.core.type.TypeReference
-import tools.jackson.databind.json.JsonMapper
-import tools.jackson.module.kotlin.KotlinModule
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames
 import org.springframework.security.oauth2.core.oidc.endpoint.OidcParameterNames
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization
@@ -16,6 +13,10 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.jackson.OAuth2AuthorizationServerJacksonModule
 import org.springframework.stereotype.Service
 import org.springframework.util.Assert
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.json.JsonMapper
+import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator
+import tools.jackson.module.kotlin.KotlinModule
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.JpaAuthorization
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.entity.OAuth2AuthorizationBuilderExtension.from
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.authorization.jackson.HandoverAuthDetailsMixin
@@ -36,7 +37,15 @@ class JpaOAuth2AuthorizationService(
 
       JsonMapper.builder()
         .addModule(KotlinModule.Builder().build())
-        .addModules(SecurityJacksonModules.getModules(classLoader))
+        .addModules(
+          SecurityJacksonModules.getModules(
+            classLoader,
+            BasicPolymorphicTypeValidator
+              .builder()
+              .allowIfSubType(HandoverAuthDetails::class.java)
+              .allowIfSubType(HandoverPrincipal::class.java),
+          ),
+        )
         .addModule(OAuth2AuthorizationServerJacksonModule())
         .addMixIn(HandoverAuthDetails::class.java, HandoverAuthDetailsMixin::class.java)
         .addMixIn(HandoverPrincipal::class.java, HandoverPrincipalMixin::class.java)
