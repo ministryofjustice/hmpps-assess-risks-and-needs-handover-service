@@ -37,7 +37,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0")
   implementation("org.webjars.npm:govuk-frontend:5.14.0")
-  implementation("org.webjars:webjars-locator-core:0.59")
+  implementation("org.webjars:webjars-locator-lite:1.1.3")
 
   // Test dependencies
   testImplementation(kotlin("test"))
