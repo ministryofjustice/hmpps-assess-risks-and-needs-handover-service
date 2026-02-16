@@ -3,12 +3,12 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.con
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisIndexedHttpSession
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession
 import org.springframework.session.web.http.CookieSerializer
 import org.springframework.session.web.http.DefaultCookieSerializer
 
 @Configuration
-@EnableRedisIndexedHttpSession(maxInactiveIntervalInSeconds = 12 * 60 * 60)
+@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 12 * 60 * 60)
 class SessionConfig {
 
   @Bean
