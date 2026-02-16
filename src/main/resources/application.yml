@@ -6,8 +6,7 @@ logging:
   level:
     org:
       springframework:
-        security: debug
-        security.jackson2: info
+        security: info
 
 spring:
   session:
