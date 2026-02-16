@@ -9,11 +9,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver
-import org.springframework.security.web.authentication.AuthenticationFilter
+import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter
+import org.springframework.security.web.authentication.AuthenticationFilter
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher
-import org.springframework.security.web.SecurityFilterChain
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.UnauthorizedHandler
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.security.HandoverAuthenticationConverter
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.security.HandoverAuthenticationFailureHandler
