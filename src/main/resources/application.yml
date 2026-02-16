@@ -12,6 +12,7 @@ logging:
 spring:
   session:
     timeout: 12h
+    store-type: redis
   application:
     name: hmpps-assess-risks-and-needs-handover-service
 
