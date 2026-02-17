@@ -37,7 +37,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0")
   implementation("org.webjars.npm:govuk-frontend:5.14.0")
-  implementation("org.webjars:webjars-locator-core:0.59")
+  implementation("org.webjars:webjars-locator-lite:1.1.3")
 
   // Test dependencies
   testImplementation(kotlin("test"))
@@ -48,8 +48,6 @@ dependencies {
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
   testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
-  testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 }
 
 kotlin {

@@ -6,12 +6,12 @@ logging:
   level:
     org:
       springframework:
-        security: debug
-        security.jackson2: info
+        security: info
 
 spring:
   session:
     timeout: 12h
+    store-type: redis
   application:
     name: hmpps-assess-risks-and-needs-handover-service
 
