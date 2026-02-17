@@ -89,11 +89,9 @@ class HandoverService(
         telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, contextResult.handoverContext)
         publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, contextResult.handoverContext)
 
-        val authToken = UsernamePasswordAuthenticationToken(
-          contextResult.handoverContext.principal.identifier,
-          null,
-          contextResult.handoverContext.principal.accessMode.toAuthorities(),
-        )
+        val principal = contextResult.handoverContext.principal
+        val authorities = principal.accessMode.toAuthorities("SAN") + principal.planAccessMode.toAuthorities("PLAN")
+        val authToken = UsernamePasswordAuthenticationToken(principal.identifier, null, authorities)
         authToken.details = HandoverAuthDetails(
           handoverSessionId = handoverSessionId,
           principal = contextResult.handoverContext.principal,
