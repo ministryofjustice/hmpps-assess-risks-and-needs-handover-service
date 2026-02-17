@@ -1,6 +1,7 @@
-FROM gradle:9-jdk21-alpine AS builder
+ARG BASE_IMAGE=ghcr.io/ministryofjustice/hmpps-eclipse-temurin:25-jre-jammy
+FROM gradle:9-jdk25 AS builder
 
-FROM eclipse-temurin:25.0.1_8-jre-alpine AS runtime
+FROM ${BASE_IMAGE} AS runtime
 
 FROM builder AS build
 WORKDIR /app
@@ -8,22 +9,25 @@ ADD . .
 RUN gradle --no-daemon assemble
 
 FROM builder AS development
-RUN apk add --no-cache curl
 WORKDIR /app
 
 FROM runtime AS production
 LABEL maintainer="HMPPS Digital Studio <info@digital.justice.gov.uk>"
+
 ARG BUILD_NUMBER
 ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
-RUN apk add --no-cache tzdata curl
-ENV TZ=Europe/London
-RUN cp "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
-RUN addgroup --gid 2000 --system appgroup && \
-    adduser --uid 2000 --system appuser --ingroup appgroup
+
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY --from=build --chown=appuser:appgroup /app/build/libs/hmpps-assess-risks-and-needs-handover-service*.jar /app/app.jar
 COPY --from=build --chown=appuser:appgroup /app/build/libs/applicationinsights-agent*.jar /app/agent.jar
 COPY --from=build --chown=appuser:appgroup /app/applicationinsights.json /app
 COPY --from=build --chown=appuser:appgroup /app/applicationinsights.dev.json /app
+
 USER 2000
-ENTRYPOINT ["java", "-XX:+AlwaysActAsServerClassMachine", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]
+
+ENTRYPOINT ["java", "-XX:+ExitOnOutOfMemoryError", "-XX:+AlwaysActAsServerClassMachine", "-javaagent:/app/agent.jar", "-jar", "/app/app.jar"]

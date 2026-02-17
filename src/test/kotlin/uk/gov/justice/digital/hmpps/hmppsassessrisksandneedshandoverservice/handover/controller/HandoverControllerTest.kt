@@ -1,6 +1,5 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.controller
 
-import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -245,7 +244,7 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return access denied when using handover link with already used code`() = runTest {
+    fun `should return access denied when using handover link with already used code`() {
       val clientId = "test-client"
 
       val handoverSessionId = UUID.randomUUID()

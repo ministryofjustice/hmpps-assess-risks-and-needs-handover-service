@@ -17,8 +17,8 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.hand
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.repository.HandoverTokenRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.request.CreateHandoverLinkRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.response.CreateHandoverLinkResponse
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.AuditService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.TelemetryService
-import uk.gov.justice.hmpps.sqs.audit.HmppsAuditService
 import java.util.*
 
 enum class TokenValidationResult {
@@ -34,9 +34,10 @@ class HandoverService(
   val coordinatorService: CoordinatorService,
   val appConfiguration: AppConfiguration,
   val telemetryService: TelemetryService,
-  val auditService: HmppsAuditService,
+  val auditService: AuditService,
 ) {
-  suspend fun createHandover(
+
+  fun createHandover(
     handoverRequest: CreateHandoverLinkRequest,
     handoverSessionId: UUID = UUID.randomUUID(),
   ): CreateHandoverLinkResponse {
@@ -76,7 +77,7 @@ class HandoverService(
     )
   }
 
-  suspend fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
+  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
     TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
     TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
     TokenValidationResult.VALID -> {
@@ -123,16 +124,16 @@ class HandoverService(
     return handoverTokenRepository.save(token)
   }
 
-  private suspend fun publishAuditEvent(
+  private fun publishAuditEvent(
     event: AuditEvent,
     context: HandoverContext,
-  ) = auditService.publishEvent(
-    what = event.name,
-    subjectId = context.subject.crn,
-    subjectType = "CRN",
-    who = context.principal.identifier,
-    service = appConfiguration.name,
-  )
+  ) {
+    auditService.publish(
+      event = event,
+      who = context.principal.identifier,
+      subjectId = context.subject.crn,
+    )
+  }
 }
 
 sealed class UseHandoverLinkResult {
