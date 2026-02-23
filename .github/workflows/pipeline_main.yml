@@ -59,6 +59,7 @@ jobs:
     name: Deploy to the preproduction environment
     needs:
       - deploy_dev
+      - build_docker
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
     secrets: inherit
     with:
@@ -69,6 +70,7 @@ jobs:
     name: Deploy to the production environment
     needs:
       - deploy_preprod
+      - build_docker
     uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
     secrets: inherit
     with:
