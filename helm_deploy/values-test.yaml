@@ -39,6 +39,7 @@ generic-service:
     oasys-box-t2 : 10.26.12.211/32
     neil-test: 51.155.102.238/32
     user-vision-testers: 5.181.59.114/32
+    kpmg-pentest: 195.68.59.74/32
 
 
 # CloudPlatform AlertManager receiver to route prometheus alerts to slack
