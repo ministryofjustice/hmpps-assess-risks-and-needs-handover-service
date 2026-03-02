@@ -5,4 +5,5 @@ import java.util.UUID
 data class AssociationsResponse(
   val sanAssessmentId: UUID?,
   val sentencePlanId: UUID?,
+  val planVersion: Long?,
 )
