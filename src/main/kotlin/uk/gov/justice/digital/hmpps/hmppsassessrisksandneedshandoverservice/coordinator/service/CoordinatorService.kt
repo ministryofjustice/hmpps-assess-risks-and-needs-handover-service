@@ -13,7 +13,7 @@ class CoordinatorService(
 ) {
   private fun endpoint(endpoint: String): String = "${appConfiguration.services.coordinatorApi.baseUrl}$endpoint"
 
-  fun getAssociations(oasysAssessmentPk: String, planVersion: Long? = null): AssociationsResponse = try {
+  fun getAssociations(oasysAssessmentPk: String, planVersion: Long?): AssociationsResponse = try {
     val result = coordinatorApiWebClient.get()
       .uri { uriBuilder ->
         uriBuilder.path("/oasys/$oasysAssessmentPk/associations").apply {
