@@ -69,6 +69,7 @@ class HandoverServiceTest {
       associations = AssociationsResponse(
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
+        planVersion = null,
       )
       handoverRequest = TestUtils.createHandoverRequest()
       handoverToken = HandoverToken(
