@@ -87,7 +87,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response?.userMessage).contains("subject.familyName: size must be between 1 and 25")
+      assertThat(response?.userMessage).contains("subject.familyName: size must be between 1 and 36")
       assertThat(response?.userMessage).contains("subject.crn: size must be between 1 and 15")
     }
 
