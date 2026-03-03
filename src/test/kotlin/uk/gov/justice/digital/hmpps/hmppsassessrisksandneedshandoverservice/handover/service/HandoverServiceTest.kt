@@ -66,11 +66,12 @@ class HandoverServiceTest {
     fun setUp() {
       clearAllMocks()
 
+      handoverRequest = TestUtils.createHandoverRequest()
       associations = AssociationsResponse(
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
+        planVersion = handoverRequest.sentencePlanVersion,
       )
-      handoverRequest = TestUtils.createHandoverRequest()
       handoverToken = HandoverToken(
         handoverSessionId = handoverSessionId,
         principal = handoverRequest.user,
@@ -96,7 +97,7 @@ class HandoverServiceTest {
         ),
       )
 
-      every { coordinatorService.getAssociations(any()) } returns associations
+      every { coordinatorService.getAssociations(any(), any()) } returns associations
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
       every { telemetryService.track(any(), any()) } just Runs
