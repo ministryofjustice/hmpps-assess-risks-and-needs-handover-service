@@ -13,14 +13,19 @@ class CoordinatorService(
 ) {
   private fun endpoint(endpoint: String): String = "${appConfiguration.services.coordinatorApi.baseUrl}$endpoint"
 
-  fun getAssociations(oasysAssessmentPk: String): AssociationsResponse = try {
+  fun getAssociations(oasysAssessmentPk: String, planVersion: Long?): AssociationsResponse = try {
     val result = coordinatorApiWebClient.get()
-      .uri(endpoint("/oasys/$oasysAssessmentPk/associations"))
+      .uri { uriBuilder ->
+        uriBuilder.path("/oasys/$oasysAssessmentPk/associations").apply {
+          if (planVersion !== null) queryParam("planVersion", planVersion)
+        }.build()
+      }
       .retrieve()
       .bodyToMono(AssociationsResponse::class.java)
       .block()
 
-    result ?: throw IllegalStateException("Unexpected empty associations response for OASys Assessment PK $oasysAssessmentPk")
+    result
+      ?: throw IllegalStateException("Unexpected empty associations response for OASys Assessment PK $oasysAssessmentPk")
   } catch (ex: WebClientResponseException) {
     throw Exception("Unexpected associations response code ${ex.statusCode}")
   } catch (ex: Exception) {
