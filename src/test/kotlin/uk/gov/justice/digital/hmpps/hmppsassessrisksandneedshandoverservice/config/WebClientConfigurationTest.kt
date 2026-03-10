@@ -57,7 +57,7 @@ class WebClientConfigurationTest {
                   {
                     "sentencePlanId": "$expectedSentencePlanId",
                     "sanAssessmentId": "$expectedAssessmentId",
-                    "planVersion": 7
+                    "sentencePlanVersion": 7
                   }
                   """.trimIndent(),
                 )
@@ -73,7 +73,7 @@ class WebClientConfigurationTest {
       assertEquals(3, requestCount.get())
       assertEquals(expectedSentencePlanId, result?.sentencePlanId)
       assertEquals(expectedAssessmentId, result?.sanAssessmentId)
-      assertEquals(7, result?.planVersion)
+      assertEquals(7, result?.sentencePlanVersion)
     }
 
     @Test
@@ -111,5 +111,5 @@ class WebClientConfigurationTest {
 private data class TestAssociationsResponse(
   val sentencePlanId: UUID,
   val sanAssessmentId: UUID,
-  val planVersion: Long,
+  val sentencePlanVersion: Long,
 )

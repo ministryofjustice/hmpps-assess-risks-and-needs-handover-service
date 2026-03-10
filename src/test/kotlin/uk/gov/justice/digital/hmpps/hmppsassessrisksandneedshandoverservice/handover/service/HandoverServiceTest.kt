@@ -70,7 +70,7 @@ class HandoverServiceTest {
       associations = AssociationsResponse(
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
-        planVersion = handoverRequest.sentencePlanVersion,
+        sentencePlanVersion = handoverRequest.sentencePlanVersion,
       )
       handoverToken = HandoverToken(
         handoverSessionId = handoverSessionId,
