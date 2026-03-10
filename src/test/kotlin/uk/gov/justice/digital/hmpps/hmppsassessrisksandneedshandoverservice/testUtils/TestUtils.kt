@@ -32,7 +32,7 @@ object TestUtils {
     subjectDetails = createSubjectDetails(),
     oasysAssessmentPk = (100_000..999_999).random().toString(),
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
-    sentencePlanVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+    sentencePlanVersion = null,
   )
 
   fun createHandoverRequestFromJson(): CreateHandoverLinkRequest = objectMapper.readValue(
@@ -57,7 +57,7 @@ object TestUtils {
           "sexuallyMotivatedOffenceHistory": "NO"
         },
         "oasysAssessmentPk": 2164180,
-        "sentencePlanVersion": "0",
+        "sentencePlanVersion": null,
         "criminogenicNeedsData": {
           "accommodation": {
             "accLinkedToHarm": "NO",
@@ -159,6 +159,7 @@ object TestUtils {
     identifier = faker.idNumber().valid(),
     displayName = faker.name().firstName(),
     accessMode = UserAccess.READ_WRITE,
+    planAccessMode = UserAccess.READ_WRITE,
     returnUrl = "http://test-oasys-return-url",
   )
 

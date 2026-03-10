@@ -66,11 +66,12 @@ class HandoverServiceTest {
     fun setUp() {
       clearAllMocks()
 
+      handoverRequest = TestUtils.createHandoverRequest()
       associations = AssociationsResponse(
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
+        sentencePlanVersion = handoverRequest.sentencePlanVersion,
       )
-      handoverRequest = TestUtils.createHandoverRequest()
       handoverToken = HandoverToken(
         handoverSessionId = handoverSessionId,
         principal = handoverRequest.user,
@@ -96,7 +97,7 @@ class HandoverServiceTest {
         ),
       )
 
-      every { coordinatorService.getAssociations(any()) } returns associations
+      every { coordinatorService.getAssociations(any(), any()) } returns associations
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
       every { telemetryService.track(any(), any()) } just Runs
@@ -203,7 +204,11 @@ class HandoverServiceTest {
 
       val result = handoverService.consumeAndExchangeHandover(handoverToken.code)
 
-      assertEquals(true, (result as UseHandoverLinkResult.Success).authenticationToken.isAuthenticated)
+      val authToken = (result as UseHandoverLinkResult.Success).authenticationToken
+      assertEquals(true, authToken.isAuthenticated)
+      val authorityStrings = authToken.authorities.map { it.authority }
+      assertContains(authorityStrings, "SAN_READ")
+      assertContains(authorityStrings, "PLAN_READ")
       verify { handoverTokenRepository.findById(any()) }
       verify { handoverTokenRepository.save(handoverToken) }
       verify(exactly = 1) { telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, handoverContext) }
