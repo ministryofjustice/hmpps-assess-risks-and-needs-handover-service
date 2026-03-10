@@ -8,6 +8,12 @@ logging:
       springframework:
         security: info
 
+api:
+  timeout: 5s
+  retry:
+    max-retries: 2
+    min-backoff: 250ms
+
 spring:
   session:
     timeout: 12h
