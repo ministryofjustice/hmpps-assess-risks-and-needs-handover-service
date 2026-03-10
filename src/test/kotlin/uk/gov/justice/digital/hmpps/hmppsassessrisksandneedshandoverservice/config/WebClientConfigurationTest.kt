@@ -62,7 +62,7 @@ class WebClientConfigurationTest {
                   """.trimIndent(),
                 )
                 .build(),
-              )
+            )
           }
         },
       )
