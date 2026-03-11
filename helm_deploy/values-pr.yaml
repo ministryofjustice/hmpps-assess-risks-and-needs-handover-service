@@ -1,0 +1,28 @@
+---
+# Per environment values which override defaults in hmpps-sentence-plan-ui/values.yaml
+
+generic-service:
+  nameOverride: $RELEASE_NAME
+  replicaCount: 1
+
+  ingress:
+    host: pr-$PR_NUMBER.arns-handover-service-dev.hmpps.service.justice.gov.uk
+
+  env:
+    APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
+    HMPPS_AUTH_BASE_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk"
+    HMPPS_HANDOVER_BASE_URL: "https://pr-$PR_NUMBER.arns-handover-service-dev.hmpps.service.justice.gov.uk"
+    OASYS_BASE_URL: "https://arns-oastub-dev.hmpps.service.justice.gov.uk"
+    OASYS_RETURN_URLS: "https://arns-oastub-dev.hmpps.service.justice.gov.uk,https://t2.oasys.service.justice.gov.uk"
+    COORDINATOR_API_BASE_URL: "https://pr-217.arns-coordinator-api-dev.hmpps.service.justice.gov.uk"
+    CLIENT_SP_OAUTH_REDIRECT_URI: "https://sentence-plan-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback,https://*.sentence-plan-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_SP_HANDOVER_REDIRECT_URI: "https://sentence-plan-dev.hmpps.service.justice.gov.uk/sign-in/handover"
+    CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback,https://*.strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback"
+    CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in"
+    CLIENT_AAP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback,https://*.arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_AAP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover"
+
+generic-prometheus-alerts:
+  targetApplication: $RELEASE_NAME
+  alertSeverity: NON_PROD_ALERTS_SEVERITY_LABEL
+
