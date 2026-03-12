@@ -91,7 +91,7 @@ app:
     coordinator-api:
       base-url: ${coordinator-api.base-url}
   self:
-    base-url: ${hmpps-handover.base-url}
+    base-url: ${hmpps-handover.base-url:${ingress-url}}
     external-url: ${hmpps-handover-external-url:${app.self.base-url}}
     endpoints:
       handover: /handover
