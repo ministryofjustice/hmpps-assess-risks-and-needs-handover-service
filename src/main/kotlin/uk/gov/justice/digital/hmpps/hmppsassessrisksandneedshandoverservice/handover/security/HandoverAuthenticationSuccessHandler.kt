@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.security
 
+import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.security.core.Authentication
@@ -15,6 +16,15 @@ class HandoverAuthenticationSuccessHandler : AuthenticationSuccessHandler {
   ) {
     val redirectUri = request.getAttribute(REDIRECT_URI_REQUEST_ATTRIBUTE)?.toString() ?: ACCESS_DENIED_PATH
     response.sendRedirect(redirectUri)
+  }
+
+  override fun onAuthenticationSuccess(
+    request: HttpServletRequest,
+    response: HttpServletResponse,
+    chain: FilterChain,
+    authentication: Authentication,
+  ) {
+    onAuthenticationSuccess(request, response, authentication)
   }
 
   companion object {
