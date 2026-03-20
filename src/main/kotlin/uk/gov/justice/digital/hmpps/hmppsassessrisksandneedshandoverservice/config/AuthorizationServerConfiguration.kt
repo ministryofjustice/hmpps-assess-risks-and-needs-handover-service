@@ -23,6 +23,9 @@ class AuthorizationServerConfiguration {
   @Throws(Exception::class)
   fun denyUnusedOauth2EndpointsSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
     val urls = arrayOf(
+      // Token management endpoints
+      "/oauth2/introspect",
+      "/oauth2/revoke",
       // Device Authorization Flow
       "/oauth2/device_authorization",
       // OAuth2 Consent Flow
