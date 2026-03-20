@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
-import org.springframework.data.redis.core.index.Indexed
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.AppSecAllowedCharacters
@@ -27,9 +26,9 @@ enum class UserAccess(val value: String) {
   }
 }
 
-@RedisHash("HandoverContext")
+@RedisHash("HandoverContext", timeToLive = 172800)
 data class HandoverContext(
-  @Id @Indexed var handoverSessionId: UUID,
+  @Id var handoverSessionId: UUID,
   val createdAt: LocalDateTime = LocalDateTime.now(),
   val principal: HandoverPrincipal,
   val subject: SubjectDetails,
