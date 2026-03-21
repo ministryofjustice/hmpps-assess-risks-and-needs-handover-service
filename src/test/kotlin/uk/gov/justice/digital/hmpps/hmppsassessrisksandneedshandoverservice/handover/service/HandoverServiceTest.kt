@@ -209,8 +209,15 @@ class HandoverServiceTest {
       val authorityStrings = authToken.authorities.map { it.authority }
       assertContains(authorityStrings, "SAN_READ")
       assertContains(authorityStrings, "PLAN_READ")
-      verify { handoverTokenRepository.findById(any()) }
-      verify { handoverTokenRepository.save(handoverToken) }
+      verify(exactly = 1) { handoverTokenRepository.findById(handoverToken.code) }
+      verify(exactly = 1) {
+        handoverTokenRepository.save(
+          withArg {
+            assertEquals(TokenStatus.USED, it.tokenStatus)
+            assertEquals(handoverToken.code, it.code)
+          },
+        )
+      }
       verify(exactly = 1) { telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, handoverContext) }
       verify(exactly = 1) {
         auditService.publish(
@@ -231,8 +238,8 @@ class HandoverServiceTest {
       val result = handoverService.consumeAndExchangeHandover(handoverToken.code)
 
       assertEquals(result, UseHandoverLinkResult.HandoverLinkAlreadyUsed)
-      verify { handoverTokenRepository.findById(any()) wasNot Called }
-      verify { handoverTokenRepository.save(any()) wasNot Called }
+      verify(exactly = 1) { handoverTokenRepository.findById(handoverToken.code) }
+      verify(exactly = 0) { handoverTokenRepository.save(any()) }
     }
   }
 }
