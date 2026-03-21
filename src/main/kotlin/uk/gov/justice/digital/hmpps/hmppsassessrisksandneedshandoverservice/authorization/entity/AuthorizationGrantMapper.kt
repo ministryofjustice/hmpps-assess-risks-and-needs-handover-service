@@ -47,14 +47,16 @@ object AuthorizationGrantMapper {
       "Unsupported authorization grant type: ${authorization.authorizationGrantType?.value}"
     }
 
+    val authorizationCodeContext = AuthorizationCodeContext.from(authorization)
+
     val entity = AuthorizationCodeGrantAuthorization(
       id = authorization.id,
       registeredClientId = authorization.registeredClientId,
       principalName = authorization.principalName,
       authorizedScopes = authorization.authorizedScopes,
       state = authorization.getAttribute(OAuth2ParameterNames.STATE),
-      authorizationCodeContext = null,
-      attributes = writeMap(authorization.attributes),
+      authorizationCodeContext = authorizationCodeContext?.let(::writeAuthorizationCodeContext),
+      attributes = if (authorizationCodeContext == null) writeMap(authorization.attributes) else null,
       authorizationCode = authorization.getToken(OAuth2AuthorizationCode::class.java)?.let(::mapAuthorizationCode),
       accessToken = authorization.getToken(OAuth2AccessToken::class.java)?.let(::mapAccessToken),
     )
@@ -74,16 +76,9 @@ object AuthorizationGrantMapper {
       .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
       .authorizedScopes(entity.authorizedScopes)
 
-    when {
-      !entity.authorizationCodeContext.isNullOrBlank() -> {
-        parseAuthorizationCodeContext(entity.authorizationCodeContext)
-          ?.toAttributes(entity.principalName.orEmpty())
-          ?.let { attributes -> builder.attributes { it.putAll(attributes) } }
-      }
-      !entity.attributes.isNullOrBlank() -> {
-        builder.attributes { it.putAll(parseMap(entity.attributes)) }
-      }
-    }
+    parseAuthorizationCodeContext(entity.authorizationCodeContext)
+      ?.toAttributes(entity.principalName.orEmpty())
+      ?.let { attributes -> builder.attributes { it.putAll(attributes) } }
 
     entity.authorizationCode?.let { authorizationCode ->
       builder.token(

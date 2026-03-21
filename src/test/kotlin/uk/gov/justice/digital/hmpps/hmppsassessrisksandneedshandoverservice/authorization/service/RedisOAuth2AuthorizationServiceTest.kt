@@ -134,45 +134,6 @@ class RedisOAuth2AuthorizationServiceTest {
     return AuthorizationGrantMapper.from(builder.build())
   }
 
-  private fun createLegacyEntity(
-    id: String = UUID.randomUUID().toString(),
-    authorizationCodeValue: String,
-  ): AuthorizationCodeGrantAuthorization {
-    val now = Instant.now()
-    val expiry = now.plusSeconds(300)
-    val authorizationRequest = OAuth2AuthorizationRequest.authorizationCode()
-      .authorizationUri("http://localhost/authorize")
-      .clientId("test-client")
-      .redirectUri("http://localhost/callback")
-      .scopes(setOf("profile"))
-      .additionalParameters(
-        mapOf(
-          PkceParameterNames.CODE_CHALLENGE to "challenge",
-          PkceParameterNames.CODE_CHALLENGE_METHOD to "S256",
-        ),
-      )
-      .build()
-    val authentication = UsernamePasswordAuthenticationToken(
-      handoverPrincipal.identifier,
-      null,
-      handoverPrincipal.accessMode.toAuthorities("SAN") + handoverPrincipal.planAccessMode.toAuthorities("PLAN"),
-    )
-    authentication.details = handoverAuthDetails
-    val authorization = OAuth2Authorization.withRegisteredClient(registeredClient)
-      .id(id)
-      .principalName("test-user")
-      .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-      .attribute(OAuth2AuthorizationRequest::class.java.name, authorizationRequest)
-      .attribute(Principal::class.java.name, authentication)
-      .token(OAuth2AuthorizationCode(authorizationCodeValue, now, expiry))
-      .build()
-
-    return AuthorizationGrantMapper.from(authorization).apply {
-      authorizationCodeContext = null
-      attributes = AuthorizationGrantMapper.writeMap(authorization.attributes)
-    }
-  }
-
   @Nested
   @DisplayName("save()")
   inner class Save {
@@ -201,8 +162,8 @@ class RedisOAuth2AuthorizationServiceTest {
     fun `should persist authorization attributes for code grant context`() {
       val entity = createEntity(authorizationCodeValue = "test-auth-code")
 
-      assertNull(entity.authorizationCodeContext)
-      assertNotNull(entity.attributes)
+      assertNotNull(entity.authorizationCodeContext)
+      assertNull(entity.attributes)
     }
 
     @Test
@@ -305,23 +266,6 @@ class RedisOAuth2AuthorizationServiceTest {
       assertNotNull(authentication)
       assertEquals("test-user", authentication?.name)
       assertEquals(setOf("SAN_READ", "SAN_WRITE", "PLAN_READ"), authentication?.authorities?.map { it.authority }?.toSet())
-      assertEquals(handoverAuthDetails, authentication?.details)
-    }
-
-    @Test
-    fun `should fall back to legacy attributes when compact context is absent`() {
-      val code = "test-auth-code"
-      val entity = createLegacyEntity(authorizationCodeValue = code)
-      every { authorizationGrantAuthorizationRepository.findByAuthorizationCode_TokenValue(code) } returns entity
-      every { registeredClientRepository.findById(registeredClientId) } returns registeredClient
-
-      val result = service.findByToken(code, OAuth2TokenType(OAuth2ParameterNames.CODE))
-      val authorizationRequest = result?.getAttribute<OAuth2AuthorizationRequest>(OAuth2AuthorizationRequest::class.java.name)
-      val authentication = result?.getAttribute<Authentication>(Principal::class.java.name)
-
-      assertNotNull(authorizationRequest)
-      assertEquals("test-client", authorizationRequest?.clientId)
-      assertNotNull(authentication)
       assertEquals(handoverAuthDetails, authentication?.details)
     }
 
