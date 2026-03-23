@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.repository.HandoverContextRepository
@@ -11,7 +12,7 @@ class HandoverContextService(
   private val handoverContextRepository: HandoverContextRepository,
 ) {
 
-  fun updateContext(handoverSessionId: UUID, handoverContext: UpdateHandoverContextRequest): GetHandoverContextResult = handoverContextRepository.findByHandoverSessionId(handoverSessionId)
+  fun updateContext(handoverSessionId: UUID, handoverContext: UpdateHandoverContextRequest): GetHandoverContextResult = handoverContextRepository.findByIdOrNull(handoverSessionId)
     ?.let {
       val updatedContext = it.copy(
         principal = handoverContext.principal,
@@ -26,7 +27,7 @@ class HandoverContextService(
 
   fun saveContext(handoverContext: HandoverContext): HandoverContext = handoverContextRepository.save(handoverContext)
 
-  fun getContext(handoverSessionId: UUID): GetHandoverContextResult = handoverContextRepository.findByHandoverSessionId(handoverSessionId)
+  fun getContext(handoverSessionId: UUID): GetHandoverContextResult = handoverContextRepository.findByIdOrNull(handoverSessionId)
     ?.let { GetHandoverContextResult.Success(it) }
     ?: GetHandoverContextResult.NotFound
 }

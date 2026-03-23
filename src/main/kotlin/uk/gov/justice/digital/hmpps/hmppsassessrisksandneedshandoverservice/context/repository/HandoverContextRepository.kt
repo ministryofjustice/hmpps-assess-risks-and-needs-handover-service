@@ -6,6 +6,4 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import java.util.UUID
 
 @Repository
-interface HandoverContextRepository : CrudRepository<HandoverContext, UUID> {
-  fun findByHandoverSessionId(handoverSessionId: UUID): HandoverContext?
-}
+interface HandoverContextRepository : CrudRepository<HandoverContext, UUID>

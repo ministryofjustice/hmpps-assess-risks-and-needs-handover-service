@@ -13,6 +13,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.repository.HandoverContextRepository
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
+import java.util.Optional
 import java.util.UUID
 
 class HandoverContextServiceTest {
@@ -47,28 +48,28 @@ class HandoverContextServiceTest {
 
     @Test
     fun `should find original context from repository when using valid handover session id`() {
-      every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
+      every { handoverContextRepository.findById(handoverSessionId) } returns Optional.of(existingContext)
       every { handoverContextRepository.save(any()) } returns updatedContext
 
       handoverContextService.updateContext(handoverSessionId, updateHandoverContextRequest)
 
-      verify { handoverContextRepository.findByHandoverSessionId(match { it == handoverSessionId }) }
+      verify { handoverContextRepository.findById(match { it == handoverSessionId }) }
     }
 
     @Test
     fun `should return not found when using invalid handover session id`() {
       val invalidUUID = UUID.randomUUID()
-      every { handoverContextRepository.findByHandoverSessionId(any()) } returns null
+      every { handoverContextRepository.findById(any()) } returns Optional.empty()
 
       val result = handoverContextService.updateContext(invalidUUID, updateHandoverContextRequest)
 
-      verify { handoverContextRepository.findByHandoverSessionId(match { it == invalidUUID }) }
+      verify { handoverContextRepository.findById(match { it == invalidUUID }) }
       assertEquals(result, GetHandoverContextResult.NotFound)
     }
 
     @Test
     fun `should return Success when context exists and update successful`() {
-      every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
+      every { handoverContextRepository.findById(handoverSessionId) } returns Optional.of(existingContext)
       every { handoverContextRepository.save(any()) } returns updatedContext
 
       val result = handoverContextService.updateContext(handoverSessionId, updateHandoverContextRequest)
@@ -104,22 +105,22 @@ class HandoverContextServiceTest {
 
     @Test
     fun `should find original context from repository when using valid handover session id`() {
-      every { handoverContextRepository.findByHandoverSessionId(handoverSessionId) } returns existingContext
+      every { handoverContextRepository.findById(handoverSessionId) } returns Optional.of(existingContext)
 
       val result = handoverContextService.getContext(handoverSessionId)
 
       assertEquals(existingContext, (result as GetHandoverContextResult.Success).handoverContext)
-      verify { handoverContextRepository.findByHandoverSessionId(match { it == handoverSessionId }) }
+      verify { handoverContextRepository.findById(match { it == handoverSessionId }) }
     }
 
     @Test
     fun `should return not found when using invalid handover session id`() {
       val invalidUUID = UUID.randomUUID()
-      every { handoverContextRepository.findByHandoverSessionId(any()) } returns null
+      every { handoverContextRepository.findById(any()) } returns Optional.empty()
 
       val result = handoverContextService.getContext(invalidUUID)
 
-      verify { handoverContextRepository.findByHandoverSessionId(match { it == invalidUUID }) }
+      verify { handoverContextRepository.findById(match { it == invalidUUID }) }
       assertEquals(result, GetHandoverContextResult.NotFound)
     }
   }
