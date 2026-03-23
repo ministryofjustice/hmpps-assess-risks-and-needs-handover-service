@@ -85,17 +85,15 @@ class ScopeNormalizingAuthorizationRequestConverterTest {
     assertSame(authentication, convertedAuthentication)
   }
 
-  private fun tokenFor(scopes: Set<String>?): OAuth2AuthorizationCodeRequestAuthenticationToken =
-    OAuth2AuthorizationCodeRequestAuthenticationToken(
-      "http://localhost/oauth2/authorize",
-      "test-client",
-      principal,
-      "http://localhost:3000/callback",
-      "test-state",
-      scopes,
-      emptyMap(),
-    )
+  private fun tokenFor(scopes: Set<String>?): OAuth2AuthorizationCodeRequestAuthenticationToken = OAuth2AuthorizationCodeRequestAuthenticationToken(
+    "http://localhost/oauth2/authorize",
+    "test-client",
+    principal,
+    "http://localhost:3000/callback",
+    "test-state",
+    scopes,
+    emptyMap(),
+  )
 
-  private fun authenticationConverter(authentication: Authentication?): AuthenticationConverter =
-    AuthenticationConverter { authentication }
+  private fun authenticationConverter(authentication: Authentication?): AuthenticationConverter = AuthenticationConverter { authentication }
 }

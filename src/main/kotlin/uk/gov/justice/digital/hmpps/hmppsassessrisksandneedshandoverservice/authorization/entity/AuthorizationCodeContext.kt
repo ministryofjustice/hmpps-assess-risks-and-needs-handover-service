@@ -41,9 +41,7 @@ data class AuthorizationCodeContext(
   }
 
   companion object {
-    fun from(authorization: OAuth2Authorization): AuthorizationCodeContext? {
-      return fromAttributes(authorization.attributes)
-    }
+    fun from(authorization: OAuth2Authorization): AuthorizationCodeContext? = fromAttributes(authorization.attributes)
 
     fun fromAttributes(attributes: Map<String, Any>): AuthorizationCodeContext? {
       val authorizationRequest = attributes[OAuth2AuthorizationRequest::class.java.name] as? OAuth2AuthorizationRequest

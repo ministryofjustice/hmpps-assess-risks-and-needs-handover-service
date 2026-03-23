@@ -151,7 +151,7 @@ object AuthorizationGrantMapper {
   )
 
   private fun mapAccessToken(
-  accessToken: OAuth2Authorization.Token<OAuth2AccessToken>,
+    accessToken: OAuth2Authorization.Token<OAuth2AccessToken>,
   ): AuthorizationCodeGrantAuthorization.AccessToken = AuthorizationCodeGrantAuthorization.AccessToken(
     tokenValue = accessToken.token.tokenValue,
     issuedAt = accessToken.token.issuedAt,
