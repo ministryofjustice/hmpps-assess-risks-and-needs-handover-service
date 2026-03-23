@@ -76,6 +76,9 @@ class AuthorizationServerConfiguration {
       .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.NEVER) }
 
     configurer.authorizationEndpoint { authorizationEndpoint ->
+      authorizationEndpoint.authorizationRequestConverter(
+        ScopeNormalizingAuthorizationRequestConverter(),
+      )
       authorizationEndpoint.authenticationProviders(
         configureAuthenticationValidator(),
       )
