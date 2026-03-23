@@ -28,14 +28,23 @@ class WireMockExtension :
   companion object {
     // todo - is there a way to get this port from the confjg?
     val wireMockServer = WireMockServer(WireMockConfiguration.wireMockConfig().port(8089))
-    lateinit var keyPair: KeyPair
+    val keyPair: KeyPair = generateRSAKeyPair()
     const val KEY_ID = "test-key-id"
+
+    private fun generateRSAKeyPair(): KeyPair {
+      val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
+      keyPairGenerator.initialize(2048)
+
+      return keyPairGenerator.genKeyPair()
+    }
   }
 
   override fun beforeAll(context: ExtensionContext) {
-    wireMockServer.start()
+    if (!wireMockServer.isRunning) {
+      wireMockServer.start()
+    }
 
-    keyPair = generateRSAKeyPair()
+    wireMockServer.resetAll()
     val jwksResponse = createJWKS(keyPair.public as RSAPublicKey, KEY_ID)
 
     wireMockServer.stubFor(
@@ -75,13 +84,9 @@ class WireMockExtension :
   }
 
   override fun afterAll(context: ExtensionContext) {
-    wireMockServer.stop()
-  }
-
-  private fun generateRSAKeyPair(): KeyPair {
-    val keyPairGenerator = KeyPairGenerator.getInstance("RSA")
-    keyPairGenerator.initialize(2048)
-    return keyPairGenerator.genKeyPair()
+    if (wireMockServer.isRunning) {
+      wireMockServer.stop()
+    }
   }
 
   private fun createJWKS(publicKey: RSAPublicKey, keyId: String): String {
