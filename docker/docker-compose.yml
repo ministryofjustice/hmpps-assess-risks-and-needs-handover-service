@@ -7,7 +7,7 @@ services:
       ALLOW_EMPTY_PASSWORD: yes
 
   hmpps-auth:
-    image: ghcr.io/ministryofjustice/hmpps-auth
+    image: ghcr.io/ministryofjustice/hmpps-auth:2026-01-19.282.b6537e8
     networks:
       - hmpps
     healthcheck:
@@ -31,7 +31,7 @@ services:
       - /var/lib/postgresql
 
   coordinator-api:
-    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:latest
+    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-coordinator-api:national-rollout
     networks:
       - hmpps
     depends_on:
@@ -40,7 +40,7 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://coordinator-api:8080/health/ping" ]
       interval: 5s
-      retries: 60
+      retries: 100
     environment:
       SERVER_PORT: 8080
       SPRING_PROFILES_ACTIVE: postgres
@@ -51,6 +51,7 @@ services:
       HMPPS_AUTH_BASE_URL: http://hmpps-auth:9090/auth
       SAN_API_BASE_URL: http://san-api:8080
       SP_API_BASE_URL: http://sp-api:8080
+      AAP_API_BASE_URL: http://aap-api:8080
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
 
@@ -169,7 +170,6 @@ services:
     image: localstack/localstack:4
     networks:
       - hmpps
-    container_name: localstack-sqs
     environment:
       - SERVICES=sqs
       - LOCALSTACK_HOST=localstack:4566

@@ -21,12 +21,6 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.serv
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.TelemetryService
 import java.util.*
 
-enum class TokenValidationResult {
-  VALID,
-  NOT_FOUND,
-  ALREADY_USED,
-}
-
 @Service
 class HandoverService(
   val handoverTokenRepository: HandoverTokenRepository,
@@ -41,7 +35,9 @@ class HandoverService(
     handoverRequest: CreateHandoverLinkRequest,
     handoverSessionId: UUID = UUID.randomUUID(),
   ): CreateHandoverLinkResponse {
-    val associations = coordinatorService.getAssociations(handoverRequest.oasysAssessmentPk)
+    val associations = with(handoverRequest) {
+      coordinatorService.getAssociations(oasysAssessmentPk, sentencePlanVersion)
+    }
     val handoverToken = HandoverToken(
       handoverSessionId = handoverSessionId,
       principal = handoverRequest.user,
@@ -58,7 +54,7 @@ class HandoverService(
       sentencePlanContext = SentencePlanContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         planId = associations.sentencePlanId,
-        planVersion = handoverRequest.sentencePlanVersion,
+        planVersion = associations.sentencePlanVersion,
       ),
       criminogenicNeedsData = handoverRequest.criminogenicNeedsData,
     )
@@ -77,11 +73,11 @@ class HandoverService(
     )
   }
 
-  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (validateToken(handoverCode)) {
-    TokenValidationResult.NOT_FOUND -> UseHandoverLinkResult.HandoverLinkNotFound
-    TokenValidationResult.ALREADY_USED -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
-    TokenValidationResult.VALID -> {
-      val handoverToken = consumeToken(handoverCode)
+  fun consumeAndExchangeHandover(handoverCode: UUID): UseHandoverLinkResult = when (val tokenValidationResult = validateToken(handoverCode)) {
+    is ValidateTokenResult.NotFound -> UseHandoverLinkResult.HandoverLinkNotFound
+    is ValidateTokenResult.AlreadyUsed -> UseHandoverLinkResult.HandoverLinkAlreadyUsed
+    is ValidateTokenResult.Valid -> {
+      val handoverToken = consumeToken(tokenValidationResult.handoverToken)
       val handoverSessionId = handoverToken.handoverSessionId
       val contextResult = handoverContextService.getContext(handoverSessionId)
 
@@ -89,11 +85,9 @@ class HandoverService(
         telemetryService.track(TelemetryEvent.ONE_TIME_LINK_USED, contextResult.handoverContext)
         publishAuditEvent(AuditEvent.ONE_TIME_LINK_USED, contextResult.handoverContext)
 
-        val authToken = UsernamePasswordAuthenticationToken(
-          contextResult.handoverContext.principal.identifier,
-          null,
-          contextResult.handoverContext.principal.accessMode.toAuthorities(),
-        )
+        val principal = contextResult.handoverContext.principal
+        val authorities = principal.accessMode.toAuthorities("SAN") + principal.planAccessMode.toAuthorities("PLAN")
+        val authToken = UsernamePasswordAuthenticationToken(principal.identifier, null, authorities)
         authToken.details = HandoverAuthDetails(
           handoverSessionId = handoverSessionId,
           principal = contextResult.handoverContext.principal,
@@ -107,22 +101,20 @@ class HandoverService(
 
   private fun generateHandoverLink(handoverCode: UUID): String = "${appConfiguration.self.externalUrl}${appConfiguration.self.endpoints.handover}/$handoverCode"
 
-  private fun validateToken(code: UUID): TokenValidationResult {
+  private fun validateToken(code: UUID): ValidateTokenResult {
     val token = handoverTokenRepository.findById(code).orElse(null)
-      ?: return TokenValidationResult.NOT_FOUND
+      ?: return ValidateTokenResult.NotFound
 
     if (token.tokenStatus == TokenStatus.USED) {
-      return TokenValidationResult.ALREADY_USED
+      return ValidateTokenResult.AlreadyUsed
     }
 
-    return TokenValidationResult.VALID
+    return ValidateTokenResult.Valid(token)
   }
 
-  private fun consumeToken(code: UUID): HandoverToken {
-    val token = handoverTokenRepository.findById(code).orElse(null)
-      ?: throw NoSuchElementException()
-
+  private fun consumeToken(token: HandoverToken): HandoverToken {
     token.tokenStatus = TokenStatus.USED
+
     return handoverTokenRepository.save(token)
   }
 
@@ -142,4 +134,12 @@ sealed class UseHandoverLinkResult {
   data class Success(val authenticationToken: UsernamePasswordAuthenticationToken) : UseHandoverLinkResult()
   data object HandoverLinkNotFound : UseHandoverLinkResult()
   data object HandoverLinkAlreadyUsed : UseHandoverLinkResult()
+}
+
+private sealed class ValidateTokenResult {
+  data class Valid(val handoverToken: HandoverToken) : ValidateTokenResult()
+
+  data object NotFound : ValidateTokenResult()
+
+  data object AlreadyUsed : ValidateTokenResult()
 }

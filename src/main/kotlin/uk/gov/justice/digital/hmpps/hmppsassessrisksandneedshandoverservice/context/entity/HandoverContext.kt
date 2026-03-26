@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
-import org.springframework.data.redis.core.index.Indexed
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.AppSecAllowedCharacters
@@ -21,15 +20,15 @@ enum class UserAccess(val value: String) {
   READ_WRITE("READ_WRITE"),
   ;
 
-  fun toAuthorities(): List<GrantedAuthority> = when (this) {
-    READ_ONLY -> listOf(SimpleGrantedAuthority("READ"))
-    READ_WRITE -> listOf(SimpleGrantedAuthority("READ"), SimpleGrantedAuthority("WRITE"))
+  fun toAuthorities(prefix: String): List<GrantedAuthority> = when (this) {
+    READ_ONLY -> listOf(SimpleGrantedAuthority("${prefix}_READ"))
+    READ_WRITE -> listOf(SimpleGrantedAuthority("${prefix}_READ"), SimpleGrantedAuthority("${prefix}_WRITE"))
   }
 }
 
-@RedisHash("HandoverContext")
+@RedisHash("HandoverContext", timeToLive = 172800)
 data class HandoverContext(
-  @Id @Indexed var handoverSessionId: UUID,
+  @Id var handoverSessionId: UUID,
   val createdAt: LocalDateTime = LocalDateTime.now(),
   val principal: HandoverPrincipal,
   val subject: SubjectDetails,
@@ -48,6 +47,7 @@ data class HandoverPrincipal(
   @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Display name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
+  val planAccessMode: UserAccess = UserAccess.READ_ONLY,
 
   @field:OasysReturnUrl
   val returnUrl: String = "",

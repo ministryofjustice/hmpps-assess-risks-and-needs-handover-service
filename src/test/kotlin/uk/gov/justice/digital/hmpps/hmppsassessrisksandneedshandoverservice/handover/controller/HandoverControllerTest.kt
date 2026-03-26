@@ -131,7 +131,7 @@ class HandoverControllerTest : IntegrationTestBase() {
   @DisplayName("useHandoverLink")
   inner class UseHandoverLink {
     @Test
-    fun `should return found when using handover link with valid code `() {
+    fun `should return found when using handover link with valid code`() {
       val clientId = "test-client"
       val client: AppConfiguration.Client = appConfiguration.clients[clientId]
         ?: throw IllegalStateException()
@@ -210,15 +210,17 @@ class HandoverControllerTest : IntegrationTestBase() {
     @Test
     fun `should return access denied when redirectUri is invalid subdomain`() {
       val clientId = "test-client"
-      val client: AppConfiguration.Client = appConfiguration.clients[clientId]
-        ?: throw IllegalStateException("Client not found for test")
 
       val invalidSubdomainUri = "https://subdomain.otherdomain.com/callback"
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 
@@ -230,7 +232,7 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @Test
-    fun `should return access denied when using handover link with invalid code `() {
+    fun `should return access denied when using handover link with invalid code`() {
       val clientId = "test-client"
       val handoverCode = UUID.randomUUID().toString()
 
@@ -245,10 +247,14 @@ class HandoverControllerTest : IntegrationTestBase() {
     fun `should return access denied when using handover link with already used code`() {
       val clientId = "test-client"
 
+      val handoverSessionId = UUID.randomUUID()
+      val principal = TestUtils.createPrincipal()
+
+      handoverContextService.saveContext(TestUtils.createHandoverContext(handoverSessionId))
       val handoverToken = handoverTokenRepository.save(
         HandoverToken(
-          handoverSessionId = UUID.randomUUID(),
-          principal = TestUtils.createPrincipal(),
+          handoverSessionId = handoverSessionId,
+          principal = principal,
         ),
       )
 

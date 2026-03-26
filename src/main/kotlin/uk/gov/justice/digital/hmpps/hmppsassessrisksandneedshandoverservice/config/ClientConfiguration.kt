@@ -23,7 +23,6 @@ class ClientConfiguration(
   fun registeredClientRepository(): InMemoryRegisteredClientRepository {
     val tokenSettings = TokenSettings.builder()
       .accessTokenTimeToLive(Duration.ofDays(1L))
-      .refreshTokenTimeToLive(Duration.ofDays(2L))
       .build()
 
     val registeredClients = appConfiguration.clients
@@ -39,8 +38,6 @@ class ClientConfiguration(
           .clientSecret("{noop}${clientProperties.secret}")
           .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
           .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-          .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-          .scope(OidcScopes.OPENID)
           .scope(OidcScopes.PROFILE)
           .tokenSettings(tokenSettings)
           .clientSettings(ClientSettings.builder().requireProofKey(false).build()) // TODO: Can enable PKCE when clients have it enabled too

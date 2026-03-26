@@ -13,13 +13,11 @@ generic-service:
     OASYS_BASE_URL: "https://oasys.service.justice.gov.uk"
     OASYS_RETURN_URLS: "https://oasys.service.justice.gov.uk,https://int.oasys.service.justice.gov.uk"
     COORDINATOR_API_BASE_URL: "https://arns-coordinator-api.hmpps.service.justice.gov.uk"
-    CLIENT_SP_OAUTH_REDIRECT_URI: "https://sentence-plan.hmpps.service.justice.gov.uk/sign-in/handover/callback"
-    CLIENT_SP_HANDOVER_REDIRECT_URI: "https://sentence-plan.hmpps.service.justice.gov.uk/sign-in/handover"
+    CLIENT_SP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_SP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform.hmpps.service.justice.gov.uk/sign-in/handover?service=sentence-plan"
     CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments.hmpps.service.justice.gov.uk/sign-in/callback"
     CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments.hmpps.service.justice.gov.uk/sign-in"
-    CLIENT_AAP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform.hmpps.service.justice.gov.uk/sign-in/callback"
-    CLIENT_AAP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform.hmpps.service.justice.gov.uk/sign-in"
-    
+
   allowlist:
     mod-platform-live-eu-west-2a-nat: 13.41.38.176/32
     mod-platform-live-eu-west-2c-nat: 3.11.197.133/32

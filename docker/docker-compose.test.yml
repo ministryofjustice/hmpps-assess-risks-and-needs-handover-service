@@ -10,6 +10,7 @@ services:
   coordinator-api:
     environment:
       APP_STRATEGIES_PLAN: false
+      APP_STRATEGIES_AAP_PLAN: false
 
   arns-handover:
     depends_on:

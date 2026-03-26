@@ -15,6 +15,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationProvider
 import org.springframework.security.oauth2.server.resource.authentication.JwtIssuerAuthenticationManagerResolver
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 @ConfigurationProperties(prefix = "spring.security.oauth2.resourceserver.jwt")
 data class JwtProperties(
@@ -34,20 +35,28 @@ data class JwtIssuerProperties(
 class JwtConfiguration(
   private val jwtProperties: JwtProperties,
 ) {
+  private val authenticationManagers = ConcurrentHashMap<String, AuthenticationManager>()
+
   @Bean
   fun issuerAuthenticationManagerResolver(): JwtIssuerAuthenticationManagerResolver = JwtIssuerAuthenticationManagerResolver { issuerUri: String ->
+    resolveIssuerAuthenticationManager(issuerUri)
+  }
+
+  internal fun resolveIssuerAuthenticationManager(issuerUri: String): AuthenticationManager {
     val issuer = getIssuerByIssuerUri(issuerUri)
       ?: throw AccessDeniedException("Invalid issuer: $issuerUri")
 
-    val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuer.jwkSetUri)
-      .build()
-      .apply {
-        setJwtValidator(JwtValidators.createDefaultWithIssuer(issuerUri))
-      }
+    return authenticationManagers.computeIfAbsent(issuerUri) {
+      val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(issuer.jwkSetUri)
+        .build()
+        .apply {
+          setJwtValidator(JwtValidators.createDefaultWithIssuer(issuerUri))
+        }
 
-    AuthenticationManager { authentication ->
-      JwtAuthenticationProvider(jwtDecoder).authenticate(authentication)
-        ?: throw AccessDeniedException("Authentication failed")
+      AuthenticationManager { authentication ->
+        JwtAuthenticationProvider(jwtDecoder).authenticate(authentication)
+          ?: throw AccessDeniedException("Authentication failed")
+      }
     }
   }
 
