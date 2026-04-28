@@ -85,11 +85,11 @@ data class SubjectDetails(
   val nomisId: String?,
   @field:Size(min = 1, max = 25)
   @field:AppSecAllowedCharacters
-  @field:Pattern(regexp = "^[a-zA-Z\\-' /]+$", message = "Given name must contain only alphabetic characters, hyphens, spaces, forward slashes, or apostrophes")
+  @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Given name must contain only alphabetic characters, numbers, hyphens, spaces, forward slashes, or apostrophes")
   val givenName: String,
   @field:Size(min = 1, max = 36)
   @field:AppSecAllowedCharacters
-  @field:Pattern(regexp = "^[a-zA-Z\\-' /]+$", message = "Family name must contain only alphabetic characters, hyphens, spaces, forward slashes, or apostrophes")
+  @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Family name must contain only alphabetic characters, numbers, hyphens, spaces, forward slashes, or apostrophes")
   val familyName: String,
   @field:Past
   val dateOfBirth: LocalDate?,
