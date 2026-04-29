@@ -44,7 +44,7 @@ data class HandoverPrincipal(
 
   @field:Size(min = 1, max = 50)
   @field:AppSecAllowedCharacters
-  @field:Pattern(regexp = "^[a-zA-Z\\-'\\s]+$", message = "Display name must contain only alphabetic characters, hyphens, spaces, or apostrophes")
+  @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Display name must contain only alphanumeric characters, hyphens, spaces, forward slashes, or apostrophes")
   val displayName: String = "",
   val accessMode: UserAccess = UserAccess.READ_ONLY,
   val planAccessMode: UserAccess = UserAccess.READ_ONLY,
