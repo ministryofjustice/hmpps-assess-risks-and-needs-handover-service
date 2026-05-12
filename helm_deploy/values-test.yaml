@@ -16,6 +16,9 @@ generic-service:
       SecRuleUpdateTargetById 920272 "!REQUEST_BODY"
       # CRS 932260 (Unix RCE detection) false-positives on personal name fields in POST /handover
       SecRuleUpdateTargetById 932260 "!ARGS"
+      # No PHP in this service - disable PHP rules to reduce log noise from external scans
+      SecRuleRemoveById 930130
+      SecRuleRemoveById 933150
       # Change default denial to be a 406 so that we can tell easily that it is modsecurity doing the blocking
       SecRuleUpdateActionById 949110 "t:none,deny,status:406,logdata:%{SERVER_NAME}"
       SecRuleUpdateActionById 959100 "t:none,deny,status:406,logdata:%{SERVER_NAME}"
