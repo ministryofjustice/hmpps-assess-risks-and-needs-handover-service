@@ -15,7 +15,12 @@ generic-service:
       # Disables request body scanning so free-text form fields (goal titles, step descriptions) do not trigger false positives
       SecRuleUpdateTargetById 920272 "!REQUEST_BODY"
       # CRS 932260 (Unix RCE detection) false-positives on personal name fields in POST /handover
-      SecRuleUpdateTargetById 932260 "!ARGS"
+      # Names like "Perf", "Cat", "Ed" overlap with Unix command names and trip the regex at paranoia level 1
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.givenName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.familyName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.middleName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.preferredName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.user.displayName"
       # No PHP in this service - disable PHP rules to reduce log noise from external scans
       SecRuleRemoveById 930130
       SecRuleRemoveById 933150
