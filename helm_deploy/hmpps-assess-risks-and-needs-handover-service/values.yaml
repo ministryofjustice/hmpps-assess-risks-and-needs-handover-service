@@ -29,6 +29,8 @@ generic-service:
       SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.middleName"
       SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.preferredName"
       SecRuleUpdateTargetById 932260 "!ARGS:json.user.displayName"
+      # Block Detectify scanner with 418
+      SecRule REQUEST_HEADERS:User-Agent "@pm detectify Detectify DETECTIFY" "id:800003,phase:1,deny,status:418,log,tag:github_team=hmpps-assessments,tag:namespace={{ .Release.Namespace }}"
       # No PHP in this service - disable PHP rules to reduce log noise from external scans
       SecRuleRemoveById 930130
       SecRuleRemoveById 933150
