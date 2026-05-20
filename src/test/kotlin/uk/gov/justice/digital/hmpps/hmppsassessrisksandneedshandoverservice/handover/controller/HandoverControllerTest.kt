@@ -94,7 +94,7 @@ class HandoverControllerTest : IntegrationTestBase() {
         .responseBody
 
       assertThat(response?.userMessage).contains("subjectDetails.sexuallyMotivatedOffenceHistory: must be either 'YES' or 'NO'")
-      assertThat(response?.userMessage).contains("subjectDetails.givenName: size must be between 1 and 25")
+      assertThat(response?.userMessage).contains("subjectDetails.givenName: size must be between 1 and 36")
     }
 
     @Test
