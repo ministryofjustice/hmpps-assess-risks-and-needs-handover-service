@@ -83,7 +83,7 @@ data class SubjectDetails(
   @field:Size(max = 50)
   @field:AppSecAllowedCharacters
   val nomisId: String?,
-  @field:Size(min = 1, max = 25)
+  @field:Size(min = 1, max = 36)
   @field:AppSecAllowedCharacters
   @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Given name must contain only alphabetic characters, numbers, hyphens, spaces, forward slashes, or apostrophes")
   val givenName: String,
