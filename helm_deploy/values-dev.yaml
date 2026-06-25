@@ -6,6 +6,7 @@ generic-service:
 
   ingress:
     host: arns-handover-service-dev.hmpps.service.justice.gov.uk
+    className: modsec-non-prod
     modsecurity_enabled: true
     modsecurity_audit_enabled: true
     modsecurity_snippet: |
