@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.3"
   kotlin("plugin.spring") version "2.4.0"
 }
 
@@ -44,7 +44,7 @@ dependencies {
   testImplementation(kotlin("test"))
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
-  testImplementation("net.datafaker:datafaker:2.6.0")
+  testImplementation("net.datafaker:datafaker:2.7.0")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
