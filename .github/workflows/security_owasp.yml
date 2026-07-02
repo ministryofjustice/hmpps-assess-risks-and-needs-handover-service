@@ -5,6 +5,8 @@ on:
     - cron: "51 3 * * MON-FRI" # Every weekday at 03:51 UTC
 permissions:
   contents: read
+  security-events: write
+  actions: read
 jobs:
   security-owasp-check:
     name: Project security OWASP dependency check
