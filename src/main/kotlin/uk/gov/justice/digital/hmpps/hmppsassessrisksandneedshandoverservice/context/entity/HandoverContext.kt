@@ -1,5 +1,6 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Past
 import jakarta.validation.constraints.Pattern
@@ -8,6 +9,7 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.redis.core.RedisHash
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.TrimStringDeserializer
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.AppSecAllowedCharacters
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.validators.OasysReturnUrl
 import java.io.Serializable
@@ -42,6 +44,7 @@ data class HandoverPrincipal(
   @field:Pattern(regexp = "^[a-zA-Z0-9-'\\s,./_]+$", message = "Field must contain only alphanumeric characters, hyphens, spaces, commas, full stops, forward slashes, or apostrophes and underscores")
   val identifier: String = "",
 
+  @JsonDeserialize(using = TrimStringDeserializer::class)
   @field:Size(min = 1, max = 50)
   @field:AppSecAllowedCharacters
   @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Display name must contain only alphanumeric characters, hyphens, spaces, forward slashes, or apostrophes")
@@ -83,10 +86,12 @@ data class SubjectDetails(
   @field:Size(max = 50)
   @field:AppSecAllowedCharacters
   val nomisId: String?,
+  @JsonDeserialize(using = TrimStringDeserializer::class)
   @field:Size(min = 1, max = 36)
   @field:AppSecAllowedCharacters
   @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Given name must contain only alphabetic characters, numbers, hyphens, spaces, forward slashes, or apostrophes")
   val givenName: String,
+  @JsonDeserialize(using = TrimStringDeserializer::class)
   @field:Size(min = 1, max = 36)
   @field:AppSecAllowedCharacters
   @field:Pattern(regexp = "^[a-zA-Z0-9\\-' /]+$", message = "Family name must contain only alphabetic characters, numbers, hyphens, spaces, forward slashes, or apostrophes")
