@@ -49,15 +49,21 @@ To run this service in your local environment, follow these steps:
 2. **Run a Redis Instance**
     - Ensure a passwordless Redis instance is running on `localhost:6379`.
 
-## Running the tests using _make_
+## Running the tests using _make_ and [Makefile](Makefile)
 
-Using the [Makefile](Makefile):
-
+### Unit tests
 1. **Start the dev docker containers**
     - The `make dev-up` command will start the containers using the `docker/docker-compose.yml` and `docker/docker-compose.dev.yml` files
 
 2. **Run the tests against the running containers**
     - The `make test` command will the tests in the dev containers
+
+### E2E tests
+1. **Start the test docker containers**
+    - The `make test-up` command will start the containers using the `docker/docker-compose.yml` and `docker/docker-compose.test.yml` files
+
+2. **Run the e2e tests against the running containers**
+    - The `make e2e-ci` command will the tests in the test containers
 
 ## Generating a handover session
 Currently, the ARNS Handover Service does not provide a user interface for generating handover sessions and
