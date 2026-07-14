@@ -6,4 +6,6 @@ data class AssociationsResponse(
   val sanAssessmentId: UUID?,
   val sentencePlanId: UUID?,
   val sentencePlanVersion: Long?,
+  val tieringAssessmentId: UUID?,
+  val tieringAssessmentVersion: Long?,
 )

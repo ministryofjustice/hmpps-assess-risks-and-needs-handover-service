@@ -20,6 +20,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.TieringAssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.response.AssociationsResponse
@@ -34,6 +35,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.serv
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.service.TelemetryService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.testUtils.TestUtils
 import java.util.*
+import java.util.UUID
 import kotlin.test.assertContains
 
 class HandoverServiceTest {
@@ -70,6 +72,8 @@ class HandoverServiceTest {
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
         sentencePlanVersion = handoverRequest.sentencePlanVersion,
+        tieringAssessmentId= UUID.randomUUID(),
+        tieringAssessmentVersion= handoverRequest.tieringAssessmentVersion,
       )
       handoverToken = HandoverToken(
         handoverSessionId = handoverSessionId,
@@ -88,6 +92,11 @@ class HandoverServiceTest {
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
           planId = associations.sentencePlanId,
           planVersion = handoverRequest.sentencePlanVersion,
+        ),
+        tieringAssessmentContext = TieringAssessmentContext(
+          oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+          tieringAssessmentId = associations.tieringAssessmentId,
+          tieringAssessmentVersion = associations.tieringAssessmentVersion,
         ),
         criminogenicNeedsData = CriminogenicNeedsData(
           accommodation = Accommodation(
@@ -115,6 +124,7 @@ class HandoverServiceTest {
             assertEquals(handoverContext.principal, it.principal)
             assertEquals(handoverContext.assessmentContext, it.assessmentContext)
             assertEquals(handoverContext.sentencePlanContext, it.sentencePlanContext)
+            assertEquals(handoverContext.tieringAssessmentContext, it.tieringAssessmentContext)
           },
         )
       }

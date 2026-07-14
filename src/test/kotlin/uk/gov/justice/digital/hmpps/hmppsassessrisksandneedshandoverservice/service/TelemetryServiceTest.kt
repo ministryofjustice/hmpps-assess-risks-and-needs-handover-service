@@ -16,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.TieringAssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.events.TelemetryEvent
 import java.util.UUID
 
@@ -48,6 +49,11 @@ class TelemetryServiceTest {
       planId = UUID.fromString("1a2cf6c5-011e-4a31-92db-05a0d3c252e4"),
       planVersion = 1,
     ),
+    tieringAssessmentContext = TieringAssessmentContext(
+      oasysAssessmentPk = "PK123456",
+      tieringAssessmentId = UUID.fromString("d2f88734-81e3-484a-b96d-32ed895c1d4e"),
+      tieringAssessmentVersion = 2,
+    ),
   )
 
   @BeforeEach
@@ -70,6 +76,8 @@ class TelemetryServiceTest {
       "ASSESSMENT_VERSION" to "0",
       "SENTENCE_PLAN_ID" to "1a2cf6c5-011e-4a31-92db-05a0d3c252e4",
       "SENTENCE_PLAN_VERSION" to "1",
+      "TIERING_ASSESSMENT_ID" to "d2f88734-81e3-484a-b96d-32ed895c1d4e",
+      "TIERING_ASSESSMENT_VERSION" to "2",
     )
 
     verify(exactly = 1) { telemetryClient.trackEvent(event.name, expectedProperties, null) }

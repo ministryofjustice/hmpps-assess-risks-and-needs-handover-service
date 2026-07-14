@@ -11,6 +11,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.TieringAssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.UserAccess
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.request.UpdateHandoverContextRequest
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
@@ -33,6 +34,7 @@ object TestUtils {
     oasysAssessmentPk = (100_000..999_999).random().toString(),
     assessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
     sentencePlanVersion = null,
+    tieringAssessmentVersion = null,
   )
 
   fun createHandoverRequestFromJson(): CreateHandoverLinkRequest = objectMapper.readValue(
@@ -58,6 +60,7 @@ object TestUtils {
         },
         "oasysAssessmentPk": 2164180,
         "sentencePlanVersion": null,
+        "tieringAssessmentVersion": null,
         "criminogenicNeedsData": {
           "accommodation": {
             "accLinkedToHarm": "NO",
@@ -134,6 +137,7 @@ object TestUtils {
     subject = createSubjectDetails(),
     assessmentContext = createAssessmentContext(),
     sentencePlanContext = createSentencePlanContext(),
+    tieringAssessmentContext = createTieringAssessmentContext()
   )
 
   fun updateHandoverContextRequest(): UpdateHandoverContextRequest = UpdateHandoverContextRequest(
@@ -141,6 +145,7 @@ object TestUtils {
     subject = createSubjectDetails(),
     assessmentContext = createAssessmentContext(),
     sentencePlanContext = createSentencePlanContext(),
+    tieringAssessmentContext = createTieringAssessmentContext()
   )
 
   fun createAssessmentContext() = AssessmentContext(
@@ -153,6 +158,12 @@ object TestUtils {
     oasysAssessmentPk = (100_000..999_999).random().toString(),
     planId = UUID.randomUUID(),
     planVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
+  )
+
+  fun createTieringAssessmentContext() = TieringAssessmentContext(
+    oasysAssessmentPk = (100_000..999_999).random().toString(),
+    tieringAssessmentId = UUID.randomUUID(),
+    tieringAssessmentVersion = faker.number().numberBetween(Long.MIN_VALUE, Long.MAX_VALUE),
   )
 
   fun createPrincipal() = HandoverPrincipal(
