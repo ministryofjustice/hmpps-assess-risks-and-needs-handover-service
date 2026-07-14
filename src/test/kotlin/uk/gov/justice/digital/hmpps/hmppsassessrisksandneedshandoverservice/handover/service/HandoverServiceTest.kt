@@ -72,8 +72,8 @@ class HandoverServiceTest {
         sanAssessmentId = UUID.randomUUID(),
         sentencePlanId = UUID.randomUUID(),
         sentencePlanVersion = handoverRequest.sentencePlanVersion,
-        tieringAssessmentId= UUID.randomUUID(),
-        tieringAssessmentVersion= handoverRequest.tieringAssessmentVersion,
+        tieringAssessmentId = UUID.randomUUID(),
+        tieringAssessmentVersion = handoverRequest.tieringAssessmentVersion,
       )
       handoverToken = HandoverToken(
         handoverSessionId = handoverSessionId,

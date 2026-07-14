@@ -34,4 +34,4 @@ data class UpdateHandoverContextRequest(
   @field:Valid
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 
-  )
+)

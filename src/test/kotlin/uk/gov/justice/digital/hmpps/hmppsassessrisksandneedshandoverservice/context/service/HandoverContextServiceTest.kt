@@ -43,7 +43,7 @@ class HandoverContextServiceTest {
         subject = updateHandoverContextRequest.subject,
         assessmentContext = updateHandoverContextRequest.assessmentContext,
         sentencePlanContext = updateHandoverContextRequest.sentencePlanContext,
-        tieringAssessmentContext = updateHandoverContextRequest.tieringAssessmentContext
+        tieringAssessmentContext = updateHandoverContextRequest.tieringAssessmentContext,
       )
     }
 

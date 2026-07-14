@@ -137,7 +137,7 @@ object TestUtils {
     subject = createSubjectDetails(),
     assessmentContext = createAssessmentContext(),
     sentencePlanContext = createSentencePlanContext(),
-    tieringAssessmentContext = createTieringAssessmentContext()
+    tieringAssessmentContext = createTieringAssessmentContext(),
   )
 
   fun updateHandoverContextRequest(): UpdateHandoverContextRequest = UpdateHandoverContextRequest(
@@ -145,7 +145,7 @@ object TestUtils {
     subject = createSubjectDetails(),
     assessmentContext = createAssessmentContext(),
     sentencePlanContext = createSentencePlanContext(),
-    tieringAssessmentContext = createTieringAssessmentContext()
+    tieringAssessmentContext = createTieringAssessmentContext(),
   )
 
   fun createAssessmentContext() = AssessmentContext(

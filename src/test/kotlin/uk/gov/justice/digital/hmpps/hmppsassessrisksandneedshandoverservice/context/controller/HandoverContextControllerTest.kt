@@ -76,7 +76,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         ),
         assessmentContext = TestUtils.createAssessmentContext(),
         sentencePlanContext = TestUtils.createSentencePlanContext(),
-        tieringAssessmentContext = TestUtils.createTieringAssessmentContext()
+        tieringAssessmentContext = TestUtils.createTieringAssessmentContext(),
       )
 
       val response = webTestClient.post().uri("${appConfiguration.self.endpoints.context}/$handoverSessionId")
