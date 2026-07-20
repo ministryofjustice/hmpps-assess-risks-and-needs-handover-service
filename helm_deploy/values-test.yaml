@@ -21,7 +21,7 @@ generic-service:
       SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.middleName"
       SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.preferredName"
       SecRuleUpdateTargetById 932260 "!ARGS:json.user.displayName"
-      # CRS 931100 (RFI: URL param using IP address) false-positives on OASys's returnUrl,
+      # CRS 931100 (RFI: URL param using IP address) false-positives on the OASys returnUrl field,
       # which in Test legitimately points to their on-prem integration box by IP (see OASYS_RETURN_URLS)
       SecRuleUpdateTargetById 931100 "!ARGS:json.user.returnUrl"
       # No PHP in this service - disable PHP rules to reduce log noise from external scans
