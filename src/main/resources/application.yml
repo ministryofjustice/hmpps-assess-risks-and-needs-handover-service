@@ -114,6 +114,10 @@ app:
       secret: ${client.san.secret}
       oauth-redirect-uris: ${client.san.oauth-redirect-uri}
       handover-redirect-uri: ${client.san.handover-redirect-uri}
+    tiering-assessment:
+      secret: ${client.tiering-assessment.secret}
+      oauth-redirect-uris: ${client.tiering-assessment.oauth-redirect-uri}
+      handover-redirect-uri: ${client.tiering-assessment.handover-redirect-uri}
 
 management:
   endpoints:

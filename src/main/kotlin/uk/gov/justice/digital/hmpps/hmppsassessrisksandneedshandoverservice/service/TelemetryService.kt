@@ -19,6 +19,8 @@ class TelemetryService(
       "ASSESSMENT_VERSION" to (handoverContext.assessmentContext?.assessmentVersion?.toString() ?: ""),
       "SENTENCE_PLAN_ID" to (handoverContext.sentencePlanContext?.planId?.toString() ?: ""),
       "SENTENCE_PLAN_VERSION" to (handoverContext.sentencePlanContext?.planVersion?.toString() ?: ""),
+      "TIERING_ASSESSMENT_ID" to (handoverContext.tieringAssessmentContext?.tieringAssessmentId?.toString() ?: ""),
+      "TIERING_ASSESSMENT_VERSION" to (handoverContext.tieringAssessmentContext?.tieringAssessmentVersion?.toString() ?: ""),
     ),
     null,
   )

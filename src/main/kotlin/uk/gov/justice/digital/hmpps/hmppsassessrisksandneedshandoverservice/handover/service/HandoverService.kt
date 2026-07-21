@@ -6,6 +6,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.conf
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.AssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.TieringAssessmentContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coordinator.service.CoordinatorService
@@ -55,6 +56,11 @@ class HandoverService(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         planId = associations.sentencePlanId,
         planVersion = associations.sentencePlanVersion,
+      ),
+      tieringAssessmentContext = TieringAssessmentContext(
+        oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
+        tieringAssessmentId = associations.tieringAssessmentId,
+        tieringAssessmentVersion = associations.tieringAssessmentVersion,
       ),
       criminogenicNeedsData = handoverRequest.criminogenicNeedsData,
     )

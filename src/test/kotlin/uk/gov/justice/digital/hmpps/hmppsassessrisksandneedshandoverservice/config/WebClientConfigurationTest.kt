@@ -34,6 +34,7 @@ class WebClientConfigurationTest {
       val requestCount = AtomicInteger()
       val expectedSentencePlanId = UUID.randomUUID()
       val expectedAssessmentId = UUID.randomUUID()
+      val expectedTieringAssessmentId = UUID.randomUUID()
       val response = exchangeFilterFunction().filter(
         clientRequest(),
         ExchangeFunction {
@@ -57,7 +58,9 @@ class WebClientConfigurationTest {
                   {
                     "sentencePlanId": "$expectedSentencePlanId",
                     "sanAssessmentId": "$expectedAssessmentId",
-                    "sentencePlanVersion": 7
+                    "tieringAssessmentId": "$expectedTieringAssessmentId",
+                    "sentencePlanVersion": 7,
+                    "tieringAssessmentVersion": 8
                   }
                   """.trimIndent(),
                 )
@@ -73,7 +76,9 @@ class WebClientConfigurationTest {
       assertEquals(3, requestCount.get())
       assertEquals(expectedSentencePlanId, result?.sentencePlanId)
       assertEquals(expectedAssessmentId, result?.sanAssessmentId)
+      assertEquals(expectedTieringAssessmentId, result?.tieringAssessmentId)
       assertEquals(7, result?.sentencePlanVersion)
+      assertEquals(8, result?.tieringAssessmentVersion)
     }
 
     @Test
@@ -111,5 +116,7 @@ class WebClientConfigurationTest {
 private data class TestAssociationsResponse(
   val sentencePlanId: UUID,
   val sanAssessmentId: UUID,
+  val tieringAssessmentId: UUID,
   val sentencePlanVersion: Long,
+  val tieringAssessmentVersion: Long,
 )

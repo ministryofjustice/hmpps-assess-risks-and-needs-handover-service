@@ -43,6 +43,7 @@ class HandoverContextServiceTest {
         subject = updateHandoverContextRequest.subject,
         assessmentContext = updateHandoverContextRequest.assessmentContext,
         sentencePlanContext = updateHandoverContextRequest.sentencePlanContext,
+        tieringAssessmentContext = updateHandoverContextRequest.tieringAssessmentContext,
       )
     }
 
@@ -83,6 +84,7 @@ class HandoverContextServiceTest {
             assertEquals(updatedContext.subject, it.subject)
             assertEquals(updatedContext.assessmentContext, it.assessmentContext)
             assertEquals(updatedContext.sentencePlanContext, it.sentencePlanContext)
+            assertEquals(updatedContext.tieringAssessmentContext, it.tieringAssessmentContext)
             assertEquals(existingContext.createdAt, it.createdAt)
             assertEquals(existingContext.handoverSessionId, it.handoverSessionId)
           },

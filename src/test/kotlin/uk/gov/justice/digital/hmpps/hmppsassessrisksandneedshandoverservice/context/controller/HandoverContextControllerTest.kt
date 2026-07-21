@@ -55,6 +55,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
       assertThat(response?.subject).isEqualTo(newHandoverContext.subject)
       assertThat(response?.assessmentContext).isEqualTo(newHandoverContext.assessmentContext)
       assertThat(response?.sentencePlanContext).isEqualTo(newHandoverContext.sentencePlanContext)
+      assertThat(response?.tieringAssessmentContext).isEqualTo(newHandoverContext.tieringAssessmentContext)
     }
 
     @Test
@@ -75,6 +76,7 @@ class HandoverContextControllerTest : IntegrationTestBase() {
         ),
         assessmentContext = TestUtils.createAssessmentContext(),
         sentencePlanContext = TestUtils.createSentencePlanContext(),
+        tieringAssessmentContext = TestUtils.createTieringAssessmentContext(),
       )
 
       val response = webTestClient.post().uri("${appConfiguration.self.endpoints.context}/$handoverSessionId")

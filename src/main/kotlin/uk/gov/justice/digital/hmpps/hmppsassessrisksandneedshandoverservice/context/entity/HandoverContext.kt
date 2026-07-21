@@ -34,6 +34,7 @@ data class HandoverContext(
   val subject: SubjectDetails,
   val assessmentContext: AssessmentContext?,
   val sentencePlanContext: SentencePlanContext?,
+  val tieringAssessmentContext: TieringAssessmentContext?,
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 )
 
@@ -71,6 +72,13 @@ data class SentencePlanContext(
   val oasysAssessmentPk: String,
   val planId: UUID?,
   val planVersion: Long?,
+)
+
+data class TieringAssessmentContext(
+  @field:Size(min = 1, max = 15)
+  val oasysAssessmentPk: String,
+  val tieringAssessmentId: UUID?,
+  val tieringAssessmentVersion: Long?,
 )
 
 data class SubjectDetails(

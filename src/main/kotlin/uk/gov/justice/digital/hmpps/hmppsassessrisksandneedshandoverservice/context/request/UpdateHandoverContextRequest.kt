@@ -7,6 +7,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.cont
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SentencePlanContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.TieringAssessmentContext
 
 data class UpdateHandoverContextRequest(
   @Schema(description = "Details of the practitioner/principal making the handover request")
@@ -24,6 +25,10 @@ data class UpdateHandoverContextRequest(
   @Schema(description = "Sentence plan context details")
   @field:Valid
   val sentencePlanContext: SentencePlanContext?,
+
+  @Schema(description = "Tiering assessment context details")
+  @field:Valid
+  val tieringAssessmentContext: TieringAssessmentContext?,
 
   @Schema(description = "Criminogenic Needs Data")
   @field:Valid
