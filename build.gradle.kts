@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "10.5.2"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.6"
   kotlin("plugin.spring") version "2.4.0"
 }
 
@@ -32,7 +32,9 @@ dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.3")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
+  // Force the swagger-ui webjar past springdoc's 5.32.11 pin — 5.32.14 bundles the DOMPurify 3.4.13 XSS fix (CVE-2026-75838)
+  implementation("org.webjars:swagger-ui:5.32.14")
 
   // MVC
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

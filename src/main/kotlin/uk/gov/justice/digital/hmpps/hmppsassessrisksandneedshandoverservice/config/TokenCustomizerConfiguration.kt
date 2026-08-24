@@ -15,7 +15,7 @@ class TokenCustomizerConfiguration {
   fun jwtCustomizer(): OAuth2TokenCustomizer<JwtEncodingContext> = OAuth2TokenCustomizer { context ->
     if (context.tokenType == OAuth2TokenType.ACCESS_TOKEN) {
       val authentication = context.getPrincipal<Authentication>()
-      val details = authentication.details as? HandoverAuthDetails
+      val details = authentication?.details as? HandoverAuthDetails
 
       if (details != null) {
         context.claims.claims { claims ->
