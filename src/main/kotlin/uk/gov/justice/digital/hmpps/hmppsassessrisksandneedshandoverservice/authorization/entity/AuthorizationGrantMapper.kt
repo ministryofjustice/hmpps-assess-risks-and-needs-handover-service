@@ -71,8 +71,8 @@ object AuthorizationGrantMapper {
     registeredClient: RegisteredClient,
   ): OAuth2Authorization {
     val builder = OAuth2Authorization.withRegisteredClient(registeredClient)
-      .id(entity.id)
-      .principalName(entity.principalName)
+      .id(requireNotNull(entity.id))
+      .principalName(requireNotNull(entity.principalName))
       .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
       .authorizedScopes(entity.authorizedScopes)
 
@@ -83,9 +83,9 @@ object AuthorizationGrantMapper {
     entity.authorizationCode?.let { authorizationCode ->
       builder.token(
         OAuth2AuthorizationCode(
-          authorizationCode.tokenValue,
-          authorizationCode.issuedAt,
-          authorizationCode.expiresAt,
+          requireNotNull(authorizationCode.tokenValue),
+          requireNotNull(authorizationCode.issuedAt),
+          requireNotNull(authorizationCode.expiresAt),
         ),
       ) { metadata ->
         metadata.putAll(parseMap(authorizationCode.metadata))
@@ -96,7 +96,7 @@ object AuthorizationGrantMapper {
       builder.token(
         OAuth2AccessToken(
           OAuth2AccessToken.TokenType.BEARER,
-          accessToken.tokenValue,
+          requireNotNull(accessToken.tokenValue),
           accessToken.issuedAt,
           accessToken.expiresAt,
           accessToken.scopes,
