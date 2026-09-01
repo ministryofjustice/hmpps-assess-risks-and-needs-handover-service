@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.6"
-  kotlin("plugin.spring") version "2.4.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.7"
+  kotlin("plugin.spring") version "2.4.10"
 }
 
 configurations {
@@ -25,11 +25,11 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
 
-  implementation("org.bouncycastle:bcprov-jdk18on:1.84")
-  implementation("org.bouncycastle:bcpkix-jdk18on:1.84")
+  implementation("org.bouncycastle:bcprov-jdk18on:1.85.2")
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.85")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
 
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
@@ -40,13 +40,13 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.4.0")
   implementation("org.webjars.npm:govuk-frontend:5.14.0")
-  implementation("org.webjars:webjars-locator-lite:1.1.3")
+  implementation("org.webjars:webjars-locator-lite:1.1.4")
 
   // Test dependencies
   testImplementation(kotlin("test"))
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
-  testImplementation("net.datafaker:datafaker:2.6.0")
+  testImplementation("net.datafaker:datafaker:2.7.0")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
