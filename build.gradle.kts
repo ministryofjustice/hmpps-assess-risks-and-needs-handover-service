@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.6"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.8"
   kotlin("plugin.spring") version "2.4.0"
 }
 
@@ -27,6 +27,11 @@ dependencies {
 
   implementation("org.bouncycastle:bcprov-jdk18on:1.84")
   implementation("org.bouncycastle:bcpkix-jdk18on:1.84")
+
+  // Force opentelemetry past the applicationinsights-agent's 1.62.0 pin — 1.65.0 fixes CVE-2026-54285
+  implementation("io.opentelemetry:opentelemetry-api:1.65.0")
+  implementation("io.opentelemetry:opentelemetry-common:1.65.0")
+  implementation("io.opentelemetry:opentelemetry-context:1.65.0")
 
   // Audit
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0")
