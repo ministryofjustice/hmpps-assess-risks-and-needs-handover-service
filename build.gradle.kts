@@ -7,10 +7,6 @@ plugins {
   kotlin("plugin.spring") version "2.4.20"
 }
 
-configurations {
-  testImplementation { exclude(group = "org.junit.vintage") }
-}
-
 ext["netty.version"] = "4.2.18.Final"
 ext["tomcat.version"] = "11.0.26"
 
@@ -28,8 +24,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-security")
   implementation("org.springframework.boot:spring-boot-starter-oauth2-authorization-server")
 
-  implementation("org.bouncycastle:bcprov-jdk18on:1.84")
-  implementation("org.bouncycastle:bcpkix-jdk18on:1.84")
+  implementation("org.bouncycastle:bcprov-jdk18on:1.86")
+  implementation("org.bouncycastle:bcpkix-jdk18on:1.86")
 
   // Force opentelemetry past the applicationinsights-agent's 1.62.0 pin — 1.65.0 fixes CVE-2026-54285
   implementation("io.opentelemetry:opentelemetry-api:1.65.0")
