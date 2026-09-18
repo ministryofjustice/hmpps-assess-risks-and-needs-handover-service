@@ -11,6 +11,9 @@ configurations {
   testImplementation { exclude(group = "org.junit.vintage") }
 }
 
+ext["netty.version"] = "4.2.18.Final"
+ext["tomcat.version"] = "11.0.26"
+
 dependencies {
   implementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter:2.5.0")
   implementation("org.springframework.boot:spring-boot-starter-webflux")
