@@ -1,7 +1,6 @@
-ARG BASE_IMAGE=ghcr.io/ministryofjustice/hmpps-eclipse-temurin:25-jre-jammy
-FROM gradle:9-jdk25 AS builder
+FROM gradle:9-jdk25-alpine AS builder
 
-FROM ${BASE_IMAGE} AS runtime
+FROM eclipse-temurin:25.0.4_7-jre-alpine AS runtime
 
 FROM builder AS build
 
@@ -13,6 +12,8 @@ ADD . .
 RUN gradle --no-daemon assemble
 
 FROM builder AS development
+RUN apk upgrade --no-cache && \
+    apk add --no-cache curl
 WORKDIR /app
 
 FROM runtime AS production
@@ -22,9 +23,13 @@ ARG BUILD_NUMBER
 ENV BUILD_NUMBER=${BUILD_NUMBER:-1_0_0}
 
 USER root
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends curl && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk upgrade --no-cache && \
+    apk add --no-cache tzdata curl
+ENV TZ=Europe/London
+RUN cp "/usr/share/zoneinfo/$TZ" /etc/localtime && echo "$TZ" > /etc/timezone
+
+RUN addgroup --gid 2000 --system appgroup && \
+    adduser --uid 2000 --system appuser --ingroup appgroup
 
 WORKDIR /app
 COPY --from=build --chown=appuser:appgroup /app/build/libs/hmpps-assess-risks-and-needs-handover-service*.jar /app/app.jar

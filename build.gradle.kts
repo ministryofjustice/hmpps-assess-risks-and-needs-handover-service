@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.8"
-  kotlin("plugin.spring") version "2.4.0"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
+  kotlin("plugin.spring") version "2.4.20"
 }
 
 configurations {
@@ -34,10 +34,10 @@ dependencies {
   implementation("io.opentelemetry:opentelemetry-context:1.65.0")
 
   // Audit
-  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.0")
+  implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
 
   // OpenAPI dependencies
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
   // Force the swagger-ui webjar past springdoc's 5.32.11 pin — 5.32.14 bundles the DOMPurify 3.4.13 XSS fix (CVE-2026-75838)
   implementation("org.webjars:swagger-ui:5.32.14")
 
@@ -45,7 +45,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1")
   implementation("org.webjars.npm:govuk-frontend:6.5.0")
-  implementation("org.webjars:webjars-locator-lite:1.1.3")
+  implementation("org.webjars:webjars-locator-lite:1.1.4")
 
   // Test dependencies
   testImplementation(kotlin("test"))
