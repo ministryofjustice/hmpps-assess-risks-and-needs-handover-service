@@ -1,5 +1,5 @@
 info.app:
-  name: Hmpps Handover Service
+  name: HMPPS Handover Service
   version: 1.0
 
 logging:
@@ -17,7 +17,6 @@ api:
 spring:
   session:
     timeout: 12h
-    store-type: redis
   application:
     name: hmpps-assess-risks-and-needs-handover-service
 
@@ -37,7 +36,9 @@ spring:
             client-id: ${app.client.id}
             client-secret: ${app.client.secret}
             authorization-grant-type: client_credentials
-            scope: read, write
+            scope:
+             - read
+             - write
       resourceserver:
         jwt:
           jwk-set-uri: ${app.services.hmpps-auth.base-url}/auth/.well-known/jwks.json
@@ -52,6 +53,11 @@ spring:
         jwk:
           pem-secret: ${jwk-pem.secret}
           pem-encoded: ${jwk-pem.encoded}
+  web:
+    error:
+      include-message: always
+      whitelabel:
+        enabled: true
 
   data:
     redis:
@@ -81,10 +87,6 @@ server:
       protocol-header: x-forwarded-proto
       internal-proxies: 10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|169\.254\.\d{1,3}\.\d{1,3}|127\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.1[6-9]{1}\.\d{1,3}\.\d{1,3}|172\.2[0-9]{1}\.\d{1,3}\.\d{1,3}|172\.3[0-1]{1}\.\d{1,3}\.\d{1,3}|0:0:0:0:0:0:0:1|::1|100\.6[4-9]\.\d{1,3}\.\d{1,3}|100\.[7-9][0-9]{1}\.\d{1,3}\.\d{1,3}|100\.1[0-1][0-9]{1}\.\d{1,3}\.\d{1,3}|100\.12[0-7]\.\d{1,3}\.\d{1,3}
   shutdown: graceful
-  error:
-    include-message: always
-    whitelabel:
-      enabled: true
 
 app:
   name: ${spring.application.name}
