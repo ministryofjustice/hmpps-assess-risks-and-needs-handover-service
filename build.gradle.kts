@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.9"
+  id("uk.gov.justice.hmpps.gradle-spring-boot") version "11.0.10"
   kotlin("plugin.spring") version "2.4.20"
 }
 
@@ -28,9 +28,9 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.86")
 
   // Force opentelemetry past the applicationinsights-agent's 1.62.0 pin — 1.65.0 fixes CVE-2026-54285
-  implementation("io.opentelemetry:opentelemetry-api:1.65.0")
-  implementation("io.opentelemetry:opentelemetry-common:1.65.0")
-  implementation("io.opentelemetry:opentelemetry-context:1.65.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.66.0")
+  implementation("io.opentelemetry:opentelemetry-common:1.66.0")
+  implementation("io.opentelemetry:opentelemetry-context:1.66.0")
 
   // Audit
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
@@ -38,19 +38,19 @@ dependencies {
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
   // Force the swagger-ui webjar past springdoc's 5.32.11 pin — 5.32.14 bundles the DOMPurify 3.4.13 XSS fix (CVE-2026-75838)
-  implementation("org.webjars:swagger-ui:5.32.14")
+  implementation("org.webjars:swagger-ui:5.32.15")
 
   // MVC
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
   implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:4.0.1")
-  implementation("org.webjars.npm:govuk-frontend:6.5.0")
-  implementation("org.webjars:webjars-locator-lite:1.1.4")
+  implementation("org.webjars.npm:govuk-frontend:6.5.1")
+  implementation("org.webjars:webjars-locator-lite:1.1.5")
 
   // Test dependencies
   testImplementation(kotlin("test"))
   testImplementation("uk.gov.justice.service.hmpps:hmpps-kotlin-spring-boot-starter-test:2.5.0")
   testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
-  testImplementation("net.datafaker:datafaker:2.6.0")
+  testImplementation("net.datafaker:datafaker:2.7.0")
   testImplementation("com.ninja-squad:springmockk:4.0.2")
   testImplementation("org.wiremock:wiremock-standalone:3.13.2")
   testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
