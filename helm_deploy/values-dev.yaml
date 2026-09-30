@@ -38,8 +38,8 @@ generic-service:
     COORDINATOR_API_BASE_URL: "https://arns-coordinator-api-dev.hmpps.service.justice.gov.uk"
     CLIENT_SP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback,https://*.arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback"
     CLIENT_SP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover?service=sentence-plan"
-    CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback,https://*.strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in/callback"
-    CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-dev.hmpps.service.justice.gov.uk/sign-in"
+    CLIENT_SAN_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback,https://*.arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover?service=strengths-and-needs"
     CLIENT_TIERING_ASSESSMENT_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback,https://*.arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover/callback"
     CLIENT_TIERING_ASSESSMENT_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-dev.hmpps.service.justice.gov.uk/sign-in/handover?service=tiering-assessment"
 
