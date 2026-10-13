@@ -86,7 +86,7 @@ class RedisOAuth2AuthorizationService(
   }
 
   private fun AuthorizationCodeGrantAuthorization.toOAuth2Authorization(): OAuth2Authorization {
-    val registeredClient = registeredClientRepository.findById(registeredClientId)
+    val registeredClient = registeredClientRepository.findById(requireNotNull(registeredClientId))
       ?: throw DataRetrievalFailureException(
         "The RegisteredClient with id '$registeredClientId' was not found in the RegisteredClientRepository.",
       )
