@@ -27,9 +27,9 @@ dependencies {
   implementation("org.bouncycastle:bcpkix-jdk18on:1.86")
 
   // Force opentelemetry past the applicationinsights-agent's 1.62.0 pin — 1.65.0 fixes CVE-2026-54285
-  implementation("io.opentelemetry:opentelemetry-api:1.66.0")
-  implementation("io.opentelemetry:opentelemetry-common:1.66.0")
-  implementation("io.opentelemetry:opentelemetry-context:1.66.0")
+  implementation("io.opentelemetry:opentelemetry-api:1.67.0")
+  implementation("io.opentelemetry:opentelemetry-common:1.67.0")
+  implementation("io.opentelemetry:opentelemetry-context:1.67.0")
 
   // Audit
   implementation("uk.gov.justice.service.hmpps:hmpps-sqs-spring-boot-starter:7.4.1")
@@ -37,7 +37,7 @@ dependencies {
   // OpenAPI dependencies
   implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.1")
   // Force the swagger-ui webjar past springdoc's 5.32.11 pin — 5.32.14 bundles the DOMPurify 3.4.13 XSS fix (CVE-2026-75838)
-  implementation("org.webjars:swagger-ui:5.33.1")
+  implementation("org.webjars:swagger-ui:5.33.2")
 
   // MVC
   implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
