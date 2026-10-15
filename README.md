@@ -66,7 +66,7 @@ To run this service in your local environment, follow these steps:
     - The `make e2e-ci` command will the tests in the test containers
 
 ## Deployments and releases
-See [ARNS Release Process](<https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/6260917467/ARNS+Release+Process) for the background, release checks, feature flags and rollback.
+See [ARNS Release Process](https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/6260917467/ARNS+Release+Process) for the background, release checks, feature flags and rollback.
 
 | Trigger                                                      | Deploys to                          |
 |--------------------------------------------------------------|-------------------------------------|
