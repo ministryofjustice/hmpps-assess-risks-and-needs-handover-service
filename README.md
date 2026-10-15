@@ -65,6 +65,26 @@ To run this service in your local environment, follow these steps:
 2. **Run the e2e tests against the running containers**
     - The `make e2e-ci` command will the tests in the test containers
 
+## Deployments and releases
+See [ARNS Release Process](<https://dsdmoj.atlassian.net/wiki/spaces/ARN/pages/6260917467/ARNS+Release+Process) for the background, release checks, feature flags and rollback.
+
+| Trigger                                                      | Deploys to                          |
+|--------------------------------------------------------------|-------------------------------------|
+| Merge to `main`                                              | dev                                 |
+| Run **Deploy to environment** manually (any branch)          | dev or test                         |
+| Publish a **pre-release** (e.g. `v1.14.0-rc.1`)              | dev + test → preprod                |
+| Publish a **release** (e.g. `v1.14.0`)                       | dev + test → preprod → prod         |
+
+Preprod and prod need a manual approval in the release pipeline, and only change through a release.
+
+### How to do a release
+1. Go to **Releases → Draft a new release** and create a new `vX.Y.Z` tag targeting `main`
+   (patch for fixes, minor for features, major for breaking changes).
+2. Use the tag as the release title and click **Generate release notes**.
+   Tick **Set as a pre-release** if it should stop at preprod.
+3. Inform the Product Manager so they can raise a Change Request, and provide a link to the release notes.
+4. Publish the release and follow the **Release pipeline** run in the Actions tab, approving preprod and prod when prompted.
+
 ## Generating a handover session
 Currently, the ARNS Handover Service does not provide a user interface for generating handover sessions and
 their subsequent handover links. Instead, a cURL request can be made to the `/handover` endpoint to create a session.
