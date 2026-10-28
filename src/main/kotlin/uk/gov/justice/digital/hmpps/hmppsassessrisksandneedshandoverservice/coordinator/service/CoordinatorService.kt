@@ -9,11 +9,12 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.coor
 class CoordinatorService(
   private val coordinatorApiWebClient: WebClient,
 ) {
-  fun getAssociations(oasysAssessmentPk: String, planVersion: Long?): AssociationsResponse = try {
+  fun getAssociations(oasysAssessmentPk: String, planVersion: Long?, assessmentVersion: Long?): AssociationsResponse = try {
     val result = coordinatorApiWebClient.get()
       .uri { uriBuilder ->
         uriBuilder.path("/oasys/$oasysAssessmentPk/associations").apply {
           if (planVersion !== null) queryParam("planVersion", planVersion)
+          if (assessmentVersion !== null) queryParam("assessmentVersion", assessmentVersion)
         }.build()
       }
       .retrieve()
