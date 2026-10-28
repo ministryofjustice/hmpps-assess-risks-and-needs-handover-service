@@ -1,0 +1,89 @@
+name: Release pipeline [build -> test -> deploy all envs]
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  validate:
+    uses: ./.github/workflows/validate.yml
+
+  helm_lint:
+    name: Helm lint
+    strategy:
+      matrix:
+        environments: [ 'dev', 'test', 'preprod', 'prod' ]
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/test_helm_lint.yml@v2
+    secrets: inherit
+    with:
+      environment: ${{ matrix.environments }}
+
+  e2e_test:
+    uses: ./.github/workflows/e2e_test.yml
+
+  build_docker:
+    name: Build docker image
+    needs:
+      - validate
+      - helm_lint
+      - e2e_test
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/docker_build.yml@v2
+    with:
+      docker_registry: 'ghcr.io'
+      registry_org: 'ministryofjustice'
+      tag_latest: true
+      push: true
+      docker_multiplatform: true
+
+  deploy_dev:
+    name: Deploy to the development environment
+    needs:
+      - build_docker
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'dev'
+      app_version: '${{ needs.build_docker.outputs.app_version }}'
+
+  deploy_test:
+    name: Deploy to the test environment
+    needs:
+      - build_docker
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'test'
+      app_version: '${{ needs.build_docker.outputs.app_version }}'
+
+  deploy_preprod:
+    name: Deploy to the preproduction environment
+    needs:
+      - build_docker
+      - deploy_dev
+      - deploy_test
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'preprod'
+      app_version: '${{ needs.build_docker.outputs.app_version }}'
+
+  deploy_prod:
+    name: Deploy to the production environment
+    if: ${{ !github.event.release.prerelease }}
+    needs:
+      - build_docker
+      - deploy_preprod
+    uses: ministryofjustice/hmpps-github-actions/.github/workflows/deploy_env.yml@v2
+    secrets: inherit
+    with:
+      environment: 'prod'
+      app_version: '${{ needs.build_docker.outputs.app_version }}'

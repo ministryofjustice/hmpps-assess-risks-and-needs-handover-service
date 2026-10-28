@@ -100,7 +100,8 @@ class WireMockExtension :
   private fun createAssociationsResponse(): String = """
       {
         "sentencePlanId": "${UUID.randomUUID()}",
-        "sanAssessmentId": "${UUID.randomUUID()}"
+        "sanAssessmentId": "${UUID.randomUUID()}",
+        "sanAssessmentVersion": 1
       }
   """.trimIndent()
 }

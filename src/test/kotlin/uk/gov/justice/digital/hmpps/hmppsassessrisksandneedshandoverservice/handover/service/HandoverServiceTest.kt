@@ -70,6 +70,7 @@ class HandoverServiceTest {
       handoverRequest = TestUtils.createHandoverRequest()
       associations = AssociationsResponse(
         sanAssessmentId = UUID.randomUUID(),
+        sanAssessmentVersion = 42L,
         sentencePlanId = UUID.randomUUID(),
         sentencePlanVersion = handoverRequest.sentencePlanVersion,
         tieringAssessmentId = UUID.randomUUID(),
@@ -86,7 +87,7 @@ class HandoverServiceTest {
         assessmentContext = AssessmentContext(
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
           assessmentId = associations.sanAssessmentId,
-          assessmentVersion = handoverRequest.assessmentVersion,
+          assessmentVersion = associations.sanAssessmentVersion,
         ),
         sentencePlanContext = SentencePlanContext(
           oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
@@ -105,7 +106,7 @@ class HandoverServiceTest {
         ),
       )
 
-      every { coordinatorService.getAssociations(any(), any()) } returns associations
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations
       every { handoverContextService.saveContext(any()) } returns handoverContext
       every { handoverTokenRepository.save(any()) } returns handoverToken
       every { telemetryService.track(any(), any()) } just Runs
@@ -125,6 +126,47 @@ class HandoverServiceTest {
             assertEquals(handoverContext.assessmentContext, it.assessmentContext)
             assertEquals(handoverContext.sentencePlanContext, it.sentencePlanContext)
             assertEquals(handoverContext.tieringAssessmentContext, it.tieringAssessmentContext)
+          },
+        )
+      }
+    }
+
+    @Test
+    fun `should request associations using the plan and assessment versions from the request`() {
+      handoverService.createHandover(handoverRequest, handoverSessionId)
+
+      verify(exactly = 1) {
+        coordinatorService.getAssociations(
+          handoverRequest.oasysAssessmentPk,
+          handoverRequest.sentencePlanVersion,
+          handoverRequest.assessmentVersion,
+        )
+      }
+    }
+
+    @Test
+    fun `should request associations without an assessment version when none is provided`() {
+      val requestWithoutAssessmentVersion = handoverRequest.copy(assessmentVersion = null)
+
+      handoverService.createHandover(requestWithoutAssessmentVersion, handoverSessionId)
+
+      verify(exactly = 1) {
+        coordinatorService.getAssociations(
+          handoverRequest.oasysAssessmentPk,
+          handoverRequest.sentencePlanVersion,
+          null,
+        )
+      }
+    }
+
+    @Test
+    fun `should use the assessment version returned by the coordinator rather than the requested version`() {
+      handoverService.createHandover(handoverRequest, handoverSessionId)
+
+      verify {
+        handoverContextService.saveContext(
+          withArg {
+            assertEquals(associations.sanAssessmentVersion, it.assessmentContext?.assessmentVersion)
           },
         )
       }

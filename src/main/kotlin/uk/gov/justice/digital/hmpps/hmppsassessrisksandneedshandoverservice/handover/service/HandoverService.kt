@@ -37,7 +37,7 @@ class HandoverService(
     handoverSessionId: UUID = UUID.randomUUID(),
   ): CreateHandoverLinkResponse {
     val associations = with(handoverRequest) {
-      coordinatorService.getAssociations(oasysAssessmentPk, sentencePlanVersion)
+      coordinatorService.getAssociations(oasysAssessmentPk, sentencePlanVersion, assessmentVersion)
     }
     val handoverToken = HandoverToken(
       handoverSessionId = handoverSessionId,
@@ -50,7 +50,7 @@ class HandoverService(
       assessmentContext = AssessmentContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         assessmentId = associations.sanAssessmentId,
-        assessmentVersion = handoverRequest.assessmentVersion,
+        assessmentVersion = associations.sanAssessmentVersion,
       ),
       sentencePlanContext = SentencePlanContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
