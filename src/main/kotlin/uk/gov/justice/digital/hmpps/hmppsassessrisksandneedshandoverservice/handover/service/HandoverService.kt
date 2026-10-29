@@ -37,8 +37,18 @@ class HandoverService(
     handoverSessionId: UUID = UUID.randomUUID(),
   ): CreateHandoverLinkResponse {
     val associations = with(handoverRequest) {
-      coordinatorService.getAssociations(oasysAssessmentPk, sentencePlanVersion)
+      coordinatorService.getAssociations(oasysAssessmentPk, sentencePlanVersion, assessmentVersion)
     }
+
+    fun throwIfOneButNotTheOther(type: String, a: Any?, b: Any?) {
+      if (listOfNotNull(a, b).size == 1) {
+        throw IllegalStateException("Mismatch in requested $type '$a' and resolved $type '$b'")
+      }
+    }
+
+    throwIfOneButNotTheOther("plan version", handoverRequest.sentencePlanVersion, associations.sentencePlanVersion)
+    throwIfOneButNotTheOther("assessment version", handoverRequest.assessmentVersion, associations.sanAssessmentVersion)
+
     val handoverToken = HandoverToken(
       handoverSessionId = handoverSessionId,
       principal = handoverRequest.user,
@@ -50,7 +60,7 @@ class HandoverService(
       assessmentContext = AssessmentContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
         assessmentId = associations.sanAssessmentId,
-        assessmentVersion = handoverRequest.assessmentVersion,
+        assessmentVersion = associations.sanAssessmentVersion,
       ),
       sentencePlanContext = SentencePlanContext(
         oasysAssessmentPk = handoverRequest.oasysAssessmentPk,
