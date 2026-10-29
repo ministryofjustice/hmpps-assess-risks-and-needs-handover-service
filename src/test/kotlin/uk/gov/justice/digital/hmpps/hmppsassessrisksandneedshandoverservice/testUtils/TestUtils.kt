@@ -59,6 +59,7 @@ object TestUtils {
           "sexuallyMotivatedOffenceHistory": "NO"
         },
         "oasysAssessmentPk": 2164180,
+        "assessmentVersion": 1,
         "sentencePlanVersion": null,
         "tieringAssessmentVersion": null,
         "criminogenicNeedsData": {
