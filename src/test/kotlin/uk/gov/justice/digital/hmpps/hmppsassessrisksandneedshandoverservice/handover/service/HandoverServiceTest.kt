@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Accommodation
@@ -147,6 +148,7 @@ class HandoverServiceTest {
     @Test
     fun `should request associations without an assessment version when none is provided`() {
       val requestWithoutAssessmentVersion = handoverRequest.copy(assessmentVersion = null)
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations.copy(sanAssessmentVersion = null)
 
       handoverService.createHandover(requestWithoutAssessmentVersion, handoverSessionId)
 
@@ -232,6 +234,81 @@ class HandoverServiceTest {
           },
         )
       }
+    }
+
+    @Test
+    fun `should throw when a plan version is requested but none is resolved`() {
+      val request = handoverRequest.copy(sentencePlanVersion = 3L)
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations.copy(sentencePlanVersion = null)
+
+      val exception = assertThrows<IllegalStateException> {
+        handoverService.createHandover(request, handoverSessionId)
+      }
+
+      assertContains(exception.message!!, "plan version")
+      verifyNothingSaved()
+    }
+
+    @Test
+    fun `should throw when a plan version is resolved but none is requested`() {
+      val request = handoverRequest.copy(sentencePlanVersion = null)
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations.copy(sentencePlanVersion = 3L)
+
+      val exception = assertThrows<IllegalStateException> {
+        handoverService.createHandover(request, handoverSessionId)
+      }
+
+      assertContains(exception.message!!, "plan version")
+      verifyNothingSaved()
+    }
+
+    @Test
+    fun `should not throw when both requested and resolved plan versions are present`() {
+      val request = handoverRequest.copy(sentencePlanVersion = 3L)
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations.copy(sentencePlanVersion = 3L)
+
+      handoverService.createHandover(request, handoverSessionId)
+
+      verify(exactly = 1) { handoverContextService.saveContext(any()) }
+    }
+
+    @Test
+    fun `should throw when an assessment version is requested but none is resolved`() {
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations.copy(sanAssessmentVersion = null)
+
+      val exception = assertThrows<IllegalStateException> {
+        handoverService.createHandover(handoverRequest, handoverSessionId)
+      }
+
+      assertContains(exception.message!!, "assessment version")
+      verifyNothingSaved()
+    }
+
+    @Test
+    fun `should not throw when no assessment version is requested and none is resolved`() {
+      val request = handoverRequest.copy(assessmentVersion = null)
+      every { coordinatorService.getAssociations(any(), any(), any()) } returns associations.copy(sanAssessmentVersion = null)
+
+      handoverService.createHandover(request, handoverSessionId)
+
+      verify(exactly = 1) { handoverContextService.saveContext(any()) }
+    }
+
+    @Test
+    fun `should throw when an assessment version is resolved but none is requested`() {
+      val request = handoverRequest.copy(assessmentVersion = null)
+
+      val exception = assertThrows<IllegalStateException> {
+        handoverService.createHandover(request, handoverSessionId)
+      }
+
+      assertContains(exception.message!!, "assessment version")
+      verifyNothingSaved()
+    }
+
+    private fun verifyNothingSaved() {
+      verify(exactly = 0) { handoverContextService.saveContext(any()) }
+      verify(exactly = 0) { handoverTokenRepository.save(any()) }
     }
   }
 
