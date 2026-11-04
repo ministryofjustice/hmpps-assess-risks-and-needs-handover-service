@@ -1,5 +1,10 @@
 package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.controller
 
+import com.github.tomakehurst.wiremock.client.WireMock.aResponse
+import com.github.tomakehurst.wiremock.client.WireMock.equalTo
+import com.github.tomakehurst.wiremock.client.WireMock.get
+import com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor
+import com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -11,6 +16,7 @@ import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.conf
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverContext
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.Location
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.SubjectDetails
+import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.GetHandoverContextResult
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.service.HandoverContextService
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handlers.exceptions.ErrorResponse
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.handover.entity.HandoverToken
@@ -61,6 +67,50 @@ class HandoverControllerTest : IntegrationTestBase() {
 
       assertThat(response?.handoverLink).startsWith(appConfiguration.self.externalUrl)
       assertThat(response?.handoverSessionId).toString().isNotEmpty()
+    }
+
+    @Test
+    fun `should pass the assessment version to the coordinator and store the returned SAN assessment version`() {
+      val handoverRequest = TestUtils.createHandoverRequest().copy(oasysAssessmentPk = "998877", assessmentVersion = 5)
+      val sanAssessmentId = UUID.randomUUID()
+
+      WireMockExtension.wireMockServer.stubFor(
+        get(urlPathEqualTo("/oasys/998877/associations"))
+          .withQueryParam("assessmentVersion", equalTo("5"))
+          .willReturn(
+            aResponse()
+              .withHeader("Content-Type", "application/json")
+              .withBody(
+                """
+                {
+                  "sanAssessmentId": "$sanAssessmentId",
+                  "sanAssessmentVersion": 12
+                }
+                """.trimIndent(),
+              ),
+          ),
+      )
+
+      val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(CreateHandoverLinkResponse::class.java)
+        .returnResult()
+        .responseBody!!
+
+      WireMockExtension.wireMockServer.verify(
+        getRequestedFor(urlPathEqualTo("/oasys/998877/associations"))
+          .withQueryParam("assessmentVersion", equalTo("5")),
+      )
+
+      val contextResult = handoverContextService.getContext(response.handoverSessionId)
+      assertThat(contextResult).isInstanceOf(GetHandoverContextResult.Success::class.java)
+      val assessmentContext = (contextResult as GetHandoverContextResult.Success).handoverContext.assessmentContext
+      assertThat(assessmentContext?.assessmentId).isEqualTo(sanAssessmentId)
+      assertThat(assessmentContext?.assessmentVersion).isEqualTo(12)
     }
 
     @Test
