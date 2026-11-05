@@ -34,4 +34,7 @@ data class CreateHandoverLinkRequest(
   @Schema(description = "Criminogenic Needs Data")
   @field:Valid
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
+
+  @Schema(description = "Maximum Uplift Version")
+  val maxUpliftVersion: String? = null
 )

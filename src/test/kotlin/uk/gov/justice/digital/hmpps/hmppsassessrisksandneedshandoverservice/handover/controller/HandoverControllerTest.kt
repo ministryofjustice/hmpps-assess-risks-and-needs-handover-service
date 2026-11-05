@@ -126,6 +126,56 @@ class HandoverControllerTest : IntegrationTestBase() {
         .expectStatus().isFound
         .expectHeader().valueMatches("Location", "^https?://.*:[0-9]+/access-denied$")
     }
+
+    @Test
+    fun `should cache and return maxUpliftVersion when maxUpliftVersion is sent in request`() {
+      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = "1.0")
+
+      val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(CreateHandoverLinkResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      val response = webTestClient.get().uri("${appConfiguration.self.endpoints.context}/${postResponse!!.handoverSessionId}")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(HandoverContext::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response!!.maxUpliftVersion).isEqualTo("1.0")
+    }
+
+    @Test
+    fun `should return null maxUpliftVersion when not sent in request`() {
+      val handoverRequest = TestUtils.createHandoverRequest()
+
+      val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(CreateHandoverLinkResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      val response = webTestClient.get().uri("${appConfiguration.self.endpoints.context}/${postResponse!!.handoverSessionId}")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(HandoverContext::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response!!.maxUpliftVersion).isNull()
+    }
   }
 
   @Nested
