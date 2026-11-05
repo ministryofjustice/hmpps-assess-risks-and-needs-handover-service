@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
@@ -177,9 +179,10 @@ class HandoverControllerTest : IntegrationTestBase() {
       assertThat(response!!.maxUpliftVersion).isNull()
     }
 
-    @Test
-    fun `should return bad request when maxUpliftVersion format is invalid`() {
-      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = "v1.2.2")
+    @ParameterizedTest(name = "rejects maxUpliftVersion  \"{0}\"")
+    @ValueSource(strings = ["v1.2.2", "2", "2.", ".0", "2.0.1", "abc", "", " 1.0", "12345678901.0"])
+    fun `should return bad request when maxUpliftVersion format is invalid`(invalidVersion: String) {
+      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = invalidVersion)
 
       val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
         .bodyValue(handoverRequest)
@@ -191,7 +194,7 @@ class HandoverControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response!!.userMessage).contains("maxUpliftVersion: must be in the format <major>.<minor>")
+      assertThat(response!!.userMessage).contains("maxUpliftVersion")
     }
   }
 

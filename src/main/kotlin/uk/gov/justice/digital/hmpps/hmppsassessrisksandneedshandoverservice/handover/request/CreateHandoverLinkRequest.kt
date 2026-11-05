@@ -37,10 +37,11 @@ data class CreateHandoverLinkRequest(
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 
   @Schema(
-    description = "Maximum SAN form version the assessment may be uplifted to. " +
+    description = "Maximum SAN form version the assessment may be uplifted to " +
       "When absent the latest version is used",
     example = "1.0",
   )
   @field:Pattern(regexp = "^\\d+\\.\\d+$", message = "must be in the format <major>.<minor>, e.g. 1.0")
+  @field:Size(max = 10)
   val maxUpliftVersion: String? = null,
 )
