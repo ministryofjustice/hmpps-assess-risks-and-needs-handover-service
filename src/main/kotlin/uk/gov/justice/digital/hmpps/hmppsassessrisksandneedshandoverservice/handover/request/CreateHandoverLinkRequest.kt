@@ -37,7 +37,7 @@ data class CreateHandoverLinkRequest(
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 
   @Schema(
-    description = "Maximum SAN form version the assessment may be uplifted to " +
+    description = "Maximum version the assessment may be uplifted to " +
       "When absent the latest version is used",
     example = "1.0",
   )
