@@ -36,7 +36,7 @@ data class HandoverContext(
   val sentencePlanContext: SentencePlanContext?,
   val tieringAssessmentContext: TieringAssessmentContext?,
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
-  val maxUpliftVersion: String? = null
+  val maxUpliftVersion: String? = null,
 )
 
 data class HandoverPrincipal(

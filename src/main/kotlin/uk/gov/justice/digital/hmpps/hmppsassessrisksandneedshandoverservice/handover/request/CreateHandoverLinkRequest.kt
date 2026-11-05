@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.han
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.Valid
+import jakarta.validation.constraints.Pattern
 import jakarta.validation.constraints.Size
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.CriminogenicNeedsData
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.context.entity.HandoverPrincipal
@@ -35,6 +36,11 @@ data class CreateHandoverLinkRequest(
   @field:Valid
   val criminogenicNeedsData: CriminogenicNeedsData? = null,
 
-  @Schema(description = "Maximum Uplift Version")
-  val maxUpliftVersion: String? = null
+  @Schema(
+    description = "Maximum SAN form version the assessment may be uplifted to. " +
+      "When absent the latest version is used",
+    example = "1.0",
+  )
+  @field:Pattern(regexp = "^\\d+\\.\\d+$", message = "must be in the format <major>.<minor>, e.g. 1.0")
+  val maxUpliftVersion: String? = null,
 )

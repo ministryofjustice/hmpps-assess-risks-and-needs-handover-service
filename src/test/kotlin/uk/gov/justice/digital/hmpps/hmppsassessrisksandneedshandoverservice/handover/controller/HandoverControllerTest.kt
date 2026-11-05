@@ -176,6 +176,23 @@ class HandoverControllerTest : IntegrationTestBase() {
 
       assertThat(response!!.maxUpliftVersion).isNull()
     }
+
+    @Test
+    fun `should return bad request when maxUpliftVersion format is invalid`() {
+      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = "v1.2.2")
+
+      val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isBadRequest
+        .expectBody(ErrorResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response!!.userMessage).contains("maxUpliftVersion: must be in the format <major>.<minor>")
+    }
   }
 
   @Nested
