@@ -131,7 +131,7 @@ class HandoverControllerTest : IntegrationTestBase() {
 
     @Test
     fun `should cache and return maxUpliftVersion when maxUpliftVersion is sent in request`() {
-      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = "1.0")
+      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = "v1.0")
 
       val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
         .bodyValue(handoverRequest)
@@ -151,7 +151,7 @@ class HandoverControllerTest : IntegrationTestBase() {
         .returnResult()
         .responseBody
 
-      assertThat(response!!.maxUpliftVersion).isEqualTo("1.0")
+      assertThat(response!!.maxUpliftVersion).isEqualTo("v1.0")
     }
 
     @Test
@@ -180,7 +180,7 @@ class HandoverControllerTest : IntegrationTestBase() {
     }
 
     @ParameterizedTest(name = "rejects maxUpliftVersion  \"{0}\"")
-    @ValueSource(strings = ["v1.2.2", "2", "2.", ".0", "2.0.1", "abc", "", " 1.0", "12345678901.0"])
+    @ValueSource(strings = ["1.0", "v2", "V1.0", "v1.2.2", "v2.", "v.0", "2.0.1", "abc", "", " v1.0", "v123456789.0"])
     fun `should return bad request when maxUpliftVersion format is invalid`(invalidVersion: String) {
       val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = invalidVersion)
 
