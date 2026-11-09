@@ -175,14 +175,14 @@ class HandoverServiceTest {
 
     @Test
     fun `should save maxUpliftVersion to the handover context when provided`() {
-      val requestWithVersion = handoverRequest.copy(maxUpliftVersion = "1.0")
+      val requestWithVersion = handoverRequest.copy(maxUpliftVersion = "v1.0")
 
       handoverService.createHandover(requestWithVersion, handoverSessionId)
 
       verify {
         handoverContextService.saveContext(
           withArg {
-            assertEquals("1.0", it.maxUpliftVersion)
+            assertEquals("v1.0", it.maxUpliftVersion)
           },
         )
       }
