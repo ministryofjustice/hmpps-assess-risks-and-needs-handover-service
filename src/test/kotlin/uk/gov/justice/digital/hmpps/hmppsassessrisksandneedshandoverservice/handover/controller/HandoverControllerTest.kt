@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import uk.gov.justice.digital.hmpps.hmppsassessrisksandneedshandoverservice.config.AppConfiguration
@@ -125,6 +127,74 @@ class HandoverControllerTest : IntegrationTestBase() {
         .exchange()
         .expectStatus().isFound
         .expectHeader().valueMatches("Location", "^https?://.*:[0-9]+/access-denied$")
+    }
+
+    @Test
+    fun `should cache and return maxUpliftVersion when maxUpliftVersion is sent in request`() {
+      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = "v1.0")
+
+      val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(CreateHandoverLinkResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      val response = webTestClient.get().uri("${appConfiguration.self.endpoints.context}/${postResponse!!.handoverSessionId}")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(HandoverContext::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response!!.maxUpliftVersion).isEqualTo("v1.0")
+    }
+
+    @Test
+    fun `should return null maxUpliftVersion when not sent in request`() {
+      val handoverRequest = TestUtils.createHandoverRequest()
+
+      val postResponse = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(CreateHandoverLinkResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      val response = webTestClient.get().uri("${appConfiguration.self.endpoints.context}/${postResponse!!.handoverSessionId}")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isOk
+        .expectBody(HandoverContext::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response!!.maxUpliftVersion).isNull()
+    }
+
+    @ParameterizedTest(name = "rejects maxUpliftVersion  \"{0}\"")
+    @ValueSource(strings = ["1.0", "v2", "V1.0", "v1.2.2", "v2.", "v.0", "2.0.1", "abc", "", " v1.0", "v123456789.0"])
+    fun `should return bad request when maxUpliftVersion format is invalid`(invalidVersion: String) {
+      val handoverRequest = TestUtils.createHandoverRequest().copy(maxUpliftVersion = invalidVersion)
+
+      val response = webTestClient.post().uri(appConfiguration.self.endpoints.handover)
+        .bodyValue(handoverRequest)
+        .header("Content-Type", "application/json")
+        .header("Authorization", "Bearer ${jwtHelper.generateAuthToken()}")
+        .exchange()
+        .expectStatus().isBadRequest
+        .expectBody(ErrorResponse::class.java)
+        .returnResult()
+        .responseBody
+
+      assertThat(response!!.userMessage).contains("maxUpliftVersion")
     }
   }
 

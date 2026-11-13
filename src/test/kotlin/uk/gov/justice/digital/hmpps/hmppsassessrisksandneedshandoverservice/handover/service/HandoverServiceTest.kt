@@ -174,6 +174,21 @@ class HandoverServiceTest {
     }
 
     @Test
+    fun `should save maxUpliftVersion to the handover context when provided`() {
+      val requestWithVersion = handoverRequest.copy(maxUpliftVersion = "v1.0")
+
+      handoverService.createHandover(requestWithVersion, handoverSessionId)
+
+      verify {
+        handoverContextService.saveContext(
+          withArg {
+            assertEquals("v1.0", it.maxUpliftVersion)
+          },
+        )
+      }
+    }
+
+    @Test
     fun `should return a valid handover link`() {
       val domain = "handover-service"
       val endpoints = TestUtils.createEndPoint()
