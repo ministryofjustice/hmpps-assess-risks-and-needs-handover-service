@@ -1,0 +1,70 @@
+---
+# Per environment values which override defaults in hmpps-assess-risks-and-needs-handover-service/values.yaml
+
+generic-service:
+  replicaCount: 1
+  serviceAccountName: hmpps-arns-assessment-platform-service-account
+
+  ingress:
+    host: arns-handover-service-training.hmpps.service.justice.gov.uk
+    modsecurity_enabled: true
+    modsecurity_audit_enabled: true
+    modsecurity_snippet: |
+      SecRuleEngine On
+      # Team here grants access to the OpenSearch logs to delve into the cause of the blockage
+      SecDefaultAction "phase:2,pass,log,tag:github_team=hmpps-assessments,tag:namespace={{ .Release.Namespace }}"
+      # Disables request body scanning so free-text form fields (goal titles, step descriptions) do not trigger false positives
+      SecRuleUpdateTargetById 920272 "!REQUEST_BODY"
+      # CRS 932260 (Unix RCE detection) false-positives on personal name fields in POST /handover
+      # Names like "Perf", "Cat", "Ed" overlap with Unix command names and trip the regex at paranoia level 1
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.givenName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.familyName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.middleName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.subjectDetails.preferredName"
+      SecRuleUpdateTargetById 932260 "!ARGS:json.user.displayName"
+      # CRS 931100 (RFI: URL param using IP address) false-positives on the OASys returnUrl field,
+      # which in Test legitimately points to their on-prem integration box by IP (see OASYS_RETURN_URLS).
+      # Training does not use that box, but the rule is kept so the training copy matches Test.
+      SecRuleUpdateTargetById 931100 "!ARGS:json.user.returnUrl"
+      # No PHP in this service - disable PHP rules to reduce log noise from external scans
+      SecRuleRemoveById 930130
+      SecRuleRemoveById 933150
+      # Change default denial to be a 406 so that we can tell easily that it is modsecurity doing the blocking
+      SecRuleUpdateActionById 949110 "t:none,deny,status:406,logdata:%{SERVER_NAME}"
+      SecRuleUpdateActionById 959100 "t:none,deny,status:406,logdata:%{SERVER_NAME}"
+      SecAction "id:900000,phase:1,nolog,pass,t:none,setvar:tx.paranoia_level=2"
+
+  env:
+    APPLICATIONINSIGHTS_CONFIGURATION_FILE: applicationinsights.dev.json
+    HMPPS_AUTH_BASE_URL: "https://sign-in-dev.hmpps.service.justice.gov.uk"
+    HMPPS_HANDOVER_BASE_URL: "https://arns-handover-service-training.hmpps.service.justice.gov.uk"
+    # Training has no OASys. The AAP training session launcher plays that role, and the AAP UI sends
+    # returnUrl as https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/training-session-launcher/sessions.
+    # OASYS_RETURN_URLS is matched with startsWith, so the UI origin with a trailing slash is enough.
+    OASYS_BASE_URL: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/training-session-launcher/sessions"
+    OASYS_RETURN_URLS: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/"
+    COORDINATOR_API_BASE_URL: "http://hmpps-assess-risks-and-needs-coordinator-api.hmpps-arns-assessment-platform-training.svc.cluster.local"
+    CLIENT_SP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_SP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover?service=sentence-plan"
+    # SAN is being deprecated, so training keeps pointing at the SAN test host as Test does
+    CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in/callback"
+    CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in"
+    CLIENT_TIERING_ASSESSMENT_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_TIERING_ASSESSMENT_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover?service=tiering-assessment"
+
+  allowlist:
+    mp-nat-egress-one: 13.43.9.198/32
+    mp-nat-egress-two: 13.42.163.245/32
+    mp-nat-egress-three: 18.132.208.127/32    
+    nat-gw-one: 35.178.209.113/32
+    nat-gw-two: 3.8.51.207/32
+    nat-gw-three: 35.177.252.54/32
+    capita-dev: 51.104.16.30/31
+    capita-further: 172.167.141.40/32
+    capita-developers-vms-one: 85.115.52.180/32
+    capita-developers-vms-two: 85.115.52.200/29
+    capita-developers-vms-three: 85.115.53.180/32
+    capita-developers-vms-four: 85.115.53.200/29
+    capita-developers-vms-five: 85.115.54.180/32
+    capita-developers-vms-six: 85.115.54.200/29
+    oasys-box-t2 : 10.26.12.211/32
