@@ -73,6 +73,7 @@ class HandoverService(
         tieringAssessmentVersion = associations.tieringAssessmentVersion,
       ),
       criminogenicNeedsData = handoverRequest.criminogenicNeedsData,
+      maxUpliftVersion = handoverRequest.maxUpliftVersion,
     )
 
     handoverContextService.saveContext(handoverContext)
