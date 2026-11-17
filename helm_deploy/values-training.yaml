@@ -46,9 +46,9 @@ generic-service:
     COORDINATOR_API_BASE_URL: "http://hmpps-assess-risks-and-needs-coordinator-api.hmpps-arns-assessment-platform-training.svc.cluster.local"
     CLIENT_SP_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover/callback"
     CLIENT_SP_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover?service=sentence-plan"
-    # SAN is being deprecated, so training keeps pointing at the SAN test host as Test does
-    CLIENT_SAN_OAUTH_REDIRECT_URI: "https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in/callback"
-    CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://strengths-based-needs-assessments-test.hmpps.service.justice.gov.uk/sign-in"
+    # SAN is moving onto the AAP, so SAN redirects to the AAP training UI like Sentence Plan does
+    CLIENT_SAN_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover/callback"
+    CLIENT_SAN_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover?service=strengths-and-needs"
     CLIENT_TIERING_ASSESSMENT_OAUTH_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover/callback"
     CLIENT_TIERING_ASSESSMENT_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-training.hmpps.service.justice.gov.uk/sign-in/handover?service=tiering-assessment"
 
