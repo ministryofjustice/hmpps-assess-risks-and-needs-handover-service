@@ -82,6 +82,11 @@ server:
         same-site: lax
   forward-headers-strategy: native
   tomcat:
+    # Spring Boot 4.2 changed the default of this property to `true`, aligning with Tomcat's own
+    # default. Keep it `false` to preserve the absolute `Location` header contract that clients of
+    # this service rely on (e.g. the /access-denied redirect).
+    servlet:
+      use-relative-redirects: false
     remoteip:
       remote-ip-header: x-forwarded-for
       protocol-header: x-forwarded-proto
