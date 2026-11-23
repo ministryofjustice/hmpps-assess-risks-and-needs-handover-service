@@ -59,58 +59,85 @@ services:
       PLAN_TYPE: AAP_PLAN
       ASSESSMENT_TYPE: AAP_SAN
 
-  san-api:
-    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-api:latest
-    networks:
-      - hmpps
-    depends_on:
-      - postgres
-      - hmpps-auth
-      - san-ui
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://san-api:8080/health/ping" ]
-      interval: 5s
-      retries: 60
-    environment:
-      SERVER_PORT: 8080
-      SPRING_PROFILES_ACTIVE: postgres
-      DATABASE_ENDPOINT: postgres:5432
-      OAUTH_ENDPOINT_URL: http://hmpps-auth:9090/auth
-      FORM_CONFIG_BASE_URL: http://san-ui:3000/config
-
-  san-ui:
-    image: ghcr.io/ministryofjustice/hmpps-strengths-based-needs-assessments-ui:latest
+  aap-ui:
+    image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-ui:latest
     networks:
       - hmpps
     depends_on:
       - redis
-      - hmpps-auth
-      - oasys-ui
+      - localstack
     healthcheck:
-      test: [ "CMD", "node", "./docker/healthcheck.js" ]
+      test: [ 'CMD', 'wget', '-q', '--spider', 'http://localhost:3000/health' ]
       interval: 5s
-      retries: 60
+      retries: 20
     environment:
-      PORT: 3000
+      REDIS_ENABLED: true
       REDIS_HOST: redis
-      HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
+      SESSION_SECRET: somesecretvalue
+      INGRESS_URL: http://localhost:3000
+      GOTENBERG_API_URL: http://gotenberg:3000
+      GOTENBERG_RENDER_URL: http://aap-ui:3000
+      NO_HTTPS: true
+      AUTH_CODE_CLIENT_ID: hmpps-arns-assessment-platform-ui
+      AUTH_CODE_CLIENT_SECRET: clientsecret
+      CLIENT_CREDS_CLIENT_ID: hmpps-arns-assessment-platform-ui-system
+      CLIENT_CREDS_CLIENT_SECRET: clientsecret
+      TOKEN_VERIFICATION_ENABLED: false
+      TOKEN_VERIFICATION_API_URL: http://localhost:9090/verification
       HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      HMPPS_AUTH_EXTERNAL_URL: http://localhost:9090/auth
+      AAP_API_URL: http://aap-api:8080
+      COORDINATOR_API_URL: http://coordinator-api:8080
+      DELIUS_API_URL: http://wiremock:8080/delius
+      ARNS_API_URL: http://wiremock:8080/arns-api
+      TIER_API_URL: http://wiremock:8080/tier-api
+      SUPERVISION_PACKAGE_API_URL: http://wiremock:8080/supervision-package-api
+      FEATURE_FLAG_URL: http://wiremock:8080/flipt
+      SAN_URL: http://localhost:3000/strengths-and-needs/v1.0
       HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
       HMPPS_ARNS_HANDOVER_EXTERNAL_URL: http://localhost:7070
-      OASYS_URL: http://localhost:7072
-      HANDOVER_CLIENT_ID: strengths-and-needs-assessment
-      HANDOVER_CLIENT_SECRET: san-secret
-      TOKEN_VERIFICATION_ENABLED: false
-      TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
-      API_CLIENT_SECRET: clientsecret
-      SYSTEM_CLIENT_SECRET: clientsecret
-      API_CLIENT_ID: hmpps-strengths-and-needs-ui
-      SYSTEM_CLIENT_ID: hmpps-strengths-and-needs-ui-client
-      SESSION_SECRET: sessionsecret
-      SBNA_API_URL: http://san-api:8080
-      INGRESS_URL: http://localhost:3000
-      HTTPS: false
-      NODE_ENV: development
+      HMPPS_ARNS_HANDOVER_CLIENT_ID: sentence-plan
+      HMPPS_ARNS_HANDOVER_CLIENT_SECRET: sp-secret
+      AWS_ACCESS_KEY_ID: test
+      AWS_SECRET_ACCESS_KEY: test
+      AWS_ENDPOINT_URL: http://localstack:4566
+      AUDIT_ENABLED: true
+      AUDIT_SQS_QUEUE_URL: http://localstack:4566/000000000000/audit-queue
+      AUDIT_SQS_REGION: eu-west-2
+      AUDIT_SERVICE_NAME: hmpps-arns-assessment-platform-ui
+      NODE_CLUSTER_ENABLED: false
+      FORM_TRAINING_SESSION_LAUNCHER_ENABLED: true
+      CAN_STUB_ARNS_API: true
+      WIREMOCK_ADMIN_URL: http://wiremock:8080/__admin
+      FORM_DATA_DELETION_TOOL_ENABLED: true
+      CACHE_REDIS_HOST: redis
+      SERVICE_NOW_FORM_URL: '#service-now-link'
+      NATIONAL_ROLLOUT_FEEDBACK_URL: '#national-rollout-feedback-url'
+      PRIVATE_BETA_FEEDBACK_URL: '#private-beta-feedback-url'
+      OASYS_URL: 'http://aap-ui:3000/training-session-launcher/sessions'
+      OASYS_REVIEW_URL: 'http://aap-ui:3000/training-session-launcher/sessions'
+      MPOP_URL: 'http://aap-ui:3000/sign-in'
+
+  aap-api:
+    image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-api:latest
+    networks:
+      - hmpps
+    depends_on:
+      - postgres
+      - localstack
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://localhost:8080/health/ping' ]
+      interval: 5s
+      retries: 20
+    environment:
+      SERVER_PORT: 8080
+      HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
+      SPRING_PROFILES_ACTIVE: dev,postgres
+      DATABASE_ENDPOINT: postgres:5432
+      HMPPS_SQS_PROVIDER: localstack
+      HMPPS_SQS_LOCALSTACK_URL: http://localstack:4566
+      HMPPS_SQS_QUEUES_AUDIT_QUEUE_NAME: audit-queue
+      SPRING_DATA_REDIS_HOST: redis
 
   arns-handover:
     image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:${APP_VERSION:-latest}
@@ -140,35 +167,12 @@ services:
       SERVER_ERROR_WHITELABEL_ENABLED: true
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
+      CLIENT_SP_SECRET: sp-secret
+      CLIENT_SP_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
+      CLIENT_SP_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=sentence-plan
       CLIENT_SAN_SECRET: san-secret
-      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/callback
-      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in
-
-  oasys-ui:
-    image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-oastub-ui:latest
-    networks:
-      - hmpps
-    depends_on:
-      - redis
-    healthcheck:
-      test: [ "CMD", "node", "./docker/healthcheck.js" ]
-      interval: 5s
-      retries: 60
-    environment:
-      REDIS_ENABLED: "true"
-      SYSTEM_CLIENT_SECRET: clientsecret
-      SYSTEM_CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
-      SESSION_SECRET: sessionsecret
-      REDIS_HOST: redis
-      INGRESS_URL: http://localhost:7072
-      HMPPS_AUTH_URL: http://hmpps-auth:9090/auth
-      TOKEN_VERIFICATION_ENABLED: "false"
-      TOKEN_VERIFICATION_API_URL: http://hmpps-auth:9091/verification
-      HMPPS_ARNS_HANDOVER_URL: http://arns-handover:7070
-      COORDINATOR_API_URL: "http://coordinator-api:8080"
-      ENVIRONMENT_NAME: DEV
-      AUDIT_ENABLED: "false"
-      PRODUCT_ID: FOO
+      CLIENT_SAN_OAUTH_REDIRECT_URI: http://localhost:3000/sign-in/handover/callback
+      CLIENT_SAN_HANDOVER_REDIRECT_URI: http://localhost:3000/sign-in/handover?service=strengths-and-needs
 
   localstack:
     image: localstack/localstack:4

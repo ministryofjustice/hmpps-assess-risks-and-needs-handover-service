@@ -15,11 +15,11 @@ services:
     ports:
       - "8070:8080"
 
-  san-api:
+  aap-api:
     ports:
       - "8080:8080"
 
-  san-ui:
+  aap-ui:
     ports:
       - "3000:3000"
 
@@ -34,10 +34,6 @@ services:
     volumes:
       - ..:/app
       - ../.gradle:/home/gradle/.gradle
-
-  oasys-ui:
-    ports:
-      - "7072:3000"
 
   localstack:
     ports:
