@@ -24,7 +24,7 @@ build-api: ## Builds a production image of the API.
 
 dev-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005.
 	docker compose ${DEV_COMPOSE_FILES} down arns-handover
-	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate arns-handover
+	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate aap-ui
 
 dev-build: ## Builds a development image of the API.
 	docker compose ${DEV_COMPOSE_FILES} build arns-handover --no-cache
@@ -49,14 +49,13 @@ lint-fix: ## Runs the Kotlin linter and auto-fixes.
 
 test-up: ## Stands up a test environment.
 	docker compose ${TEST_COMPOSE_FILES} pull --policy missing
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up arns-handover --wait --build
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up aap-ui --wait --build
 
 test-down: ## Stops and removes all of the test containers.
 	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
-BASE_URL_CI ?= "http://oasys-ui:3000"
-e2e-ci: ## Run the end-to-end tests in a headless browser. Used in CI. Override the default base URL with BASE_URL_CI=...
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test run --rm cypress --headless -c baseUrl=${BASE_URL_CI}
+e2e-ci: ## Run the end-to-end tests in a headless browser. Used in CI.
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test run --rm playwright
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down

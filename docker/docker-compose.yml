@@ -14,10 +14,13 @@ services:
       test: ["CMD", "curl", "-f", "http://hmpps-auth:9090/auth/health"]
       interval: 5s
       retries: 60
+    volumes:
+      - ./auth_db:/auth_db
     environment:
       SERVER_PORT: 9090
       SPRING_PROFILES_ACTIVE: dev
       APPLICATION_AUTHENTICATION_UI_ALLOWLIST: 0.0.0.0/0
+      SPRING_FLYWAY_LOCATIONS: classpath:db/auth,db/auth_{vendor},db/dev/data/auth_{vendor},db/dev/data/auth,filesystem:/auth_db
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
 
   postgres:
