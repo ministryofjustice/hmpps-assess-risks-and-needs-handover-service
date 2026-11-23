@@ -49,14 +49,13 @@ lint-fix: ## Runs the Kotlin linter and auto-fixes.
 
 test-up: ## Stands up a test environment.
 	docker compose ${TEST_COMPOSE_FILES} pull --policy missing
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up arns-handover --wait --build
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test up aap-ui --wait --build
 
 test-down: ## Stops and removes all of the test containers.
 	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test down
 
-BASE_URL_CI ?= "http://oasys-ui:3000"
-e2e-ci: ## Run the end-to-end tests in a headless browser. Used in CI. Override the default base URL with BASE_URL_CI=...
-	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test run --rm cypress --headless -c baseUrl=${BASE_URL_CI}
+e2e-ci: ## Run the end-to-end tests in a headless browser. Used in CI.
+	docker compose ${TEST_COMPOSE_FILES} -p ${PROJECT_NAME}-test run --rm playwright
 
 clean: ## Stops and removes all project containers. Deletes local build/cache directories.
 	docker compose down
@@ -79,10 +78,10 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	mkdir -p ${OUTPUT_LOGS_DIR}
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
-	docker logs ${PROJECT_NAME}-oasys-ui-1 > ${OUTPUT_LOGS_DIR}/oasys-ui.log
+	docker logs ${PROJECT_NAME}-aap-ui-1 > ${OUTPUT_LOGS_DIR}/aap-ui.log
+	docker logs ${PROJECT_NAME}-aap-api-1 > ${OUTPUT_LOGS_DIR}/aap-api.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
-	docker logs ${PROJECT_NAME}-san-ui-1 > ${OUTPUT_LOGS_DIR}/san-ui.log
-	docker logs ${PROJECT_NAME}-san-api-1 > ${OUTPUT_LOGS_DIR}/san-api.log
+	docker logs ${PROJECT_NAME}-wiremock-1 > ${OUTPUT_LOGS_DIR}/wiremock.log
 
 REDIS_PORT_FORWARD_PORT=6379
 redis-port-forward-pod: ## Creates a Redis port-forwarding pod in your currently active Kubernetes context
