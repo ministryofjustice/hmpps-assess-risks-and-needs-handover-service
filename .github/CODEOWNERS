@@ -3,4 +3,4 @@
 
 # These owners will be the default owners for everything in
 # the repo. Unless a later match takes precedence,
-*       @ministryofjustice/hmpps-assessments  @ministryofjustice/hmpps-sentence-planning
+*       @ministryofjustice/hmpps-assessments-devs
