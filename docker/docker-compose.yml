@@ -54,6 +54,8 @@ services:
       AAP_API_BASE_URL: http://aap-api:8080
       CLIENT_ID: hmpps-assess-risks-and-needs-oastub-ui
       CLIENT_SECRET: clientsecret
+      APP_STRATEGIES_PLAN: false
+      APP_STRATEGIES_ASSESSMENT: false
       PLAN_TYPE: AAP_PLAN
       ASSESSMENT_TYPE: AAP_SAN
 
