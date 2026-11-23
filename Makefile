@@ -24,7 +24,7 @@ build-api: ## Builds a production image of the API.
 
 dev-up: ## Starts/restarts the API in a development container. A remote debugger can be attached on port 5005.
 	docker compose ${DEV_COMPOSE_FILES} down arns-handover
-	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate aap-ui
+	docker compose ${DEV_COMPOSE_FILES} up --wait --no-recreate arns-handover
 
 dev-build: ## Builds a development image of the API.
 	docker compose ${DEV_COMPOSE_FILES} build arns-handover --no-cache
@@ -78,10 +78,10 @@ save-logs: ## Saves docker container logs in a directory defined by OUTPUT_LOGS_
 	mkdir -p ${OUTPUT_LOGS_DIR}
 	docker logs ${PROJECT_NAME}-arns-handover-1 > ${OUTPUT_LOGS_DIR}/arns-handover.log
 	docker logs ${PROJECT_NAME}-coordinator-api-1 > ${OUTPUT_LOGS_DIR}/coordinator-api.log
-	docker logs ${PROJECT_NAME}-oasys-ui-1 > ${OUTPUT_LOGS_DIR}/oasys-ui.log
+	docker logs ${PROJECT_NAME}-aap-ui-1 > ${OUTPUT_LOGS_DIR}/aap-ui.log
+	docker logs ${PROJECT_NAME}-aap-api-1 > ${OUTPUT_LOGS_DIR}/aap-api.log
 	docker logs ${PROJECT_NAME}-hmpps-auth-1 > ${OUTPUT_LOGS_DIR}/hmpps-auth.log
-	docker logs ${PROJECT_NAME}-san-ui-1 > ${OUTPUT_LOGS_DIR}/san-ui.log
-	docker logs ${PROJECT_NAME}-san-api-1 > ${OUTPUT_LOGS_DIR}/san-api.log
+	docker logs ${PROJECT_NAME}-wiremock-1 > ${OUTPUT_LOGS_DIR}/wiremock.log
 
 REDIS_PORT_FORWARD_PORT=6379
 redis-port-forward-pod: ## Creates a Redis port-forwarding pod in your currently active Kubernetes context
