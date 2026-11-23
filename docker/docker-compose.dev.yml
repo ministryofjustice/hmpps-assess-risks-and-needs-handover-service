@@ -23,6 +23,10 @@ services:
     ports:
       - "3000:3000"
 
+  gotenberg:
+    ports:
+      - '3001:3000'
+
   arns-handover:
     image: ghcr.io/ministryofjustice/hmpps-assess-risks-and-needs-handover-service:local
     build:

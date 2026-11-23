@@ -1,5 +1,7 @@
 describe('Create session and generate sentence plan link', () => {
   it('captures the CRN, starts a session, and verifies the sentence-plan page', () => {
+    cy.visit('/training-session-launcher/browse?scenario=default');
+
     let crn;
 
     // 1. Find the <dt> containing "CRN" and get the sibling <dd> content

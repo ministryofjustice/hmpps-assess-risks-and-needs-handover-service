@@ -3,7 +3,7 @@ const { defineConfig } = require('cypress')
 module.exports = defineConfig({
   chromeWebSecurity: false,
   e2e: {
-    baseUrl: 'http://aap-ui:3000/training-session-launcher/sessions',
+    baseUrl: 'http://aap-ui:3000',
     supportFile: false,
   },
 })

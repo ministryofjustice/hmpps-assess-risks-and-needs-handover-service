@@ -59,6 +59,23 @@ services:
       PLAN_TYPE: AAP_PLAN
       ASSESSMENT_TYPE: AAP_SAN
 
+  gotenberg:
+    image: gotenberg/gotenberg:8.37.0
+    networks:
+      - hmpps
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    healthcheck:
+      test: [ 'CMD', 'curl', '-f', 'http://localhost:3000/health' ]
+      interval: 5s
+      retries: 20
+    command:
+      - gotenberg
+      - --chromium-clear-cookies
+      - --libreoffice-disable-routes
+      - --webhook-disable
+      - --prometheus-disable-collect
+
   aap-ui:
     image: ghcr.io/ministryofjustice/hmpps-arns-assessment-platform-ui:latest
     networks:
@@ -66,11 +83,17 @@ services:
     depends_on:
       - redis
       - localstack
+      - aap-api
+      - coordinator-api
+      - arns-handover
+      - gotenberg
+      - wiremock
     healthcheck:
       test: [ 'CMD', 'wget', '-q', '--spider', 'http://localhost:3000/health' ]
       interval: 5s
       retries: 20
     environment:
+      PRODUCT_ID: 'UNASSIGNED'
       REDIS_ENABLED: true
       REDIS_HOST: redis
       SESSION_SECRET: somesecretvalue
@@ -194,6 +217,15 @@ services:
       interval: 5s
       timeout: 10s
       retries: 50
+
+  wiremock:
+    image: wiremock/wiremock:3.13.2
+    networks:
+      - hmpps
+    restart: always
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+    command: --global-response-templating
 
 networks:
   hmpps:
