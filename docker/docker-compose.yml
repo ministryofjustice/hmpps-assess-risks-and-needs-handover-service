@@ -21,7 +21,7 @@ services:
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
 
   postgres:
-    image: postgres:18
+    image: postgres:19
     networks:
       - hmpps
     environment:
