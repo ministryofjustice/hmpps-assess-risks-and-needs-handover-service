@@ -47,9 +47,11 @@ generic-service:
     CLIENT_TIERING_ASSESSMENT_HANDOVER_REDIRECT_URI: "https://arns-assessment-platform-test.hmpps.service.justice.gov.uk/sign-in/handover?service=tiering-assessment"
 
   allowlist:
-    mp-nat-egress-one: 13.43.9.198/32
-    mp-nat-egress-two: 13.42.163.245/32
-    mp-nat-egress-three: 18.132.208.127/32    
+    groups:
+      - internal
+      - prisons
+      - private_prisons
+      - mod-platform-non-live
     nat-gw-one: 35.178.209.113/32
     nat-gw-two: 3.8.51.207/32
     nat-gw-three: 35.177.252.54/32
