@@ -63,7 +63,7 @@ services:
       ASSESSMENT_TYPE: AAP_SAN
 
   gotenberg:
-    image: gotenberg/gotenberg:8.37.0
+    image: gotenberg/gotenberg:8.40.0
     networks:
       - hmpps
     extra_hosts:
